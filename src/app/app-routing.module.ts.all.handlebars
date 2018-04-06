@@ -1,0 +1,25 @@
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { PendingChangesGuard } from './pending-changes.guard';
+
+{{#each types}}{{#if (isEntity)}}import { {{name}}ListComponent } from './list/{{toLowerCase name}}.type';
+{{/if}}{{/each}}
+{{#each types}}{{#if (isEntity)}}import { {{name}}Component } from './crud/{{toLowerCase name}}.type';
+{{/if}}{{/each}}
+const routes: Routes = [
+  {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
+  {path: 'dashboard', component: DashboardComponent},
+
+{{#each types}}{{#if (isEntity)}}  {path: '{{toLowerCase name}}/list', component: {{name}}ListComponent},
+{{/if}}{{/each}}
+{{#each types}}{{#if (isEntity)}}  {path: '{{toLowerCase name}}', component: {{name}}Component, canDeactivate: [PendingChangesGuard]},
+  {path: '{{toLowerCase name}}/:id', component: {{name}}Component, canDeactivate: [PendingChangesGuard]},
+{{/if}}{{/each}}
+];
+
+@NgModule({
+  imports: [ RouterModule.forRoot(routes) ],
+  exports: [ RouterModule ]
+})
+export class AppRoutingModule {}
