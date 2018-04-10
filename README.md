@@ -6,7 +6,7 @@ Or rather, [PostGraphile](https://github.com/graphile/postgraphile) is used to a
 
 ## Motivation
 
-Opinionate was created as an attempt to address the issue that, although modern frameworks like Angular and technologies like GraphQL offer a lot of power and flexibility, and tools like the Angular CLI provide some shortcuts, it still seems that a lot of boilerplate code is required to build a full stack application. By making some assumptions (which are arguably opinionated), a lot of boilerplate code can be generated automatically. Even if some of the code is inappropriate or requires further development, it might still save a lot of time. Hopefully also, it might often be more efficient to refine the code generation/tool, rather than hand work the code afterwards.
+Though modern frameworks like Angular and technologies like GraphQL offer a lot of power and flexibility, and the Angular CLI provides some shortcuts, a lot of boilerplate code is still required to build a full stack application. By making some assumptions (which are arguably opinionated), a lot of boilerplate code can be generated automatically. Even if some of the code is inappropriate or requires further development, it might still save a lot of time. Hopefully also, it might often be more efficient to refine the code generation/tool, rather than hand work the code afterwards.
 
 ## Prerequisites
 

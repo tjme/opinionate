@@ -2,6 +2,10 @@
   "name": "opinionate",
   "version": "0.0.0",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tjme/opinionate.git"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -15,6 +19,20 @@
     "gentypesclean": "rm src/models/types.ts && rm src/models/schema.json && rm src/models/schema.gql",
     "gencodeclean": "rm src/app/app.module.ts && rm src/app/app-routing.module.ts && rm src/app/app.component.html && rm src/app/crud/*.ts && rm src/app/crud/*.html && rm src/app/list/*.ts && rm src/app/list/*.html"
   },
+  "keywords": [
+    "graphql",
+    "angular",
+    "angular-material",
+    "typescript",
+    "postgresql",
+    "postgraphile",
+    "code-generator"
+  ],
+  "author": "Tim Merrison <tim@merrison.co.uk>",
+  "bugs": {
+    "url": "https://github.com/tjme/opinionate/issues"
+  },
+  "homepage": "https://github.com/tjme/opinionate#readme",
   "prettier": {
     "requirePragma": "true"
   },
