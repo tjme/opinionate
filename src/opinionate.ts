@@ -1,7 +1,10 @@
+import * as fs from 'fs';
+
 export class Opinionate {
 
-    public write(message: String = "Opinionate!") {
-        console.log(message);
-    }
+  public op(schemaPath = "./src/models/schema.json") {
+    const schema = fs.readFileSync(schemaPath);
+    console.log(JSON.stringify(schema));
+  }
 
 }

@@ -16,15 +16,15 @@ export class Opinion {
     public initialize() {
         this.program
             .version(this.package.version)
-            .option('-o, --opine [value]', 'Say opinionate!')
+            .option('-s, --schemaPath [value]', 'Generate source files from schema')
             .parse(process.argv);
 
-        if (this.program.opine != null) {
+        if (this.program.schemaPath != null) {
 
-            if (typeof this.program.opine !== 'string') {
-                this.opinionate.write();
+            if (typeof this.program.schemaPath !== 'string') {
+                this.opinionate.op();
             } else {
-                this.opinionate.write(this.program.opine);
+                this.opinionate.op(this.program.schemaPath);
             }
 
             process.exit();
