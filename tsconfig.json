@@ -1,19 +1,21 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "outDir": "./dist/out-tsc",
-    "sourceMap": true,
-    "declaration": false,
-    "moduleResolution": "node",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "target": "es6",
-    "module": "commonjs",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2017"
-    ]
-  }
+	"compileOnSave": false,
+	"compilerOptions": {
+		"target": "es6",
+		"declaration": true,
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"noImplicitAny": true,
+		"outDir": "./dist",
+		"preserveConstEnums": true,
+		"removeComments": true
+	},
+	"include": [
+		"src/**/*"
+	],
+	"exclude": [
+		"node_modules",
+		"!node_modules/@types",
+		"test/**/*-spec.ts"
+	]
 }
