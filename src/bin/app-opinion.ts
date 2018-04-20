@@ -16,21 +16,22 @@ export class Opinion {
     public initialize() {
         this.program
             .version(this.package.version)
-            .option('-s, --schemaPath [value]', 'Generate source files from schema')
+            .option('-s, --schemaPath [value]', 'JSON file defining schema')
+            .option('-o, --overlayPath [value]', 'JSON file defining additions to the schema')
             .parse(process.argv);
 
-        if (this.program.schemaPath != null) {
+        // if (this.program.schemaPath != null) {
 
-            if (typeof this.program.schemaPath !== 'string') {
-                this.opinionate.op();
-            } else {
-                this.opinionate.op(this.program.schemaPath);
-            }
+        //     if (typeof this.program.schemaPath !== 'string') {
+        //         this.opinionate.op();
+        //     } else {
+                this.opinionate.op(this.program.schemaPath, this.program.overlayPath);
+            // }
 
             process.exit();
-        }
+        // }
 
-        this.program.help();
+        // this.program.help();
     }
 
 }
