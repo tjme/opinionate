@@ -28,8 +28,8 @@
 	"url": "https://github.com/tjme/opinionate/issues"
 	},
 	"homepage": "https://github.com/tjme/opinionate#readme",
-	"main": "dist/bin/app.js",
-	"typings": "dist/bin/app.d.ts",
+	"main": "dist/bin/opinionate.js",
+	"typings": "dist/bin/opinionate.d.ts",
 	"bin": {
 		"opinionate": "bin/opinionate"
 	},

@@ -1,31 +1,34 @@
-/**
- * Simple object check.
- * @param item
- * @returns {boolean}
- */
-export function isObject(item: any): boolean {
-  return (item && typeof item === 'object' && !Array.isArray(item));
+function deDupe(obj: object[]): object[] {
+  // Insert array deduplication code (assuming name property must always be unique)
+  return obj;
 }
 
 /**
- * Deep merge two objects.
- * @param target
- * @param ...sources
- */
-export function mergeDeep(target: any, ...sources: any[]): any {
-  if (!sources.length) return target;
-  const source = sources.shift();
-
-  if (isObject(target) && isObject(source)) {
-    for (const key in source) {
-      if (isObject(source[key])) {
-        if (!target[key]) Object.assign(target, { [key]: {} });
-        mergeDeep(target[key], source[key]);
-      } else {
-        Object.assign(target, { [key]: source[key] });
+* Performs a deep merge of objects and returns new object. Does not modify
+* objects (immutable) and merges arrays via concatenation.
+*
+* @param {...object} objects - Objects to merge
+* @returns {object} New object with merged key/values
+*/
+function mergeDeep(...objects: object[]): object {
+  const isObject = (obj: any) => obj && typeof obj === 'object';
+  
+  return objects.reduce((prev: any, obj: any) => {
+    Object.keys(obj).forEach(key => {
+      const pVal = prev[key];
+      const oVal = obj[key];
+      
+      if (Array.isArray(pVal) && Array.isArray(oVal)) {
+        prev[key] = deDupe(pVal.concat(...oVal));
       }
-    }
-  }
-
-  return mergeDeep(target, ...sources);
+      else if (isObject(pVal) && isObject(oVal)) {
+        prev[key] = mergeDeep(pVal, oVal);
+      }
+      else {
+        prev[key] = oVal;
+      }
+    });
+    
+    return prev;
+  }, {});
 }

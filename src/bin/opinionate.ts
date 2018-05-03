@@ -13,8 +13,8 @@ export class App {
     public initialize() {
         this.program
             .version(this.package.version)
+            .command('meta <schema>', 'merge and/or convert the metadata of the schema', {isDefault: true})
             .command('write [message]', 'say hello!')
-            .command('opinion [message]', 'say opinionate!')
             .parse(process.argv);
     }
 
