@@ -1,5 +1,5 @@
 import * as commander from 'commander';
-import { getSchema } from '../schema-meta';
+import { metaMerge } from '../schema-meta';
 
 export class AppMetaMerge {
 
@@ -23,26 +23,19 @@ export class AppMetaMerge {
       .option("-c, --clean-descriptions", "Remove metadata from the descriptions")
       .parse(process.argv);
 
-    // if (this.program.schemaPath != null) {
+    if (typeof this.program.schema !== 'string') throw new Error(`No schema file supplied`);
 
-    // if (typeof this.program.schemaPath !== 'string') {
-    //   this.opinionate.op();
-    // } else {
-    getSchema(
+    metaMerge(
       this.program.schema,
       this.program.overlay,
       this.program.schemaOut,
       this.program.overlayOut,
       this.program.commentsOut,
       this.program.allowExisting,
-      this.program.cleanDescriptions,
+      this.program.cleanDescriptions
     );
-  // }
 
     process.exit();
-  // }
-
-  // this.program.help();
   }
 
 }

@@ -1,3 +1,5 @@
+// Facilities to merge and/or convert schema metadata, from and to various sources and file formats
+
 import * as fs from "fs";
 
 const metaProp = "meta", metaMarker = "@meta";
@@ -17,10 +19,11 @@ export type meta = { label: string, list: boolean, crud: boolean };
  * @param commentsOutPath SQL script to add (or replace) table and field comments, including metadata
  * @param allowExisting whether metadata is allowed in base schema
  * @param cleanDescriptions whether to remove metadata from descriptions/comments
+ * @param returnOverlay return only the merged overlay, rather than the full merged schema
  */
-export function getSchema(schemaInPath: string, overlayInPath?: string,
+export function metaMerge(schemaInPath: string, overlayInPath?: string,
   schemaOutPath?: string, overlayOutPath?: string, commentsOutPath?: string,
-  allowExisting = false, cleanDescriptions = false
+  allowExisting = false, cleanDescriptions = false, returnOverlay = false
 ): any {
 
   function metaMerge(item: any, overlay: any[]) {
@@ -74,11 +77,11 @@ export function getSchema(schemaInPath: string, overlayInPath?: string,
 `+t.fields.map((f: any) =>
 `COMMENT ON COLUMN ${t.name}.${f.name} IS '${comment(f.description, f[metaProp])}';
 `).join("")).join("\n"));
-  return schema;
+  return returnOverlay ? overlayOut : schema;
 }
 
-// Test getSchema:
-// const schema = getSchema(
+// Test metaMerge:
+// const schema = metaMerge(
 //   "./src/models/schema.json",
 //   "./src/models/overlay.json",
 //   "./src/models/schemaMerged.json",
