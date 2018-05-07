@@ -24,7 +24,7 @@ export type meta = { label: string, list: boolean, crud: boolean };
 export function metaMerge(schemaInPath: string, overlayInPath?: string,
   schemaOutPath?: string, overlayOutPath?: string, commentsOutPath?: string,
   allowExisting = false, cleanDescriptions = false, returnOverlay = false
-): any {
+): {schema: any, overlay:any} {
 
   function metaMerge(item: any, overlay: any[]) {
     if (item.description) {
@@ -77,7 +77,7 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string,
 `+t.fields.map((f: any) =>
 `COMMENT ON COLUMN ${t.name}.${f.name} IS '${comment(f.description, f[metaProp])}';
 `).join("")).join("\n"));
-  return returnOverlay ? overlayOut : schema;
+  return {schema: schema, overlay: overlayOut};
 }
 
 // Test metaMerge:
