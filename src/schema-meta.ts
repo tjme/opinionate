@@ -1,5 +1,3 @@
-// Facilities to merge and/or convert schema metadata, from and to various sources and file formats
-
 import * as fs from "fs";
 
 const metaProp = "meta", metaMarker = "@meta";
@@ -9,7 +7,7 @@ function toProperCase(txt: string): string { return txt.charAt(0).toUpperCase() 
 export type meta = { label: string, list: boolean, crud: boolean };
 
 /**
- * 
+ * Facilities to merge and/or convert schema metadata, from and to various sources and file formats
  * @param schemaInPath to base schema JSON file to load from (which may already contain some metadata)
  * then also merge in any metadata from its entity and field descriptions (originally from PostGreSQL table and field comments)
  * @param overlayInPath then merge in any metadata from overlay JSON file (containing metadata and IDs)
@@ -80,7 +78,7 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string,
   return {schema: schema, overlay: overlayOut};
 }
 
-// Test metaMerge:
+// Todo: for test purposes; remove later:
 // const schema = metaMerge(
 //   "./src/models/schema.json",
 //   "./src/models/overlay.json",

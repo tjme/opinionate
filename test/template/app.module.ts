@@ -19,9 +19,9 @@ import { PendingChangesGuard } from './pending-changes.guard';
 import { AppComponent } from './app.component';
 import { GraphQLService } from './graphql.service';
 import { DashboardComponent } from './dashboard/dashboard.component';
-${OVERLAY}
+${overlay.map(types => `
 import { ${types.name}Component } from './crud/${types.name.toLowerCase()}';
-import { ${types.name}ListComponent } from './list/${types.name.toLowerCase()}';${}
+import { ${types.name}ListComponent } from './list/${types.name.toLowerCase()}';`).join("\n")}
 
 @NgModule({
   imports: [
@@ -45,9 +45,9 @@ import { ${types.name}ListComponent } from './list/${types.name.toLowerCase()}';
   declarations: [
     AppComponent,
     DashboardComponent,
-${OVERLAY}
+${overlay.map(types => `
     ${types.name}Component,
-    ${types.name}ListComponent,${}
+    ${types.name}ListComponent,`).join("\n")}
   ],
   providers: [
     GraphQLService,

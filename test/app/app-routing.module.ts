@@ -3,88 +3,128 @@ import { RouterModule, Routes } from '@angular/router';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PendingChangesGuard } from './pending-changes.guard';
 
-import { AccountclosingListComponent } from './list/accountclosing.type';
-import { AccountclosingComponent } from './crud/accountclosing.type';
-import { CatastrophetypeListComponent } from './list/catastrophetype.type';
-import { CatastrophetypeComponent } from './crud/catastrophetype.type';
-import { ClaimListComponent } from './list/claim.type';
-import { ClaimComponent } from './crud/claim.type';
-import { PolicyListComponent } from './list/policy.type';
-import { PolicyComponent } from './crud/policy.type';
-import { PolicytypeListComponent } from './list/policytype.type';
-import { PolicytypeComponent } from './crud/policytype.type';
-import { PolicystatusListComponent } from './list/policystatus.type';
-import { PolicystatusComponent } from './crud/policystatus.type';
-import { PremiumtypeListComponent } from './list/premiumtype.type';
-import { PremiumtypeComponent } from './crud/premiumtype.type';
-import { PeriodtypeListComponent } from './list/periodtype.type';
-import { PeriodtypeComponent } from './crud/periodtype.type';
-import { CurrencyListComponent } from './list/currency.type';
-import { CurrencyComponent } from './crud/currency.type';
-import { LedgerListComponent } from './list/ledger.type';
-import { LedgerComponent } from './crud/ledger.type';
-import { DebitnoteListComponent } from './list/debitnote.type';
-import { DebitnoteComponent } from './crud/debitnote.type';
-import { ContactListComponent } from './list/contact.type';
-import { ContactComponent } from './crud/contact.type';
-import { PolicysplitListComponent } from './list/policysplit.type';
-import { PolicysplitComponent } from './crud/policysplit.type';
-import { SplittypeListComponent } from './list/splittype.type';
-import { SplittypeComponent } from './crud/splittype.type';
-import { PolicyconditionListComponent } from './list/policycondition.type';
-import { PolicyconditionComponent } from './crud/policycondition.type';
-import { VehiclemakeListComponent } from './list/vehiclemake.type';
-import { VehiclemakeComponent } from './crud/vehiclemake.type';
-import { ClaimconditionListComponent } from './list/claimcondition.type';
-import { ClaimconditionComponent } from './crud/claimcondition.type';
-import { PaymentListComponent } from './list/payment.type';
-import { PaymentComponent } from './crud/payment.type';
-import { StatementListComponent } from './list/statement.type';
-import { StatementComponent } from './crud/statement.type';
-import { StatementdebitnoteListComponent } from './list/statementdebitnote.type';
-import { StatementdebitnoteComponent } from './crud/statementdebitnote.type';
-import { RelationListComponent } from './list/relation.type';
-import { RelationComponent } from './crud/relation.type';
-import { TransactionListComponent } from './list/transaction.type';
-import { TransactionComponent } from './crud/transaction.type';
-import { PolicyriListComponent } from './list/policyri.type';
-import { PolicyriComponent } from './crud/policyri.type';
-import { ClaimstatustypeListComponent } from './list/claimstatustype.type';
-import { ClaimstatustypeComponent } from './crud/claimstatustype.type';
-import { ClaimreservehistoryListComponent } from './list/claimreservehistory.type';
-import { ClaimreservehistoryComponent } from './crud/claimreservehistory.type';
-import { CommodityListComponent } from './list/commodity.type';
-import { CommodityComponent } from './crud/commodity.type';
-import { ContactproductListComponent } from './list/contactproduct.type';
-import { ContactproductComponent } from './crud/contactproduct.type';
-import { ConveyancetypeListComponent } from './list/conveyancetype.type';
-import { ConveyancetypeComponent } from './crud/conveyancetype.type';
-import { CorrespondenceListComponent } from './list/correspondence.type';
-import { CorrespondenceComponent } from './crud/correspondence.type';
-import { CountryListComponent } from './list/country.type';
-import { CountryComponent } from './crud/country.type';
-import { FormattypeListComponent } from './list/formattype.type';
-import { FormattypeComponent } from './crud/formattype.type';
-import { GoodsconditionListComponent } from './list/goodscondition.type';
-import { GoodsconditionComponent } from './crud/goodscondition.type';
-import { NamedconditionListComponent } from './list/namedcondition.type';
-import { NamedconditionComponent } from './crud/namedcondition.type';
-import { NumberListComponent } from './list/number.type';
-import { NumberComponent } from './crud/number.type';
-import { RegletterListComponent } from './list/regletter.type';
-import { RegletterComponent } from './crud/regletter.type';
-import { ReportoptionListComponent } from './list/reportoption.type';
-import { ReportoptionComponent } from './crud/reportoption.type';
-import { StatspremiumtypeListComponent } from './list/statspremiumtype.type';
-import { StatspremiumtypeComponent } from './crud/statspremiumtype.type';
-import { StatsyearListComponent } from './list/statsyear.type';
-import { StatsyearComponent } from './crud/statsyear.type';
-import { SubstitutioncodeListComponent } from './list/substitutioncode.type';
-import { SubstitutioncodeComponent } from './crud/substitutioncode.type';
-import { VoyageListComponent } from './list/voyage.type';
-import { VoyageComponent } from './crud/voyage.type';
-import { VoyagetypeListComponent } from './list/voyagetype.type';
-import { VoyagetypeComponent } from './crud/voyagetype.type';
+import { AccountclosingComponent } from './crud/accountclosing';
+import { AccountclosingListComponent } from './list/accountclosing';
+
+import { CatastrophetypeComponent } from './crud/catastrophetype';
+import { CatastrophetypeListComponent } from './list/catastrophetype';
+
+import { ClaimComponent } from './crud/claim';
+import { ClaimListComponent } from './list/claim';
+
+import { PolicyComponent } from './crud/policy';
+import { PolicyListComponent } from './list/policy';
+
+import { PolicytypeComponent } from './crud/policytype';
+import { PolicytypeListComponent } from './list/policytype';
+
+import { PolicystatusComponent } from './crud/policystatus';
+import { PolicystatusListComponent } from './list/policystatus';
+
+import { PremiumtypeComponent } from './crud/premiumtype';
+import { PremiumtypeListComponent } from './list/premiumtype';
+
+import { PeriodtypeComponent } from './crud/periodtype';
+import { PeriodtypeListComponent } from './list/periodtype';
+
+import { CurrencyComponent } from './crud/currency';
+import { CurrencyListComponent } from './list/currency';
+
+import { LedgerComponent } from './crud/ledger';
+import { LedgerListComponent } from './list/ledger';
+
+import { DebitnoteComponent } from './crud/debitnote';
+import { DebitnoteListComponent } from './list/debitnote';
+
+import { ContactComponent } from './crud/contact';
+import { ContactListComponent } from './list/contact';
+
+import { PolicysplitComponent } from './crud/policysplit';
+import { PolicysplitListComponent } from './list/policysplit';
+
+import { SplittypeComponent } from './crud/splittype';
+import { SplittypeListComponent } from './list/splittype';
+
+import { PolicyconditionComponent } from './crud/policycondition';
+import { PolicyconditionListComponent } from './list/policycondition';
+
+import { VehiclemakeComponent } from './crud/vehiclemake';
+import { VehiclemakeListComponent } from './list/vehiclemake';
+
+import { ClaimconditionComponent } from './crud/claimcondition';
+import { ClaimconditionListComponent } from './list/claimcondition';
+
+import { PaymentComponent } from './crud/payment';
+import { PaymentListComponent } from './list/payment';
+
+import { StatementComponent } from './crud/statement';
+import { StatementListComponent } from './list/statement';
+
+import { StatementdebitnoteComponent } from './crud/statementdebitnote';
+import { StatementdebitnoteListComponent } from './list/statementdebitnote';
+
+import { RelationComponent } from './crud/relation';
+import { RelationListComponent } from './list/relation';
+
+import { TransactionComponent } from './crud/transaction';
+import { TransactionListComponent } from './list/transaction';
+
+import { PolicyriComponent } from './crud/policyri';
+import { PolicyriListComponent } from './list/policyri';
+
+import { ClaimstatustypeComponent } from './crud/claimstatustype';
+import { ClaimstatustypeListComponent } from './list/claimstatustype';
+
+import { ClaimreservehistoryComponent } from './crud/claimreservehistory';
+import { ClaimreservehistoryListComponent } from './list/claimreservehistory';
+
+import { CommodityComponent } from './crud/commodity';
+import { CommodityListComponent } from './list/commodity';
+
+import { ContactproductComponent } from './crud/contactproduct';
+import { ContactproductListComponent } from './list/contactproduct';
+
+import { ConveyancetypeComponent } from './crud/conveyancetype';
+import { ConveyancetypeListComponent } from './list/conveyancetype';
+
+import { CorrespondenceComponent } from './crud/correspondence';
+import { CorrespondenceListComponent } from './list/correspondence';
+
+import { CountryComponent } from './crud/country';
+import { CountryListComponent } from './list/country';
+
+import { FormattypeComponent } from './crud/formattype';
+import { FormattypeListComponent } from './list/formattype';
+
+import { GoodsconditionComponent } from './crud/goodscondition';
+import { GoodsconditionListComponent } from './list/goodscondition';
+
+import { NamedconditionComponent } from './crud/namedcondition';
+import { NamedconditionListComponent } from './list/namedcondition';
+
+import { NumberComponent } from './crud/number';
+import { NumberListComponent } from './list/number';
+
+import { RegletterComponent } from './crud/regletter';
+import { RegletterListComponent } from './list/regletter';
+
+import { ReportoptionComponent } from './crud/reportoption';
+import { ReportoptionListComponent } from './list/reportoption';
+
+import { StatspremiumtypeComponent } from './crud/statspremiumtype';
+import { StatspremiumtypeListComponent } from './list/statspremiumtype';
+
+import { StatsyearComponent } from './crud/statsyear';
+import { StatsyearListComponent } from './list/statsyear';
+
+import { SubstitutioncodeComponent } from './crud/substitutioncode';
+import { SubstitutioncodeListComponent } from './list/substitutioncode';
+
+import { VoyageComponent } from './crud/voyage';
+import { VoyageListComponent } from './list/voyage';
+
+import { VoyagetypeComponent } from './crud/voyagetype';
+import { VoyagetypeListComponent } from './list/voyagetype';
 
 const routes: Routes = [
   {path: '', redirectTo: '/dashboard', pathMatch: 'full'},
