@@ -8,14 +8,18 @@ import { metaMerge } from './schema-meta';
  */
 export function generate(templateDir = "./test/template", targetDir = "./test/app"): void {
   const {schema, overlay} = metaMerge("./src/models/schema.json", "./src/models/overlay.json");
-  
-  fs.readdirSync(templateDir).forEach((name: string) => {
-    if (fs.statSync(templateDir + "/" + name).isDirectory()){
-      try {fs.mkdirSync(targetDir + "/" + name)} catch (err) {if (err.code !== 'EEXIST') throw err}
-      generate(templateDir + "/" + name, targetDir + "/" + name);
+
+  fs.readdirSync(templateDir).forEach((targetName: string) => {
+    if (fs.statSync(templateDir + "/" + targetName).isDirectory()){
+      try {fs.mkdirSync(targetDir + "/" + targetName)} catch (err) {if (err.code !== 'EEXIST') throw err}
+      generate(templateDir + "/" + targetName, targetDir + "/" + targetName);
     } else {
-      fs.writeFileSync(targetDir + "/" + name,
-      eval("`" + fs.readFileSync(templateDir + "/" + name) + "`"));
+      const templateContent = fs.readFileSync(templateDir + "/" + targetName);
+      if (targetName.includes("types")) {
+        overlay.types.map((types: any) => {
+          fs.writeFileSync(targetDir + "/" + targetName.replace("types", types.name), eval("`" + templateContent + "`"));
+        })
+      } else fs.writeFileSync(targetDir + "/" + targetName, eval("`" + templateContent + "`"));
     }
   });
 }

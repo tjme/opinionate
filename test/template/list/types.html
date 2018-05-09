@@ -1,0 +1,24 @@
+<h2>${types.name} List</h2>
+
+<div class="form-container">
+  <a class="actions" color="primary" aria-label="Add a new record" matTooltip="Add a new record" matTooltipPosition="above" routerLink="/${types.name.toLowerCase()}/"><mat-icon>add</mat-icon>Add</a>
+</div>
+
+<mat-table #${types.name}Table [dataSource]="dataSource" matSort>
+  ${types.fields.map(fields => `  <ng-container matColumnDef="${fields.name}">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>${fields.name}</mat-header-cell>
+    <mat-cell *matCellDef="let ${types.name.toLowerCase()}">
+    ${type == "Boolean" ? `<mat-checkbox [disabled]="true" [ngModel]="${types.name.toLowerCase()}.${fields.name}"></mat-checkbox>` : `${types.name.toLowerCase()}.${fields.name}`
+    </mat-cell>
+  </ng-container>
+`)}
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="goto(row.nodeId)"></mat-row>
+</mat-table>
+
+<mat-paginator #paginator
+  [pageSize]="10"
+  [pageSizeOptions]="[5, 10, 20, 40, 80]"
+  [showFirstLastButtons]="true">
+</mat-paginator>
