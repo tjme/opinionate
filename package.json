@@ -25,7 +25,7 @@
 	],
 	"author": "Tim Merrison <tim@merrison.co.uk>",
 	"bugs": {
-	"url": "https://github.com/tjme/opinionate/issues"
+		"url": "https://github.com/tjme/opinionate/issues"
 	},
 	"homepage": "https://github.com/tjme/opinionate#readme",
 	"main": "dist/bin/opinionate.js",
@@ -38,7 +38,9 @@
 		"dist"
 	],
 	"dependencies": {
-		"commander": "^2.9.0"
+		"@types/pluralize": "^0.0.28",
+		"commander": "^2.9.0",
+		"pluralize": "^7.0.0"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.0",

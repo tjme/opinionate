@@ -8,7 +8,7 @@
   ${types.fields.map(fields => `  <ng-container matColumnDef="${fields.name}">
     <mat-header-cell *matHeaderCellDef mat-sort-header>${fields.name}</mat-header-cell>
     <mat-cell *matCellDef="let ${types.name.toLowerCase()}">
-    ${type == "Boolean" ? `<mat-checkbox [disabled]="true" [ngModel]="${types.name.toLowerCase()}.${fields.name}"></mat-checkbox>` : `${types.name.toLowerCase()}.${fields.name}`
+    ${types == "Boolean" ? `<mat-checkbox [disabled]="true" [ngModel]="${types.name.toLowerCase()}.${fields.name}"></mat-checkbox>` : `${types.name.toLowerCase()}.${fields.name}`}
     </mat-cell>
   </ng-container>
 `)}

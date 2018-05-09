@@ -8,12 +8,12 @@ import { ${types.name}, ${types.name}Patch } from '../../models/types';
 import { GraphQLService } from '../graphql.service';
 import gql from 'graphql-tag';
 
-const ${types.name}Fields = gql`fragment ${types.name.toLowerCase()}Fields on ${types.name} { nodeId,${types.fields.map(fields => ${fields.name})} }`;
-const ReadAll = gql`query readAll{all${pluralize(type.name)}
-  {nodes{...${types.name.toLowerCase()}Fields } } } ${ ${types.name}Fields}`;
-// const Delete = gql`mutation delete($nodeId:ID!)
+const ${types.name}Fields = gql\`fragment ${types.name.toLowerCase()}Fields on ${types.name} { nodeId,${types.fields.map(fields => `${fields.name}`)} }\`;
+const ReadAll = gql\`query readAll{all${pluralize(types.name)}
+  {nodes{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
+// const Delete = gql\`mutation delete($nodeId:ID!)
 //   {delete${types.name}(input:{nodeId:$nodeId})
-//   { ${types.name.toLowerCase()}{...${types.name.toLowerCase()}Fields } } } ${ ${types.name}Fields}`;
+//   { ${types.name.toLowerCase()}{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
 
 @Component({
   selector: 'app-${types.name.toLowerCase()}-list',
@@ -21,7 +21,7 @@ const ReadAll = gql`query readAll{all${pluralize(type.name)}
   styleUrls: ['./list.css']
 })
 export class ${types.name}ListComponent implements OnInit, AfterViewInit {
-  displayedColumns = [${types.fields.map(fields => ${fields.name})}];
+  displayedColumns = [${types.fields.map(fields => `${fields.name}`)}];
   dataSource = new MatTableDataSource<${types.name}>();
   dialogResult: any;
   // @ViewChild('${types.name}Table') ${types.name}Table: MatTable<any>;
