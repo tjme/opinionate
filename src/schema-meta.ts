@@ -22,9 +22,9 @@ export type meta = { label: string, list: boolean, crud: boolean };
 export function metaMerge(schemaInPath: string, overlayInPath?: string,
   schemaOutPath?: string, overlayOutPath?: string, commentsOutPath?: string,
   allowExisting = false, cleanDescriptions = false, returnOverlay = false
-): {schema: any, overlay:any} {
+): any {
 
-  function metaMerge(item: any, overlay: any[]) {
+  function mergeMeta(item: any, overlay: any[]) {
     if (item.description) {
       const [description, meta] = item.description.split(metaMarker);
       if (meta) {
@@ -54,12 +54,12 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string,
   .filter((ft: any) => ft.kind == "OBJECT" && ft.name !== "Query" && ft.interfaces.length > 0 && ft.interfaces[0].name == "Node")
   .forEach((t: any) => {
     if (!allowExisting && t.hasOwnProperty(metaProp)) throw new Error(`The schema already contains metadata (for table ${t.name})`);
-    metaMerge(t, overlayIn);
+    mergeMeta(t, overlayIn);
     t.fields
     .filter((f: any) => f.name !== "nodeId" && (f.type.kind == "SCALAR" || (f.type["ofType"] && f.type.ofType["kind"] == "SCALAR")))
     .forEach((f: any) => {
       if (!allowExisting && f.hasOwnProperty(metaProp)) throw new Error(`The schema already contains metadata (for field ${f.name})`);
-      metaMerge(f, overlayIn);
+      mergeMeta(f, overlayIn);
     });
   });
   if (schemaOutPath) fs.writeFileSync(schemaOutPath, JSON.stringify(schema, null, 2));
@@ -71,11 +71,11 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string,
     .map((fm: any) => { return { name: fm.name, description: fm.description, meta: fm[metaProp] }}), meta: m[metaProp] }});
   if (overlayOutPath) fs.writeFileSync(overlayOutPath, JSON.stringify(overlayOut, null, 2));
   if (commentsOutPath) fs.writeFileSync(commentsOutPath, overlayOut.map((t: any) =>
-`COMMENT ON TABLE ${t.name} IS '${comment(t.description, t[metaProp])}';
+`COMMENT ON TABLE ${t.name.toLowerCase()} IS '${comment(t.description, t[metaProp])}';
 `+t.fields.map((f: any) =>
-`COMMENT ON COLUMN ${t.name}.${f.name} IS '${comment(f.description, f[metaProp])}';
+`COMMENT ON COLUMN ${t.name.toLowerCase()}.${f.name} IS '${comment(f.description, f[metaProp])}';
 `).join("")).join("\n"));
-  return {schema: schema, overlay: overlayOut};
+  return schema;
 }
 
 // Todo: for test purposes; remove later:

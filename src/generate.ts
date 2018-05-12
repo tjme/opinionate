@@ -1,6 +1,7 @@
 import * as fs from "fs";
 import * as _pluralize from 'pluralize';
 import { metaMerge } from './schema-meta';
+import { STATUS_CODES } from "http";
 
 /**
  * Generate front-end components from schema intraspection and/or metadata
@@ -8,10 +9,14 @@ import { metaMerge } from './schema-meta';
  * @param targetDir the folder in which to write the generated code files
  */
 export function generate(templateDir = "./test/template", targetDir = "./test/app"): void {
-  const {schema, overlay} = metaMerge("./src/models/schema.json", "./src/models/overlay.json");
 
-  function pluralize(word: string) { return _pluralize.plural(word) }
-  
+  function pluralize(word: string) { return _pluralize.plural(word) };
+  function isEntity(entity: any): boolean { return entity.hasOwnProperty("meta") };
+  function isField(field: any): boolean { return field.hasOwnProperty("meta") };
+
+  const schema = metaMerge("./src/models/schema.json");
+  const types = schema.data.__schema.types.filter((f: any) => isEntity(f));
+
   fs.readdirSync(templateDir).forEach((targetName: string) => {
     if (fs.statSync(templateDir + "/" + targetName).isDirectory()){
       try {fs.mkdirSync(targetDir + "/" + targetName)} catch (err) {if (err.code !== 'EEXIST') throw err}
@@ -19,8 +24,8 @@ export function generate(templateDir = "./test/template", targetDir = "./test/ap
     } else {
       const templateContent = "`" + fs.readFileSync(templateDir + "/" + targetName) + "`";
       if (targetName.includes("types")) {
-        overlay.map((types: any) => {
-          fs.writeFileSync(targetDir + "/" + targetName.replace("types", types.name).toLowerCase(), eval(templateContent));
+        types.map((types: any) => {
+          fs.writeFileSync(targetDir + "/" + targetName.replace("types", types.name+".type").toLowerCase(), eval(templateContent));
         })
       } else fs.writeFileSync(targetDir + "/" + targetName, eval(templateContent));
     }
@@ -28,4 +33,4 @@ export function generate(templateDir = "./test/template", targetDir = "./test/ap
 }
 
 // Todo: for test purposes; remove later:
-// generate();
+generate();

@@ -1,0 +1,12 @@
+${!types.meta.crud ? "" : `<h2>${types.name} Details</h2>
+<form #crudForm="ngForm">
+<div class="form-container">${types.fields.filter(f => isField(f) && f.meta.crud).map(fields => `${fields.type.ofType && fields.type.ofType.name && fields.type.ofType.name === "Boolean" ? `
+  <mat-checkbox [(ngModel)]="${types.name}.${fields.name.toLowerCase()}" name="${fields.name.toLowerCase()}">${fields.name}</mat-checkbox>` : `
+  <mat-form-field>
+    <input matInput${fields.type.name == null || !(fields.type.name === "Int") ? "" : ` type="number"`}${true ? "" : ` required`} [(ngModel)]="${types.name.toLowerCase()}.${fields.name.toLowerCase()}" placeholder="${fields.name}" name="${fields.name.toLowerCase()}"/>${fields.type.ofType && fields.type.ofType.name && fields.type.ofType.name === "DateTime" ? "" : `<mat-datepicker-toggle matSuffix [for]="${fields.name}Pkr"></mat-datepicker-toggle><mat-datepicker #${fields.name}Pkr></mat-datepicker>`}
+  </mat-form-field>`}`).join("\n")}
+</div>
+<button mat-button color="primary" matTooltip="Save record and return" matTooltipPosition="above" aria-label="Save changes to the record and return" (click)="save()"><mat-icon>save</mat-icon>Save</button>
+<button mat-button color="warn" matTooltip="Discard record and return" matTooltipPosition="above" aria-label="Discard any changes to the record and return" (click)="back()"><mat-icon>cancel</mat-icon>Cancel</button>
+<button mat-button color="warn" matTooltip="Delete record and return" matTooltipPosition="above" aria-label="Delete the record and return" (click)="delete()"><mat-icon>delete</mat-icon>Delete</button>
+</form>`}

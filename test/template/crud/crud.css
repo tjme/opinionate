@@ -1,0 +1,7 @@
+.form-container {display: flex; flex-direction: column;}
+
+.form-container > * {width: 100%;}
+
+.material-icons {font-size: 20px;}
+
+.mat-button {padding: 0 8px; height: 2rem; /* line-height: 2rem; */}

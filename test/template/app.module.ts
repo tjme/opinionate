@@ -9,6 +9,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatNativeDateModule } from '@angular/material';
 import { MatDialogModule } from '@angular/material';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -19,9 +22,9 @@ import { PendingChangesGuard } from './pending-changes.guard';
 import { AppComponent } from './app.component';
 import { GraphQLService } from './graphql.service';
 import { DashboardComponent } from './dashboard/dashboard.component';
-${overlay.map(types => `
-import { ${types.name}Component } from './crud/${types.name.toLowerCase()}';
-import { ${types.name}ListComponent } from './list/${types.name.toLowerCase()}';`).join("\n")}
+${types.map(types => `
+${!types.meta.crud ? "" : `import { ${types.name}Component } from './crud/${types.name.toLowerCase()}';`}
+${!types.meta.list ? "" : `import { ${types.name}ListComponent } from './list/${types.name.toLowerCase()}';`}`).join("\n")}
 
 @NgModule({
   imports: [
@@ -35,6 +38,8 @@ import { ${types.name}ListComponent } from './list/${types.name.toLowerCase()}';
     MatIconModule,
     MatTooltipModule,
     MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     MatDialogModule,
     FormsModule,
     AppRoutingModule,
@@ -45,13 +50,14 @@ import { ${types.name}ListComponent } from './list/${types.name.toLowerCase()}';
   declarations: [
     AppComponent,
     DashboardComponent,
-${overlay.map(types => `
-    ${types.name}Component,
-    ${types.name}ListComponent,`).join("\n")}
+${types.map(types => `
+${!types.meta.crud ? "" : `    ${types.name}Component,`}
+${!types.meta.list ? "" : `    ${types.name}ListComponent,`}`).join("\n")}
   ],
   providers: [
     GraphQLService,
-    PendingChangesGuard
+    PendingChangesGuard,
+    {provide: MAT_DATE_LOCALE, useValue: 'en-GB'}
   ],
   bootstrap: [ AppComponent ]
 })

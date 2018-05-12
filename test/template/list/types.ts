@@ -1,14 +1,16 @@
+${!types.meta.list ? "" : `
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort,
   MatCheckbox, MatButton, MatIcon, MatTooltip, MatInput, MatFormField, MatDialog } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import { map } from 'rxjs/operators';
-import { ${types.name}, ${types.name}Patch } from '../../models/types';
 import { GraphQLService } from '../graphql.service';
 import gql from 'graphql-tag';
+import { ${types.name}, ${types.name}Patch } from '../../models/types';
 
-const ${types.name}Fields = gql\`fragment ${types.name.toLowerCase()}Fields on ${types.name} { nodeId,${types.fields.map(fields => `${fields.name}`)} }\`;
+const ${types.name}Fields = gql\`fragment ${types.name.toLowerCase()}Fields on ${types.name} { nodeId,${types.fields
+  .filter(f => isField(f) && f.meta.list).map(fields => `${fields.name}`)} }\`;
 const ReadAll = gql\`query readAll{all${pluralize(types.name)}
   {nodes{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
 // const Delete = gql\`mutation delete($nodeId:ID!)
@@ -21,7 +23,8 @@ const ReadAll = gql\`query readAll{all${pluralize(types.name)}
   styleUrls: ['./list.css']
 })
 export class ${types.name}ListComponent implements OnInit, AfterViewInit {
-  displayedColumns = [${types.fields.map(fields => `${fields.name}`)}];
+  displayedColumns = [${types.fields
+    .filter(f => isField(f)).map(fields => `${fields.name}`)}];
   dataSource = new MatTableDataSource<${types.name}>();
   dialogResult: any;
   // @ViewChild('${types.name}Table') ${types.name}Table: MatTable<any>;
@@ -34,12 +37,12 @@ export class ${types.name}ListComponent implements OnInit, AfterViewInit {
     private router: Router
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.readAll();
     this.sort.sortChange.subscribe(() => this.paginator.pageIndex = 0);
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
@@ -61,4 +64,4 @@ export class ${types.name}ListComponent implements OnInit, AfterViewInit {
   //     this.dataSource.data = this.dataSource.data.filter(_ => _.nodeId !== ${types.name.toLowerCase()}.nodeId);
   //   }
   // }
-}
+}`}
