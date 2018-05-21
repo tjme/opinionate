@@ -24,7 +24,7 @@ const ReadAll = gql\`query readAll{all${pluralize(types.name)}
 })
 export class ${types.name}ListComponent implements OnInit, AfterViewInit {
   displayedColumns = [${types.fields
-    .filter(f => isField(f)).map(fields => `${fields.name}`)}];
+    .filter(f => isField(f)).map(fields => `"${fields.name}"`)}];
   dataSource = new MatTableDataSource<${types.name}>();
   dialogResult: any;
   // @ViewChild('${types.name}Table') ${types.name}Table: MatTable<any>;

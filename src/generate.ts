@@ -13,6 +13,9 @@ export function generate(templateDir = "./test/template", targetDir = "./test/ap
   function pluralize(word: string) { return _pluralize.plural(word) };
   function isEntity(entity: any): boolean { return entity.hasOwnProperty("meta") };
   function isField(field: any): boolean { return field.hasOwnProperty("meta") };
+  function isType(field: any, type: string): boolean { 
+    return (field.type && field.type.name && field.type.name === type)
+    || (field.type.ofType && field.type.ofType.name && field.type.ofType.name === type) };
 
   const schema = metaMerge("./src/models/schema.json");
   const types = schema.data.__schema.types.filter((f: any) => isEntity(f));
@@ -25,7 +28,7 @@ export function generate(templateDir = "./test/template", targetDir = "./test/ap
       const templateContent = "`" + fs.readFileSync(templateDir + "/" + targetName) + "`";
       if (targetName.includes("types")) {
         types.map((types: any) => {
-          fs.writeFileSync(targetDir + "/" + targetName.replace("types", types.name+".type").toLowerCase(), eval(templateContent));
+          fs.writeFileSync(targetDir + "/" + targetName.replace("types", types.name).toLowerCase(), eval(templateContent));
         })
       } else fs.writeFileSync(targetDir + "/" + targetName, eval(templateContent));
     }
@@ -33,4 +36,4 @@ export function generate(templateDir = "./test/template", targetDir = "./test/ap
 }
 
 // Todo: for test purposes; remove later:
-generate();
+// generate();

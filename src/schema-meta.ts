@@ -1,6 +1,6 @@
 import * as fs from "fs";
 
-const metaProp = "meta", metaMarker = "@meta";
+const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 
 function toProperCase(txt: string): string { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); }
 
@@ -28,8 +28,8 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string,
     if (item.description) {
       const [description, meta] = item.description.split(metaMarker);
       if (meta) {
-        item[metaProp] = JSON.parse(meta);
-        if (cleanDescriptions) item.description = description ? item.description.split("\n"+metaMarker)[0] : "";
+        item[metaProp] = JSON.parse(meta.slice(2,-2)); // Removing outer brackets and quotes
+        if (cleanDescriptions) item.description = description ? item.description.split(separator+metaMarker)[0] : "";
       }
     }
     if (overlay) {
@@ -41,11 +41,11 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string,
 
   function comment(description: string, meta: string): string {
     if (!meta) return description;
-    const metaWithMarker = metaMarker+JSON.stringify(meta);
+    const metaWithMarker = metaMarker+'("'+JSON.stringify(meta)+'")';
     if (!description) return metaWithMarker;
     description = description.split(metaMarker)[0];
     if (description.length == 0) return metaWithMarker;
-    return description+"\n"+metaWithMarker;
+    return description+separator+metaWithMarker;
   }
   
   let schema = JSON.parse(fs.readFileSync(schemaInPath).toString());

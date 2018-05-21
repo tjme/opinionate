@@ -18,7 +18,7 @@ export class AppMetaMerge {
       .option("-o, --overlay <file>", "JSON file to read, defining additions to the schema (especially metadata)")
       .option("-m, --schema-out <file>", "JSON file to write, defining schema with merged in metadata")
       .option("-v, --overlay-out <file>", "JSON file to write, defining additions to the schema (especially metadata)")
-      .option("-t, --comments-out <file>", "PostGreSQL script, defining (enhanced) table and field comments")
+      .option("-t, --comments-out <file>", "PostGreSQL script file to write, defining (enhanced) table and field comments")
       .option("-a, --allow-existing", "Allow the base schema to include metadata")
       .option("-c, --clean-descriptions", "Remove metadata from the descriptions")
       .parse(process.argv);

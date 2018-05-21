@@ -8,7 +8,7 @@ ${!types.meta.list ? "" : `<h2>${types.meta.label} List</h2>
   ${types.fields.filter(f => isField(f) && f.meta.list).map(fields => `  <ng-container matColumnDef="${fields.name}">
     <mat-header-cell *matHeaderCellDef mat-sort-header>${fields.meta.label}</mat-header-cell>
     <mat-cell *matCellDef="let ${types.name.toLowerCase()}">
-    ${fields.type == "Boolean" ? `<mat-checkbox [disabled]="true" [ngModel]="${types.name.toLowerCase()}.${fields.name}"></mat-checkbox>` : `${types.name.toLowerCase()}.${fields.name}`}
+    ${isType(fields, "Boolean") ? `<mat-checkbox [disabled]="true" [ngModel]="${types.name.toLowerCase()}.${fields.name}"></mat-checkbox>` : `{{${types.name.toLowerCase()}.${fields.name}}}`}
     </mat-cell>
   </ng-container>
 `).join("\n")}

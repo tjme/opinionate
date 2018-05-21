@@ -8,7 +8,14 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Program with ts-node",
+      "name": "Launch schema-meta with ts-node",
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "args": ["${workspaceFolder}/src/schema-meta.ts"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch generate with ts-node",
       "runtimeArgs": ["-r", "ts-node/register"],
       "args": ["${workspaceFolder}/src/generate.ts"]
     },
