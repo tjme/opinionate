@@ -2,9 +2,11 @@ import * as fs from "fs";
 
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 
+// Define meta to match GraphQL:
+// directive @meta(label: String, list: Boolean = true, crud: Boolean = true) on OBJECT | FIELD_DEFINITION
 export type meta = { label: string, list: boolean, crud: boolean };
 
-// Return a "relaxed" string representation an object (with no double quotes around object properties)
+// Return a "relaxed" string representation of an object (with no double quotes around object properties)
 export function stringify(ob: any): string {
   if(typeof ob !== "object" || Array.isArray(ob)){ return JSON.stringify(ob); }
   let props = Object
@@ -12,13 +14,14 @@ export function stringify(ob: any): string {
       .map(key => `${key}:${stringify(ob[key])}`);
   return `${props}`; };
 
-// "Clean" or convert relaxed object representations (including GraphQL) to strict JSON, allowing further processing, e.g. with JSON.parse
-export function clean(ob: string): any {
-  return ob
+// Convert/clean relaxed object representations (including GraphQL) to strict JSON, allowing further processing, e.g. with JSON.parse
+export function convert(ob: string): any {
+  return "{"+ob
+  .replace(/^\((.*)\)$/g,'$1').replace(/^\"(.*)\"$/g,'$1').replace(/^\{(.*)\}$/g,'$1') // Remove any outer brackets and/or double quotes and/or curly brackets
 	.replace(/:\s*"([^"]*)"/g, function(match, p1) { return ': "' + p1.replace(/:/g, '@colon@') + '"'; })
 	.replace(/:\s*'([^']*)'/g, function(match, p1) { return ': "' + p1.replace(/:/g, '@colon@') + '"'; })
 	.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?\s*:/g, '"$2": ')
-	.replace(/@colon@/g, ':')
+	.replace(/@colon@/g, ':')+"}"
 }
 
 export function toProperCase(txt: string): string { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); };
@@ -45,7 +48,7 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string,
     if (item.description) {
       const [description, meta] = item.description.split(metaMarker);
       if (meta) {
-        item[metaProp] = meta.replace(/^\(.*\)$/g,'$1').replace(/^\".*\"$/g,'$1'); // Removing any outer brackets and/or double quotes
+        item[metaProp] = JSON.parse(convert(meta));
         if (cleanDescriptions) item.description = description ? item.description.split(separator+metaMarker)[0] : "";
       }
     }
@@ -76,7 +79,7 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string,
     .filter((f: any) => f.name !== "nodeId" && (f.type.kind == "SCALAR" || (f.type["ofType"] && f.type.ofType["kind"] == "SCALAR")))
     .forEach((f: any) => {
       if (!allowExisting && f.hasOwnProperty(metaProp)) throw new Error(`The schema already contains metadata (for field ${f.name})`);
-      mergeMeta(f, overlayIn.find((oi: any) => oi.name == t.name).fields);
+      mergeMeta(f, overlayIn && overlayIn.find((oi: any) => oi.name == t.name).fields);
     });
   });
   if (schemaOutPath) fs.writeFileSync(schemaOutPath, JSON.stringify(schema, null, 2));
@@ -98,8 +101,8 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string,
 // For test purposes; Todo: remove or comment-out:
 // const schema = metaMerge(
 //   "./src/models/schema.json",
-//   "./src/models/overlay.json",
+//   undefined, //"./src/models/overlay.json",
 //   "./src/models/schemaMerged.json",
 //   "./src/models/overlayOut.json",
-//   "./src/models/comments.pgsql",
+//   undefined //"./src/models/comments.pgsql",
 // );
