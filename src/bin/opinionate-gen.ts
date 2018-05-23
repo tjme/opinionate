@@ -15,7 +15,7 @@ export class AppGen {
     this.program
       .version(this.package.version)
       .option("-t, --templates <dir>", "folder from which to fetch the template(s)", "./test/template")
-      .option("-w, --target <dir>", "folder in which to write the generated code file(s)", "./test/app")
+      .option("-w, --target <dir>", "folder in which to write the generated code file(s)", "./src/app")
       .parse(process.argv);
 
     // if (typeof this.program.target !== 'string') throw new Error(`No target folder specified`);

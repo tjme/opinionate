@@ -8,7 +8,7 @@ import { STATUS_CODES } from "http";
  * @param templateDir the folder (structure) from which to (recursively) fetch the (ES6) templates
  * @param targetDir the folder in which to write the generated code files
  */
-export function generate(templateDir = "./test/template", targetDir = "./test/app"): void {
+export function generate(templateDir: string, targetDir: string): void {
 
   function pluralize(word: string) { return _pluralize.plural(word) };
   function isEntity(entity: any): boolean { return entity.hasOwnProperty("meta") };
@@ -35,5 +35,5 @@ export function generate(templateDir = "./test/template", targetDir = "./test/ap
   });
 }
 
-// Todo: for test purposes; remove later:
-// generate();
+// For test purposes; Todo: remove or comment-out:
+// generate("./test/template", "../i2k-opinionate/src/app");
