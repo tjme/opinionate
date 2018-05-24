@@ -16,16 +16,16 @@ const ${types.name}Fields = gql\`fragment ${types.name.toLowerCase()}Fields on $
 const Read = gql\`query read($nodeId:ID!){ ${types.name.toLowerCase()}(nodeId:$nodeId)
   {...${types.name.toLowerCase()}Fields } } $\{ ${types.name}Fields}\`;
 const Create = gql\`mutation create(${types.fields
-  .filter(f => isField(f) && f.meta.crud && f.meta.crud).map(fields => `$${fields.name}:${fields.type.name}${!fields.hasOwnProperty("isRequired") ? "" : "!"}`)})
+  .filter(f => isField(f) && f.meta.crud && f.meta.crud).map(fields => `$${fields.name}:${getType(fields)}${!fields.hasOwnProperty("isRequired") ? "" : "!"}`)})
   {create${types.name}(input:{
     ${types.name.toLowerCase()}:{ ${types.fields
-      .filter(f => isField(f) && f.meta.crud).map(fields => `${fields.name}:\$${fields.type.name}`)} } })
+      .filter(f => isField(f) && f.meta.crud).map(fields => `${fields.name}:\$${fields.name}`)} } })
   { ${types.name.toLowerCase()}{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
 const Update = gql\`mutation update($nodeId:ID!,${types.fields
-  .filter(f => isField(f) && f.meta.crud).map(fields => `$${fields.name}:${fields.type.name}`)})
+  .filter(f => isField(f) && f.meta.crud).map(fields => `$${fields.name}:${getType(fields)}`)})
   {update${types.name}(input:{nodeId:$nodeId,
   ${types.name.toLowerCase()}Patch:{ ${types.fields
-    .filter(f => isField(f) && f.meta.crud).map(fields => `${fields.name}:\$${fields.type.name}`)} } })
+    .filter(f => isField(f) && f.meta.crud).map(fields => `${fields.name}:\$${fields.name}`)} } })
   { ${types.name.toLowerCase()}{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
 const Delete = gql\`mutation delete($nodeId:ID!)
   {delete${types.name}(input:{nodeId:$nodeId})

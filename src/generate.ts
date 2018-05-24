@@ -11,12 +11,11 @@ import { STATUS_CODES } from "http";
 export function generate(templateDir: string, targetDir: string): void {
 
   function pluralize(word: string) { return _pluralize.plural(word) };
+  function getType(field: any): string { return (field.type && field.type.name) || (field.type.ofType && field.type.ofType.name) };
+  function isType(field: any, type: string): boolean { return (getType(field) === type) };
   function isEntity(entity: any): boolean { return entity.hasOwnProperty("meta") };
   function isField(field: any): boolean { return field.hasOwnProperty("meta") };
-  function isType(field: any, type: string): boolean { 
-    return (field.type && field.type.name && field.type.name === type)
-    || (field.type.ofType && field.type.ofType.name && field.type.ofType.name === type) };
-
+  
   const schema = metaMerge("./src/models/schema.json");
   const types = schema.data.__schema.types.filter((f: any) => isEntity(f));
 
