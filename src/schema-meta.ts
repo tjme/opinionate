@@ -3,8 +3,8 @@ import * as fs from "fs";
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 
 // Define meta to match GraphQL:
-// directive @meta(label: String, list: Boolean = true, crud: Boolean = true) on OBJECT | FIELD_DEFINITION
-export type meta = { label: string, list: boolean, crud: boolean };
+// directive @meta(label: String, list: Boolean = true, crud: Boolean = true, readonly: Boolean = false) on OBJECT | FIELD_DEFINITION
+export type meta = { label: string, list: boolean, crud: boolean, readonly: boolean };
 
 // Return a "relaxed" string representation of an object (with no double quotes around object properties)
 export function stringify(ob: any): string {
@@ -56,7 +56,7 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string,
       const overlayItem = overlay.find((oi: any) => oi.name == item.name)
       if (overlayItem && overlayItem[metaProp]) item[metaProp] = overlayItem[metaProp];
     }
-    if (!item[metaProp]) item[metaProp] = { label: toProperCase(item.name), list: true, crud: true };
+    if (!item[metaProp]) item[metaProp] = { label: toProperCase(item.name), list: true, crud: true, readonly: false };
   };
 
   function comment(description: string, meta: string): string {
