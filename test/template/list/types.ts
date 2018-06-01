@@ -1,4 +1,4 @@
-${!types.meta.list ? "" : `
+${!types.meta.templates.includes("list") ? "" : `
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatTable, MatTableDataSource, MatPaginator, MatSort,
@@ -10,7 +10,7 @@ import gql from 'graphql-tag';
 import { ${types.name}, ${types.name}Patch } from '../../models/types';
 
 const ${types.name}Fields = gql\`fragment ${types.name.toLowerCase()}Fields on ${types.name} { nodeId,${types.fields
-  .filter(f => isField(f) && f.meta.list).map(fields => `${fields.name}`)} }\`;
+  .filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `${fields.name}`)} }\`;
 const ReadAll = gql\`query readAll{all${pluralize(types.name)}
   {nodes{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
 // const Delete = gql\`mutation delete($nodeId:ID!)
@@ -24,7 +24,7 @@ const ReadAll = gql\`query readAll{all${pluralize(types.name)}
 })
 export class ${types.name}ListComponent implements OnInit, AfterViewInit {
   displayedColumns = [${types.fields
-    .filter(f => isField(f)).map(fields => `"${fields.name}"`)}];
+    .filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `"${fields.name}"`)}];
   dataSource = new MatTableDataSource<${types.name}>();
   dialogResult: any;
   // @ViewChild('${types.name}Table') ${types.name}Table: MatTable<any>;

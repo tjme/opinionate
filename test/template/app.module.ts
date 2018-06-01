@@ -23,8 +23,8 @@ import { AppComponent } from './app.component';
 import { GraphQLService } from './graphql.service';
 import { DashboardComponent } from './dashboard/dashboard.component';
 ${types.map(types => `
-${!types.meta.crud ? "" : `import { ${types.name}Component } from './crud/${types.name.toLowerCase()}';`}
-${!types.meta.list ? "" : `import { ${types.name}ListComponent } from './list/${types.name.toLowerCase()}';`}`).join("\n")}
+${!types.meta.templates.includes("crud") ? "" : `import { ${types.name}Component } from './crud/${types.name.toLowerCase()}';`}
+${!types.meta.templates.includes("list") ? "" : `import { ${types.name}ListComponent } from './list/${types.name.toLowerCase()}';`}`).join("\n")}
 
 @NgModule({
   imports: [
@@ -51,8 +51,8 @@ ${!types.meta.list ? "" : `import { ${types.name}ListComponent } from './list/${
     AppComponent,
     DashboardComponent,
 ${types.map(types => `
-${!types.meta.crud ? "" : `    ${types.name}Component,`}
-${!types.meta.list ? "" : `    ${types.name}ListComponent,`}`).join("\n")}
+${!types.meta.templates.includes("crud") ? "" : `    ${types.name}Component,`}
+${!types.meta.templates.includes("list") ? "" : `    ${types.name}ListComponent,`}`).join("\n")}
   ],
   providers: [
     GraphQLService,

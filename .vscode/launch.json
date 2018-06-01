@@ -8,16 +8,16 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch schema-meta with ts-node",
+      "name": "schema-meta-test with ts-node",
       "runtimeArgs": ["-r", "ts-node/register"],
-      "args": ["${workspaceFolder}/src/schema-meta.ts"]
+      "args": ["${workspaceFolder}/test/schema-meta-test.ts"]
     },
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch generate with ts-node",
+      "name": "generate-test with ts-node",
       "runtimeArgs": ["-r", "ts-node/register"],
-      "args": ["${workspaceFolder}/src/generate.ts"]
+      "args": ["${workspaceFolder}/test/generate-test.ts"]
     },
     {
       "type": "node",

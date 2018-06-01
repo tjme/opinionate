@@ -1,4 +1,4 @@
-${!types.meta.crud ? "" : `
+${!types.meta.templates.includes("crud") ? "" : `
 import { Component, OnInit, Input, ViewChild, HostListener } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatCheckbox, MatButton, MatIcon, MatTooltip, MatInput, MatFormField, MatDatepicker, MatDatepickerToggle } from '@angular/material';
@@ -12,20 +12,20 @@ import { ComponentCanDeactivate } from '../pending-changes.guard';
 import { ${types.name}, ${types.name}Patch } from '../../models/types';
 
 const ${types.name}Fields = gql\`fragment ${types.name.toLowerCase()}Fields on ${types.name} { nodeId,${types.fields
-  .filter(f => isField(f) && f.meta.crud).map(fields => `${fields.name}`)} }\`;
+  .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `${fields.name}`)} }\`;
 const Read = gql\`query read($nodeId:ID!){ ${types.name.toLowerCase()}(nodeId:$nodeId)
   {...${types.name.toLowerCase()}Fields } } $\{ ${types.name}Fields}\`;
 const Create = gql\`mutation create(${types.fields
-  .filter(f => isField(f) && f.meta.crud && f.meta.crud).map(fields => `$${fields.name}:${getType(fields)}${!fields.hasOwnProperty("isRequired") ? "" : "!"}`)})
+  .filter(f => isField(f) && f.meta.templates.includes("crud") && f.meta.templates.includes("crud")).map(fields => `$${fields.name}:${getType(fields)}${!fields.hasOwnProperty("isRequired") ? "" : "!"}`)})
   {create${types.name}(input:{
     ${types.name.toLowerCase()}:{ ${types.fields
-      .filter(f => isField(f) && f.meta.crud).map(fields => `${fields.name}:\$${fields.name}`)} } })
+      .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `${fields.name}:\$${fields.name}`)} } })
   { ${types.name.toLowerCase()}{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
 const Update = gql\`mutation update($nodeId:ID!,${types.fields
-  .filter(f => isField(f) && f.meta.crud).map(fields => `$${fields.name}:${getType(fields)}`)})
+  .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `$${fields.name}:${getType(fields)}`)})
   {update${types.name}(input:{nodeId:$nodeId,
   ${types.name.toLowerCase()}Patch:{ ${types.fields
-    .filter(f => isField(f) && f.meta.crud).map(fields => `${fields.name}:\$${fields.name}`)} } })
+    .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `${fields.name}:\$${fields.name}`)} } })
   { ${types.name.toLowerCase()}{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
 const Delete = gql\`mutation delete($nodeId:ID!)
   {delete${types.name}(input:{nodeId:$nodeId})

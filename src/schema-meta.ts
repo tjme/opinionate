@@ -1,67 +1,53 @@
 import * as fs from "fs";
+import * as utils from "./utils";
 
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 
-// Define meta to match GraphQL:
-// directive @meta(label: String, list: Boolean = true, crud: Boolean = true, readonly: Boolean = false) on OBJECT | FIELD_DEFINITION
-export type meta = { label: string, list: boolean, crud: boolean, readonly: boolean };
-
-// Return a "relaxed" string representation of an object (with no double quotes around object properties)
-export function stringify(ob: any): string {
-  if(typeof ob !== "object" || Array.isArray(ob)){ return JSON.stringify(ob); }
-  let props = Object
-      .keys(ob)
-      .map(key => `${key}:${stringify(ob[key])}`);
-  return `${props}`; };
-
-// Convert/clean relaxed object representations (including GraphQL) to strict JSON, allowing further processing, e.g. with JSON.parse
-export function convert(ob: string): any {
-  return "{"+ob
-  .replace(/^\((.*)\)$/g,'$1').replace(/^\"(.*)\"$/g,'$1').replace(/^\{(.*)\}$/g,'$1') // Remove any outer brackets and/or double quotes and/or curly brackets
-	.replace(/:\s*"([^"]*)"/g, function(match, p1) { return ': "' + p1.replace(/:/g, '@colon@') + '"'; })
-	.replace(/:\s*'([^']*)'/g, function(match, p1) { return ': "' + p1.replace(/:/g, '@colon@') + '"'; })
-	.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?\s*:/g, '"$2": ')
-	.replace(/@colon@/g, ':')+"}"
-}
-
-export function toProperCase(txt: string): string { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); };
-
 /**
  * Facilities to merge and/or convert schema metadata, from and to various sources and file formats
- * @param schemaInPath to base schema JSON file to load from (which may already contain some metadata)
- * then also merge in any metadata from its entity and field descriptions (originally from PostGreSQL table and field comments)
+ * @param schemaInPath base schema JSON filename to load from (which may already contain some metadata)
  * @param overlayInPath then merge in any schema.data.__schema.types metadata from overlay JSON file (containing metadata and type IDs)
  * Write merged results to any of the following output files:
+ * @param defaultMeta an ES6 template string defining the default metadata (used for each type, in the absence of any other sources)
+ * then also merge in any metadata from its entity and field descriptions (originally from PostGreSQL table and field comments)
  * @param schemaOutPath to updated schema JSON file (which can subsequently be used as new base schema)
- * @param overlayOutPath to JSON file with just metadata (and identifying type IDs)
+ * @param overlayOutPath for schema.data.__schema.types, to JSON file with just metadata (and identifying type IDs)
  * @param commentsOutPath SQL script to add (or replace) table and field comments, including metadata
  * @param allowExisting whether metadata is allowed in base schema
  * @param cleanDescriptions whether to remove metadata from descriptions/comments
+ * @param ignoreComments ignore any existing metadata in base schema comments
+ * @param relaxedStructure don't limit to just the structure specified in the default metadata
  * @param returnOverlay return only the merged overlay, rather than the full merged schema
  */
-export function metaMerge(schemaInPath: string, overlayInPath?: string,
+export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultMeta?: string,
   schemaOutPath?: string, overlayOutPath?: string, commentsOutPath?: string,
-  allowExisting = false, cleanDescriptions = false, returnOverlay = false
+  allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, returnOverlay = false
 ): any {
 
   function mergeMeta(item: any, overlay: any[]) {
+    // Define meta to match GraphQL:
+    // directive @meta(label: String, readonly: Boolean = false, templates: [String] = ["list", "crud"]) on OBJECT | FIELD_DEFINITION
+    const es6Meta = "`" + (defaultMeta || '{ label: "${utils.toProperCase(item.name)}", readonly: false, templates: ["list", "crud"] }') + "`";
+    item[metaProp] = JSON.parse(utils.convert(eval(es6Meta)));
     if (item.description) {
       const [description, meta] = item.description.split(metaMarker);
-      if (meta) {
-        item[metaProp] = JSON.parse(convert(meta));
-        if (cleanDescriptions) item.description = description ? item.description.split(separator+metaMarker)[0] : "";
-      }
+      if (meta && !ignoreComments) { item[metaProp] = utils.merge(item[metaProp], relaxedStructure, JSON.parse(utils.convert(meta))); }
+      if (cleanDescriptions) item.description = description ? item.description.split(separator+metaMarker)[0] : "";
     }
     if (overlay) {
       const overlayItem = overlay.find((oi: any) => oi.name == item.name)
-      if (overlayItem && overlayItem[metaProp]) item[metaProp] = overlayItem[metaProp];
+      if (overlayItem && overlayItem[metaProp]) item[metaProp] = utils.merge(item[metaProp], relaxedStructure, overlayItem[metaProp]);
     }
-    if (!item[metaProp]) item[metaProp] = { label: toProperCase(item.name), list: true, crud: true, readonly: false };
+    // { label: toProperCase(item.name),
+    //   list: !(listXDefaults.indexOf(item.name)>=0) ,
+    //   crud: true,
+    //   readonly: (readOnlyDefaults.indexOf(item.name)>=0) };
   };
 
+  // Return a comment string, suitable for PostGreSQL tables or fields
   function comment(description: string, meta: string): string {
     if (!meta) return description;
-    const metaWithMarker = metaMarker+'('+stringify(meta)+')';
+    const metaWithMarker = metaMarker+'('+utils.stringify(meta)+')';
     if (!description) return metaWithMarker;
     description = description.split(metaMarker)[0];
     if (description.length == 0) return metaWithMarker;
