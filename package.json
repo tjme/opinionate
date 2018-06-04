@@ -36,7 +36,9 @@
 	},
 	"files": [
 		"bin",
-		"dist"
+		"dist",
+    "models",
+    "template"
 	],
 	"dependencies": {
 		"@types/pluralize": "^0.0.28",

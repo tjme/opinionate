@@ -30,7 +30,7 @@ Though modern frameworks like Angular and technologies like GraphQL offer a lot 
 ```sql
 CREATE USER test WITH PASSWORD 'testpass';
 \c toh
-\i node_modules/opinionate/src/models/toh.pgsql
+\i node_modules/opinionate/models/toh.pgsql
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 \q
