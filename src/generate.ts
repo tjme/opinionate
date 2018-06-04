@@ -11,7 +11,7 @@ import { STATUS_CODES } from "http";
  * @param overlayInPath then merge in any schema.data.__schema.types metadata from overlay JSON file (containing metadata and type IDs)
  * Write merged results to any of the following output files:
  * @param defaultMeta an ES6 template string defining the default metadata (used for each type, in the absence of any other sources)
- * then also merge in any metadata from its entity and field descriptions (originally from PostGreSQL table and field comments)
+ * then also merge in any metadata from its entity and field descriptions (originally from PostgreSQL table and field comments)
  */
 export function generate(templateDir: string, targetDir: string, schemaInPath: string, overlayInPath?: string, defaultMeta?: string): void {
 

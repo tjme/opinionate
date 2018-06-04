@@ -9,7 +9,7 @@ const metaProp = "meta", metaMarker = "@meta", separator = "\n";
  * @param overlayInPath then merge in any schema.data.__schema.types metadata from overlay JSON file (containing metadata and type IDs)
  * Write merged results to any of the following output files:
  * @param defaultMeta an ES6 template string defining the default metadata (used for each type, in the absence of any other sources)
- * then also merge in any metadata from its entity and field descriptions (originally from PostGreSQL table and field comments)
+ * then also merge in any metadata from its entity and field descriptions (originally from PostgreSQL table and field comments)
  * @param schemaOutPath to updated schema JSON file (which can subsequently be used as new base schema)
  * @param overlayOutPath for schema.data.__schema.types, to JSON file with just metadata (and identifying type IDs)
  * @param commentsOutPath SQL script to add (or replace) table and field comments, including metadata
@@ -44,7 +44,7 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
     //   readonly: (readOnlyDefaults.indexOf(item.name)>=0) };
   };
 
-  // Return a comment string, suitable for PostGreSQL tables or fields
+  // Return a comment string, suitable for PostgreSQL tables or fields
   function comment(description: string, meta: string): string {
     if (!meta) return description;
     const metaWithMarker = metaMarker+'('+utils.stringify(meta)+')';

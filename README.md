@@ -6,6 +6,8 @@ Or rather, [PostGraphile](https://github.com/graphile/postgraphile) is used to a
 
 This version of Opinionate includes a built-in template that automatically generates an [Angular](https://angular.io) front-end, using [Angular Material](https://material.angular.io) and [Apollo Client](https://www.apollographql.com/docs/angular). The generated code is [TypeScript](https://www.typescriptlang.org) (and HTML templates) and is fully human-readable, enabling ongoing development and hand crafting. Alternatively, you can use your own (see below).
 
+Note that it should also be possible to use Opinionate with other GraphQL server-side technologies, to generate a front-end/client.
+
 ## Motivation
 
 Though modern frameworks like Angular and technologies like GraphQL offer a lot of power and flexibility, and the Angular CLI provides some shortcuts, a lot of boilerplate code is still required to build a full stack application. By making some assumptions (which are arguably opinionated), a lot of boilerplate code can be generated automatically. Even if some of the code is not quite appropriate or requires further development, it might still save a lot of time. Hopefully also, it might often be more efficient to refine the code generation/tool, rather than hand work the code afterwards.
@@ -70,7 +72,7 @@ const Fields = gql\`fragment theFields on ${types.name} { nodeId,${types.fields.
 
 You can guide and improve the code gneration performed by the template, by adding metadata. For example (when using the built-in template), you can specify more user-friendly labels for individual tables and fields, and whether they should appear on List or CRUD pages.
 
-You can provide the metadata as a (JSON) overlay file, or in the PostGreSQL schema, as table and field comments. In future versions, it may also be included as directives in the GraphQL schema (when directives are better defined and/or external tools and dependencies allow). The Opinionate-meta sub-command can assist with these options, by creating starter (SQL or JSON) files, where you need only fill in the gaps (which is especially useful if you have a large schema).
+You can provide the metadata as a (JSON) overlay file, or in the PostgreSQL schema, as table and field comments. In future versions, it may also be included as directives in the GraphQL schema (when directives are better defined and/or external tools and dependencies allow). The Opinionate-meta sub-command can assist with these options, by creating starter (SQL or JSON) files, where you need only fill in the gaps (which is especially useful if you have a large schema).
 
 ## Issues (mostly with the built-in template)
 

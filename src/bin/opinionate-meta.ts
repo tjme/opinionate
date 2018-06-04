@@ -19,7 +19,7 @@ export class AppMetaMerge {
       .option("-d, --default-meta <string>","ES6 template string defining the default metadata (used for each type, in the absence of any other sources)")
       .option("-m, --schema-out <file>", "JSON file to write, defining schema with merged in metadata")
       .option("-v, --overlay-out <file>", "JSON file to write, defining additions to the schema (especially metadata, but including type IDs)")
-      .option("-t, --comments-out <file>", "PostGreSQL script file to write, defining (enhanced) table and field comments")
+      .option("-t, --comments-out <file>", "PostgreSQL script file to write, defining (enhanced) table and field comments")
       .option("-a, --allow-existing", "Allow the base schema to include metadata")
       .option("-c, --clean-descriptions", "Remove metadata from the descriptions")
       .option("-i, --ignore-comments", "Do not extract metadata from any comments in the base schema")
