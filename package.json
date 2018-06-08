@@ -8,7 +8,7 @@
 		"url": "git+https://github.com/tjme/opinionate.git"
 	},
 	"scripts": {
-    "gencodeclean": "rm src/app/app.module.ts && rm src/app/app-routing.module.ts && rm src/app/app.component.html && rm src/app/crud/*.ts && rm src/app/crud/*.html && rm src/app/list/*.ts && rm src/app/list/*.html",
+		"gencodeclean": "rm src/app/app.module.ts && rm src/app/app-routing.module.ts && rm src/app/app.component.html && rm src/app/crud/*.ts && rm src/app/crud/*.html && rm src/app/list/*.ts && rm src/app/list/*.html",
 		"clean": "rimraf dist",
 		"build": "npm run clean && tsc --pretty",
 		"test": "npm run build && mocha --compilers ts:ts-node/register --recursive test/**/*-spec.ts",
@@ -37,8 +37,8 @@
 	"files": [
 		"bin",
 		"dist",
-    "models",
-    "template"
+		"models",
+		"template"
 	],
 	"dependencies": {
 		"@types/pluralize": "^0.0.28",
@@ -52,11 +52,10 @@
 		"@types/node": "^7.0.5",
 		"@types/sinon": "^2.3.0",
 		"chai": "^4.0.1",
-		"mocha": "^3.2.0",
+		"mocha": "^5.2.0",
 		"rimraf": "^2.6.1",
 		"sinon": "^2.3.2",
 		"ts-node": "^4.1.0",
-		"tsc": "^1.20150623.0",
 		"typescript": "^2.7.2"
 	}
 }
