@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatNativeDateModule } from '@angular/material';
@@ -38,6 +39,7 @@ ${!types.meta.templates.includes("list") ? "" : `import { ${types.name}ListCompo
     MatIconModule,
     MatTooltipModule,
     MatInputModule,
+    MatMenuModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatDialogModule,

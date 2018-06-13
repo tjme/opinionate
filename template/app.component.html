@@ -1,7 +1,7 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-<h1>{{title}}</h1>
-<nav>
-<a routerLink="/dashboard">Dashboard</a>
-${types.map(types => !types.meta.templates.includes("list") ? "" : `<a routerLink="/${types.name.toLowerCase()}/list">${types.meta.label} List</a>`).join("\n")}
-</nav>
+<button mat-button routerLink="/dashboard">{{title}}</button>
+<button mat-button [matMenuTriggerFor]="menu">Menu</button>
+<mat-menu #menu="matMenu">
+${types.map(types => !types.meta.templates.includes("list") ? "" : `  <button mat-menu-item routerLink="/${types.name.toLowerCase()}/list">${types.meta.label}</button>`).join(" \n")}
+</mat-menu>
 <router-outlet></router-outlet>
