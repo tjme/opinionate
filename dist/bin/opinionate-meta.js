@@ -12,7 +12,7 @@ class AppMetaMerge {
             .version(this.package.version)
             .option("-s, --schema <file>", "JSON file to read (base) schema from", "./src/models/schema.json")
             .option("-o, --overlay <file>", "JSON file to read, defining additions to the schema.data.__schema.types (especially metadata)")
-            .option("-d, --default-meta <string>", "ES6 template string defining the default metadata (used for each type, in the absence of any other sources)")
+            .option("-d, --default-meta <file>", "ES6 template file defining the metadata structure and default values (used for each type, in the absence of any other sources)")
             .option("-m, --schema-out <file>", "JSON file to write, defining schema with merged in metadata")
             .option("-v, --overlay-out <file>", "JSON file to write, defining additions to the schema (especially metadata, but including type IDs)")
             .option("-t, --comments-out <file>", "PostgreSQL script file to write, defining (enhanced) table and field comments")

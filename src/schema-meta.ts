@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import * as utils from "./utils";
+import * as u from "./utils";
 
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 
@@ -27,27 +27,23 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
   function mergeMeta(item: any, overlay: any[]) {
     // Define meta to match GraphQL:
     // directive @meta(label: String, readonly: Boolean = false, templates: [String] = ["list", "crud"]) on OBJECT | FIELD_DEFINITION
-    const es6Meta = "`" + (defaultMeta || '{ label: "${utils.toProperCase(item.name)}", readonly: false, templates: ["list", "crud"] }') + "`";
-    item[metaProp] = JSON.parse(utils.convert(eval(es6Meta)));
+    const es6Meta = "`" + ((defaultMeta && fs.readFileSync(defaultMeta).toString()) || '{ label: "${utils.toProperCase(item.name)}", readonly: false, templates: ["list", "crud"] }') + "`";
+    item[metaProp] = JSON.parse(u.convert(eval(es6Meta)));
     if (item.description) {
       const [description, meta] = item.description.split(metaMarker);
-      if (meta && !ignoreComments) { item[metaProp] = utils.merge(item[metaProp], relaxedStructure, JSON.parse(utils.convert(meta))); }
+      if (meta && !ignoreComments) { item[metaProp] = u.merge(item[metaProp], relaxedStructure, JSON.parse(u.convert(meta))); }
       if (cleanDescriptions) item.description = description ? item.description.split(separator+metaMarker)[0] : "";
     }
     if (overlay) {
       const overlayItem = overlay.find((oi: any) => oi.name == item.name)
-      if (overlayItem && overlayItem[metaProp]) item[metaProp] = utils.merge(item[metaProp], relaxedStructure, overlayItem[metaProp]);
+      if (overlayItem && overlayItem[metaProp]) item[metaProp] = u.merge(item[metaProp], relaxedStructure, overlayItem[metaProp]);
     }
-    // { label: toProperCase(item.name),
-    //   list: !(listXDefaults.indexOf(item.name)>=0) ,
-    //   crud: true,
-    //   readonly: (readOnlyDefaults.indexOf(item.name)>=0) };
   };
 
   // Return a comment string, suitable for PostgreSQL tables or fields
   function comment(description: string, meta: string): string {
     if (!meta) return description;
-    const metaWithMarker = metaMarker+'('+utils.stringify(meta)+')';
+    const metaWithMarker = metaMarker+'('+u.stringify(meta)+')';
     if (!description) return metaWithMarker;
     description = description.split(metaMarker)[0];
     if (description.length == 0) return metaWithMarker;
@@ -83,12 +79,3 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
 `).join("")).join("\n"));
   return schema;
 }
-
-// For test purposes; Todo: remove or comment-out:
-// const schema = metaMerge(
-//   "./src/models/schema.json",
-//   undefined, //"./src/models/overlay.json",
-//   "./src/models/schemaMerged.json",
-//   "./src/models/overlayOut.json",
-//   undefined //"./src/models/comments.pgsql",
-// );

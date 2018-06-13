@@ -38,6 +38,3 @@ export function generate(templateDir: string, targetDir: string, schemaInPath: s
     }
   });
 }
-
-// For test purposes; Todo: remove or comment-out:
-// generate("./test/template", "../i2k-opinionate/src/app");

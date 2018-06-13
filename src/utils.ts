@@ -8,6 +8,17 @@ export function isObject(item: any): boolean {
 }
 
 /**
+ * Safely get the value of a property/path, without raising an exception if (any part of) the path does not exist
+ * @param obj the object from which to safely get the value
+ * @param key the key of the property/path required
+ */
+export function get(obj: any, key: string) {
+  return key.split(".").reduce(function(o, x) {
+    return (typeof o == "undefined" || o === null) ? o : o[x];
+  }, obj);
+}
+
+/**
  * Deep merge an object with others.
  * @param target a base object
  * @param relaxed boolean flag indicating whether properties not already present in the target should be added

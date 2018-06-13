@@ -4,6 +4,12 @@ function isObject(item) {
     return (item && typeof item === 'object' && !Array.isArray(item));
 }
 exports.isObject = isObject;
+function get(obj, key) {
+    return key.split(".").reduce(function (o, x) {
+        return (typeof o == "undefined" || o === null) ? o : o[x];
+    }, obj);
+}
+exports.get = get;
 function merge(target, relaxed = false, ...sources) {
     if (!sources.length)
         return target;
