@@ -1,10 +1,10 @@
 # Opinionate
 
-An automated front-end or full stack application code generator/scaffolder.
+An automated front-end (or full stack) application code generator/scaffolder, that can convert a simple (codeless and declarative) definition into a fully functional application.
 
-*Create a working application in minutes: you provide a PostgreSQL database, and Opinionate does the rest!*
+*Create a working application in minutes: just bring your own PostgreSQL database!*
 
-Or rather, [PostGraphile](https://github.com/graphile/postgraphile) is used to automatically generate a GraphQL API/back-end (derived from your existing database, using introspection). Then the front-end components are generated similarly from the GraphQL using ES6 template files, and ideally some additional metadata (see below).
+Or rather, [PostGraphile](https://github.com/graphile/postgraphile) is used to automatically generate a GraphQL API/back-end (derived from your existing database, using introspection). Then the front-end components are generated similarly from the GraphQL using ES6 template files, and any additional metadata you can provide (see below).
 
 This version of Opinionate includes built-in templates that generate a fully functional front-end, using the latest [Angular 6](https://angular.io), [Angular Material](https://material.angular.io) and [Apollo Client](https://www.apollographql.com/docs/angular). The generated code is [TypeScript](https://www.typescriptlang.org) (and HTML templates) and is fully human-readable, enabling ongoing development and hand crafting. Alternatively, you can refine or customize the templates to better suit your needs, or you can create your own (which could target other technologies, such as React or VueJS, see below).
 
@@ -12,7 +12,9 @@ Alternatively, Opinionate can be used with other GraphQL server-side technologie
 
 ## Motivation
 
-Though modern frameworks like Angular and technologies like GraphQL offer a lot of power and flexibility, and the Angular CLI provides some shortcuts, a lot of boilerplate code is still required to build a full stack application. By making some assumptions (which are arguably opinionated), a lot of boilerplate code can be generated automatically. Even if some of the code is not quite appropriate or requires further development, it might still save a lot of time. Hopefully also, it might often be more efficient to refine the code generation/tool, rather than hand work the code afterwards.
+Writing code is often difficult and time consuming, whilst at the same time often highly repetitive. Code is frequently needed simply to translate from one data representation to another (e.g. SQL to JSON). It would be much easier to produce an application if it could be defined (declaratively) in one place, using a single language or notation (some refer to this as DRY, Don't Repeat Yourself).
+
+Though modern frameworks like Angular and technologies like GraphQL offer a lot of power and flexibility, and the Angular CLI provides some shortcuts, a lot of boilerplate code is still required to build a full stack application (not very DRY). By making some assumptions (which are arguably opinionated), a lot of boilerplate code can be generated automatically. Even if some of the code is not quite appropriate or requires further development, it might still save a lot of time. Hopefully also, it might often be more efficient to refine the code generation/tool, rather than hand work the code afterwards.
 
 ## Prerequisites
 
@@ -85,9 +87,13 @@ Escape all embedded backquotes (especially the gql tagged strings) with backslas
 const Fields = gql\`fragment theFields on ${types.name} { nodeId,${types.fields.map(fields => `${fields.name}`)} }\`;
 ```
 
+## Structure
+
+![Opinionate UML component diagram](src/Opinionate.png)
+
 ## Issues (mostly with the built-in template)
 
-The generated front-end is currently very basic, both in form and function. Though it is more straightforward to address the former through manually added theming and CSS styling, the latter should be addressed in susequent releases, through deeper introspection (e.g. to support linking between entities), and perhaps through additional direction in the form of schema annotations/directives.
+The generated front-end is currently quite basic, both in form and function. Though it is more straightforward to address the former through manually added theming and CSS styling, the latter should be addressed in susequent releases, through deeper introspection (e.g. to support linking between entities), and perhaps through additional direction in the form of schema annotations/directives.
 
 Note that the previous version of Opinionate used GraphQL Code Generator with Handlebars (rather than ES6) templates, and this version has not yet replaced the TypeScript definitions for the GraphQL types, so in the meantime you may want to use `yarn run gentypes`.
 

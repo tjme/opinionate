@@ -1,0 +1,35 @@
+@startuml Opinionate
+caption Opinionate Component Diagram
+'scale 1
+'left to right direction
+'top to bottom direction
+component "Database" as db
+interface "Schema (SQL)" as schemaSql
+component "PostGraphile" as graphile
+interface "GraphQL API" as gqlApi
+interface "Schema (JSON)" as schemaJson
+interface "Schema (GraphQL)" as schemaGql
+interface "ES6 Templates" as templates
+package "Opinionate CLI" as op {
+  component "opinionate-meta" as meta
+  component "opinionate-gen" as gen
+}
+interface "Overlay (JSON)" as overlayJson
+interface "Comments (SQL)" as commentsSql
+interface "Front-end application" as app
+commentsSql.>db
+db->schemaSql
+schemaSql->graphile
+graphile->gqlApi
+graphile->schemaJson
+graphile.>schemaGql
+schemaJson->meta
+overlayJson.>meta
+meta.>overlayJson
+meta.>schemaJson
+meta.>commentsSql
+meta->gen
+gen<-templates
+gen->app
+gqlApi->app
+@enduml
