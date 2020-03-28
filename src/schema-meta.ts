@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as utils from "./utils";
 import { merge, stringify, convert } from "./utils";
 
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
