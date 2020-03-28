@@ -1,16 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
-const utils_1 = require("./utils");
+const u = require("./utils");
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, returnOverlay = false) {
     function mergeMeta(item, overlay) {
-        const es6Meta = "`" + ((defaultMeta && fs.readFileSync(defaultMeta).toString()) || '{ label: "${utils.toProperCase(item.name)}", readonly: false, templates: ["list", "crud"] }') + "`";
-        item[metaProp] = JSON.parse(utils_1.convert(eval(es6Meta)));
+        const es6Meta = "`" + ((defaultMeta && fs.readFileSync(defaultMeta).toString()) || '{ label: "${u.toProperCase(item.name)}", readonly: false, templates: ["list", "crud"] }') + "`";
+        item[metaProp] = JSON.parse(u.convert(eval(es6Meta)));
         if (item.description) {
             const [description, meta] = item.description.split(metaMarker);
             if (meta && !ignoreComments) {
-                item[metaProp] = utils_1.merge(item[metaProp], relaxedStructure, JSON.parse(utils_1.convert(meta)));
+                item[metaProp] = u.merge(item[metaProp], relaxedStructure, JSON.parse(u.convert(meta)));
             }
             if (cleanDescriptions)
                 item.description = description ? item.description.split(separator + metaMarker)[0] : "";
@@ -18,14 +18,14 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, over
         if (overlay) {
             const overlayItem = overlay.find((oi) => oi.name == item.name);
             if (overlayItem && overlayItem[metaProp])
-                item[metaProp] = utils_1.merge(item[metaProp], relaxedStructure, overlayItem[metaProp]);
+                item[metaProp] = u.merge(item[metaProp], relaxedStructure, overlayItem[metaProp]);
         }
     }
     ;
     function comment(description, meta) {
         if (!meta)
             return description;
-        const metaWithMarker = metaMarker + '(' + utils_1.stringify(meta) + ')';
+        const metaWithMarker = metaMarker + '(' + u.stringify(meta) + ')';
         if (!description)
             return metaWithMarker;
         description = description.split(metaMarker)[0];
