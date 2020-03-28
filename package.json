@@ -1,6 +1,6 @@
 {
 	"name": "opinionate",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Automated full stack application code generator/scaffolder",
 	"license": "MIT",
 	"repository": {
@@ -10,10 +10,10 @@
 	"scripts": {
 		"gencodeclean": "rm src/app/app.module.ts && rm src/app/app-routing.module.ts && rm src/app/app.component.html && rm src/app/crud/*.ts && rm src/app/crud/*.html && rm src/app/list/*.ts && rm src/app/list/*.html",
 		"clean": "rimraf dist",
-		"build": "npm run clean && tsc --pretty",
-		"test": "npm run build && mocha --compilers ts:ts-node/register --recursive test/**/*-spec.ts",
-		"watch": "npm run build -- --watch",
-		"watch:test": "npm run test -- --watch"
+		"build": "rimraf dist && tsc --pretty",
+		"test": "rimraf dist && tsc --pretty && mocha --compilers ts:ts-node/register --recursive test/**/*-spec.ts",
+		"watch": "rimraf dist && tsc --watch",
+		"watch:test": "rimraf dist && tsc --watch"
 	},
 	"keywords": [
 		"graphql",
@@ -43,19 +43,20 @@
 	"dependencies": {
 		"@types/pluralize": "^0.0.28",
 		"commander": "^2.9.0",
+		"global": "^4.4.0",
 		"graphql": "^0.13.2",
 		"pluralize": "^7.0.0"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.0.0",
 		"@types/mocha": "^2.2.39",
-		"@types/node": "^7.0.5",
+		"@types/node": "^7.10.9",
 		"@types/sinon": "^2.3.0",
 		"chai": "^4.0.1",
-		"mocha": "^5.2.0",
+		"mocha": "^7.1.1",
 		"rimraf": "^2.6.1",
 		"sinon": "^2.3.2",
-		"ts-node": "^4.1.0",
-		"typescript": "^2.7.2"
+		"ts-node": "^8.8.1",
+		"typescript": "^3.8.3"
 	}
 }
