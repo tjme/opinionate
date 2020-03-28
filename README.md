@@ -61,15 +61,15 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 
 You can guide and improve the code gneration performed by the template, by adding metadata. For example (when using the built-in template), you can specify more user-friendly labels for individual tables and fields, and whether they should appear on List or CRUD pages.
 
-The `opinionate-meta` sub-command can be used in a number of ways to help manage the metadata. You can provide the metadata as a (JSON) overlay file, or in the PostgreSQL schema, as table and field comments. It can create starter (SQL and/or JSON) files, where you need only fill in the gaps (which is especially useful if you have a large schema).
+The `opinionate meta` sub-command can be used in a number of ways to help manage the metadata. You can provide the metadata as a (JSON) overlay file, or in the PostgreSQL schema, as table and field comments. It can create starter (SQL and/or JSON) files, where you need only fill in the gaps (which is especially useful if you have a large schema).
 
 In future versions, it may also be included as directives in the GraphQL schema (when directives are better defined and/or external tools and dependencies allow).
 
-### Example usage of opinionate-meta
+### Example usage of opinionate meta
 
-You can generate an overlay file with default metadata using `opinionate-meta --overlay-out ./src/models/overlayOut.json`, similarly you can generate a SQL script to create table and field comments containing metadata using `opinionate-meta --comments-out ./src/models/comments.pgsql`. These assume there is a `./src/models/schema.json` file describing the GraphQL schema (as produced by PostGraphile), otherwise you should use the `--schema` option to specify an alternative location.
+You can generate an overlay file with default metadata using `opinionate meta --overlay-out ./src/models/overlayOut.json`, similarly you can generate a SQL script to create table and field comments containing metadata using `opinionate meta --comments-out ./src/models/comments.pgsql`. These assume there is a `./src/models/schema.json` file describing the GraphQL schema (as produced by PostGraphile), otherwise you should use the `--schema` option to specify an alternative location.
 
-Note that you can use `opinionate-meta -h` for more help, especially on options for the locations on files to read and write.
+Note that you can use `opinionate meta -h` for more help, especially on options for the locations on files to read and write.
 
 ## Writing your own Opinionate ES6 template(s)
 

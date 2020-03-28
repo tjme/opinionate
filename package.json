@@ -32,7 +32,9 @@
 	"main": "dist/bin/opinionate.js",
 	"typings": "dist/bin/opinionate.d.ts",
 	"bin": {
-		"opinionate": "bin/opinionate"
+		"opinionate": "bin/opinionate",
+		"opinionate-gen": "bin/opinionate-gen",
+		"opinionate-meta": "bin/opinionate-meta"
 	},
 	"files": [
 		"bin",
