@@ -1,9 +1,17 @@
 ${!types.meta.templates.includes("list") ? "" : `
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
-import { MatTable, MatTableDataSource, MatPaginator, MatSort,
-  MatCheckbox, MatButton, MatIcon, MatTooltip, MatInput, MatFormField, MatDialog } from '@angular/material';
-import { Observable } from 'rxjs/Observable';
+import { MatButton  } from '@angular/material/button';
+import { MatCheckbox  } from '@angular/material/checkbox';
+import { MatDialog  } from '@angular/material/dialog';
+import { MatFormField  } from '@angular/material/form-field';
+import { MatIcon  } from '@angular/material/icon';
+import { MatPaginator  } from '@angular/material/paginator';
+import { MatSort  } from '@angular/material/sort';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatInput  } from '@angular/material/input';
+import { MatTooltip  } from '@angular/material/tooltip';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GraphQLService } from '../graphql.service';
 import gql from 'graphql-tag';

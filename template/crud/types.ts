@@ -1,10 +1,16 @@
 ${!types.meta.templates.includes("crud") ? "" : `
 import { Component, OnInit, Input, ViewChild, HostListener } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatCheckbox, MatButton, MatIcon, MatTooltip, MatInput, MatFormField, MatDatepicker, MatDatepickerToggle } from '@angular/material';
+import { MatButton  } from '@angular/material/button';
+import { MatCheckbox  } from '@angular/material/checkbox';
+import { MatDatepicker  } from '@angular/material/datepicker';
+import { MatFormField  } from '@angular/material/form-field';
+import { MatIcon  } from '@angular/material/icon';
+import { MatInput  } from '@angular/material/input';
+import { MatTooltip  } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GraphQLService } from '../graphql.service';
 import gql from 'graphql-tag';
