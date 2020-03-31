@@ -22,7 +22,7 @@ export class GraphQLService {
   }
 
   /* Query (read) record(s), matching variables where necessary */
-  query<T>(query: any, variables: any = {}, description: string = 'read'): Observable<T> {
+  query<T>(query: any, variables: any = {}, description: string = 'read'): Observable<any> {
     return this.apollo.subscribe({query: query, variables: variables}).pipe(
       map(({data}) => data),
       catchError(this.handleError<T>
