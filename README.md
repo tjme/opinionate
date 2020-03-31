@@ -30,7 +30,7 @@ Though modern frameworks like Angular and technologies such as GraphQL offer a l
 
 - create your Angular project: `ng new toh`
 - change to your project directory: `cd toh`
-- if using yarn, configure: `ng set --global packageManager=yarn`
+- if using yarn, configure: `ng config cli.packageManager yarn`
 - install GraphQL Code Generator (to generate TypeScript types): `yarn -D add graphql @graphql-codegen/cli @graphql-codegen/typescript`
 - add Angular and Material dependencies: `yarn add rxjs rxjs-compat @angular/material @angular/cdk graphql-tag apollo-client apollo-angular apollo-link apollo-angular-link-http apollo-cache-inmemory`
 - install opinionate as a development dependency: `yarn -D add tjme/opinionate`
