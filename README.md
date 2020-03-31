@@ -6,7 +6,7 @@ An automated front-end (or full stack) application code generator/scaffolder, th
 
 Or rather, [PostGraphile](https://github.com/graphile/postgraphile) is used to automatically generate a GraphQL API/back-end (derived from your existing database, using introspection). Then the front-end components are generated similarly from the GraphQL using ES6 template files, and any additional metadata you can provide (see below).
 
-This version of Opinionate includes built-in templates that generate a fully functional front-end, using the latest [Angular 6](https://angular.io), [Angular Material](https://material.angular.io) and [Apollo Client](https://www.apollographql.com/docs/angular). The generated code is [TypeScript](https://www.typescriptlang.org) (and HTML templates) and is fully human-readable, enabling ongoing development and hand crafting. Alternatively, you can refine or customize the templates to better suit your needs, or you can create your own (which could target other technologies, such as React or VueJS, see below).
+This version of Opinionate includes built-in templates that generate a fully functional front-end, using the latest [Angular](https://angular.io), [Angular Material](https://material.angular.io) and [Apollo Client](https://www.apollographql.com/docs/angular). The generated code is [TypeScript](https://www.typescriptlang.org) (and HTML templates) and is fully human-readable, enabling ongoing development and hand crafting. Alternatively, you can refine or customize the templates to better suit your needs, or you can create your own (which could target other technologies, such as React or VueJS, see below).
 
 Alternatively, Opinionate can be used with other GraphQL server-side technologies, to automatically generate just the front-end/client.
 
@@ -19,16 +19,21 @@ Though modern frameworks like Angular and technologies such as GraphQL offer a l
 ## Prerequisites
 
 - install [Node.js](https://nodejs.org/en)
+- optionally install [Yarn](https://yarnpkg.com/) (rather than using NPM)
 - install [TypeScript](https://www.typescriptlang.org/)
 - install [PostgreSQL](https://www.postgresql.org)
-- optionally install Yarn (rather than using NPM)
 - install PostGraphile globally (you may need elevated privileges, e.g. prefix with sudo) `yarn global add postgraphile` (or `npm -g i postgraphile`)
 - install angular CLI globally (again, you may need elevated privileges) `yarn global add @angular/cli`
-- install GraphQL Code Generator (to generate TypeScript types): `yarn -D add graphql @graphql-codegen/cli @graphql-codegen/typescript`
 - optionally install a good IDE with TypeScript support, e.g. [VS Code](https://code.visualstudio.com)
 
 ## Example installation and usage
 
+- create your Angular project: `ng new toh`
+- change to your project directory: `cd toh`
+- if using yarn, configure: `ng set --global packageManager=yarn`
+- install GraphQL Code Generator (to generate TypeScript types): `yarn -D add graphql @graphql-codegen/cli @graphql-codegen/typescript`
+- add Angular and Material dependencies: `yarn add rxjs rxjs-compat @angular/material @angular/cdk graphql-tag apollo-client apollo-angular apollo-link apollo-angular-link-http apollo-cache-inmemory`
+- install opinionate as a development dependency: `yarn -D add tjme/opinionate`
 - create/configure a PostgreSQL database, e.g. "toh" `sudo -u postgres psql -d template1`, then enter the following SQL commands:
 
 ```sql
@@ -41,11 +46,6 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 \q
 ```
 
-- create your Angular project: `ng new toh`
-- change to your project directory: `cd toh`
-- if using yarn, configure: `ng set --global packageManager=yarn`
-- add Angular and Material dependencies: `yarn add rxjs rxjs-compat @angular/material @angular/cdk graphql-tag apollo-client apollo-angular apollo-link apollo-angular-link-http apollo-cache-inmemory`
-- install opinionate as a development dependency: `yarn --dev add tjme/opinionate`
 - create a database sources directory: `mkdir src/models`
 - generate JSON and GraphQL schema files: `postgraphile -c postgres://test:testpass@/toh -s public -X --export-schema-json src/models/schema.json --export-schema-graphql src/models/schema.gql`
 - run the GraphQL server (in the background): `postgraphile -c postgres://test:testpass@/toh -s public -o &`
