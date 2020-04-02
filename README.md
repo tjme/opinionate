@@ -6,15 +6,9 @@ An automated front-end (or full stack) application code generator/scaffolder, th
 
 Or rather, [PostGraphile](https://github.com/graphile/postgraphile) is used to automatically generate a GraphQL API/back-end (derived from your existing database, using introspection). Then the front-end components are generated similarly from the GraphQL using ES6 template files, and any additional metadata you can provide (see below).
 
-This version of Opinionate includes built-in templates that generate a fully functional front-end, using the latest [Angular](https://angular.io), [Angular Material](https://material.angular.io) and [Apollo Client](https://www.apollographql.com/docs/angular). The generated code is [TypeScript](https://www.typescriptlang.org) (and HTML templates) and is fully human-readable, enabling ongoing development and hand crafting. Alternatively, you can refine or customize the templates to better suit your needs, or you can create your own (which could target other technologies, such as React or VueJS, see below).
+This version of Opinionate includes built-in templates that generate a fully functional front-end, using the latest [Angular](https://angular.io), [Angular Material](https://material.angular.io) and [Apollo Client](https://www.apollographql.com/docs/angular). The generated code is [TypeScript](https://www.typescriptlang.org) (and HTML templates) and is fully human-readable, enabling ongoing development and hand crafting. Alternatively, you can refine or customize the templates to better suit your needs, or you can create your own (which could target other technologies, such as React, see below).
 
 Alternatively, Opinionate can be used with other GraphQL server-side technologies, to automatically generate just the front-end/client.
-
-## Motivation
-
-Writing code is frequently difficult and time consuming, and can often be highly repetitive. Code is regularly needed simply to translate from one data representation to another (e.g. SQL to JSON). It would be much easier to produce an application if it could simply be defined (declaratively) in one place, using a single language or notation (some refer to this as DRY, Don't Repeat Yourself).
-
-Though modern frameworks like Angular and technologies such as GraphQL offer a lot of power and flexibility (and the Angular CLI provides some shortcuts) a lot of boilerplate code is still required, to build a full stack application (so it's not very DRY). By making some assumptions (which may arguably be opinionated), a lot of boilerplate code can be generated automatically. Even if some of the code is not quite appropriate or requires further development or hand-crafting, it might still save a lot of time. Hopefully also, it might often be more efficient to refine the code generation/tool, rather than hand working the code afterwards.
 
 ## Prerequisites
 
@@ -23,41 +17,64 @@ Though modern frameworks like Angular and technologies such as GraphQL offer a l
 - install [TypeScript](https://www.typescriptlang.org/)
 - install [PostgreSQL](https://www.postgresql.org)
 - install PostGraphile globally (you may need elevated privileges, e.g. prefix with sudo) `yarn global add postgraphile` (or `npm -g i postgraphile`)
-- install angular CLI globally (again, you may need elevated privileges) `yarn global add @angular/cli`
+- install GraphQL Code Generator (to generate TypeScript types, again you may need elevated privileges): `yarn global add graphql @graphql-codegen/cli @graphql-codegen/typescript`
 - optionally install a good IDE with TypeScript support, e.g. [VS Code](https://code.visualstudio.com)
 
-## Example installation and usage
+## Example database installation
 
-- create your Angular project: `ng new toh`
-- change to your project directory: `cd toh`
-- if using yarn, configure: `ng config cli.packageManager yarn`
-- install GraphQL Code Generator (to generate TypeScript types): `yarn -D add graphql @graphql-codegen/cli @graphql-codegen/typescript`
-- add Angular and Material dependencies: `yarn add rxjs rxjs-compat @angular/material @angular/cdk graphql-tag apollo-client apollo-angular apollo-link apollo-angular-link-http apollo-cache-inmemory`
-- install opinionate as a development dependency: `yarn -D add tjme/opinionate`
 - create/configure a PostgreSQL database, e.g. "toh" `sudo -u postgres psql -d template1`, then enter the following SQL commands:
 
 ```sql
 CREATE USER test WITH PASSWORD 'testpass';
 CREATE DATABASE toh;
 \c toh
-\i node_modules/opinionate/models/toh.pgsql
+CREATE TABLE hero(id SERIAL PRIMARY KEY, name text NOT NULL);
+CREATE OR REPLACE FUNCTION herowithterm(term text)
+    RETURNS SETOF hero LANGUAGE 'sql' STABLE
+AS $$
+    select * from hero where name ILIKE '%'||term||'%'
+$$;
+INSERT INTO hero (id, name) VALUES
+(1, 'Mr. Nice'),
+(2, 'Narco'),
+(3, 'Bombasto'),
+(4, 'Celeritas'),
+(5, 'Magneta'),
+(6, 'RubberMan'),
+(7, 'Dynama'),
+(8, 'Dr IQ'),
+(9, 'Magma'),
+(10, 'Tornado');
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 \q
 ```
 
-- create a database sources directory: `mkdir src/models`
-- generate JSON and GraphQL schema files: `postgraphile -c postgres://test:testpass@/toh -s public -X --export-schema-json src/models/schema.json --export-schema-graphql src/models/schema.gql`
+- create a database sources directory: `mkdir models`
+- generate JSON and GraphQL schema files: `postgraphile -c postgres://test:testpass@/toh -s public -X --export-schema-json models/schema.json --export-schema-graphql models/schema.gql`
 - run the GraphQL server (in the background): `postgraphile -c postgres://test:testpass@/toh -s public -o &`
 - optionally you can click on the link to GraphiQL generated by the above, and explore the server by entering queries such as: `{allHeroes{nodes{nodeId,id,name}}}`
-- create the TypeScript type definitions for the schema: `yarn run graphql-codegen --config node_modules/opinionate/codegen.yml`
-- to automatically (re)generate fully functional List and CRUD components/pages for each GraphQL node/entity, as well as common items (including app.module.ts and app-routing.module.ts): `yarn run opinionate gen --templates node_modules/opinionate/template`
-- Note that the above will replace previously generated code without warning, but will not automatically remove any components no longer present, so you may want to first remove all generated code with: `yarn run gencodeclean`, but use with caution, as there are no safety checks!
+
+## Example Angular front-end (using Angular Material)
+
+- install angular CLI globally (again, you may need elevated privileges) `yarn global add @angular/cli`
+- create your Angular project: `ng new toh`
+- change to your project directory: `cd toh`
+- if using yarn, configure: `ng config cli.packageManager yarn`
+- add Angular and Material dependencies: `yarn add rxjs rxjs-compat @angular/material @angular/cdk graphql graphql-tag apollo-client apollo-angular apollo-link apollo-angular-link-http apollo-cache-inmemory`
+- install opinionate as a development dependency: `yarn -D add tjme/opinionate`
+- create the TypeScript type definitions for the schema: `graphql-codegen --config node_modules/opinionate/codegen.yml`
+- to automatically (re)generate fully functional List and CRUD components/pages for each GraphQL node/entity, as well as common items (including app.module.ts and app-routing.module.ts): `yarn run opinionate gen --template node_modules/opinionate/templates/angular-material`
+- Note that the above will replace previously generated code without warning, but will not automatically remove any components no longer present
 - for more help on options available you can use: `opinionate gen -h`
 - run the Angular server: `ng serve --open`
 - the front-end will open automatically in your browser, and you will be able to list, add, update and delete heroes that are then stored (persistently) in the database
 - you can use the Angular CLI to further build, develop and test (use `ng help` or refer to the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md))
 - you can restore the database, with its initial sample data, by re-running the toh.pgsql script (as above)
+
+## Example Vue front-end
+
+- TBA
 
 ## Writing metadata
 
@@ -69,7 +86,7 @@ In future versions, it may also be included as directives in the GraphQL schema 
 
 ### Example usage of opinionate meta
 
-You can generate an overlay file with default metadata using `opinionate meta --overlay-out ./src/models/overlayOut.json`, similarly you can generate a SQL script to create table and field comments containing metadata using `opinionate meta --comments-out ./src/models/comments.pgsql`. These assume there is a `./src/models/schema.json` file describing the GraphQL schema (as produced by PostGraphile), otherwise you should use the `--schema` option to specify an alternative location.
+You can generate an overlay file with default metadata using `opinionate meta --overlay-out ../models/overlayOut.json`, similarly you can generate a SQL script to create table and field comments containing metadata using `opinionate meta --comments-out ../models/comments.pgsql`. These assume there is a `../models/schema.json` file describing the GraphQL schema (as produced by PostGraphile), otherwise you should use the `--schema` option to specify an alternative location.
 
 Note that you can use `opinionate meta -h` for more help, especially on options for the locations on files to read and write.
 
@@ -91,6 +108,12 @@ Escape all embedded backquotes (especially the gql tagged strings) with backslas
 ```js
 const Fields = gql\`fragment theFields on ${types.name} { nodeId,${types.fields.map(fields => `${fields.name}`)} }\`;
 ```
+
+## Motivation
+
+Writing code is frequently difficult and time consuming, and can often be highly repetitive. Code is regularly needed simply to translate from one data representation to another (e.g. SQL to JSON). It would be much easier to produce an application if it could simply be defined (declaratively) in one place, using a single language or notation (some refer to this as DRY, Don't Repeat Yourself).
+
+Though modern frameworks like Angular and technologies such as GraphQL offer a lot of power and flexibility (and the Angular CLI provides some shortcuts) a lot of boilerplate code is still required, to build a full stack application (so it's not very DRY). By making some assumptions (which may arguably be opinionated), a lot of boilerplate code can be generated automatically. Even if some of the code is not quite appropriate or requires further development or hand-crafting, it might still save a lot of time. Hopefully also, it might often be more efficient to refine the code generation/tool, rather than hand working the code afterwards.
 
 ## Structure
 

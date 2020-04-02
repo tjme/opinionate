@@ -1,6 +1,6 @@
 overwrite: true
-schema: "src/models/schema.gql"
+schema: "../models/schema.gql"
 generates:
-  src/models/types.d.ts:
+  ../models/types.d.ts:
     plugins:
       - "typescript"
