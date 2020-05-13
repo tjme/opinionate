@@ -15,7 +15,7 @@ import { map } from 'rxjs/operators';
 import { GraphQLService } from '../graphql.service';
 import gql from 'graphql-tag';
 import { ComponentCanDeactivate } from '../pending-changes.guard';
-import { ${types.name}, ${types.name}Patch } from '../../models/types';
+import { ${types.name}, ${types.name}Patch } from '../../../../models/types';
 
 const ${types.name}Fields = gql\`fragment ${types.name.toLowerCase()}Fields on ${types.name} { nodeId,${types.fields
   .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `${fields.name}`)} }\`;

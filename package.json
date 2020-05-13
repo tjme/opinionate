@@ -1,6 +1,6 @@
 {
 	"name": "opinionate",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"description": "Automated full stack application code generator/scaffolder",
 	"license": "MIT",
 	"repository": {
@@ -23,8 +23,9 @@
 		"postgresql",
 		"postgraphile",
 		"code-generator",
-		"vue",
-		"vuejs"
+		"vue", "vuejs",
+		"vuetify", "vuetifyjs",
+		"nuxt", "nuxtjs"
 	],
 	"author": "Tim Merrison <tim@merrison.co.uk>",
 	"bugs": {
@@ -42,7 +43,7 @@
 		"bin",
 		"dist",
 		"models",
-		"template"
+		"templates"
 	],
 	"dependencies": {
 		"@types/pluralize": "^0.0.28",
