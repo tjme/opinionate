@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.metaMerge = void 0;
 const fs = require("fs");
 const u = require("./utils");
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
@@ -54,8 +55,7 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, over
     const overlayOut = schema.data.__schema.types
         .filter((ft) => ft.hasOwnProperty(metaProp))
         .map((m) => {
-        return { name: m.name, description: m.description,
-            fields: m.fields
+        return { name: m.name, description: m.description, fields: m.fields
                 .filter((ff) => ff.hasOwnProperty(metaProp))
                 .map((fm) => { return { name: fm.name, description: fm.description, meta: fm[metaProp] }; }), meta: m[metaProp] };
     });

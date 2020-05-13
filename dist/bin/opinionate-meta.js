@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AppMetaMerge = void 0;
 const commander = require("commander");
 const schema_meta_1 = require("../schema-meta");
 class AppMetaMerge {

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.toProperCase = exports.convert = exports.stringify = exports.merge = exports.get = exports.isObject = void 0;
 function isObject(item) {
     return (item && typeof item === 'object' && !Array.isArray(item));
 }

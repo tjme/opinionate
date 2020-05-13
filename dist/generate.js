@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.generate = void 0;
 const fs = require("fs");
 const _pluralize = require("pluralize");
 const schema_meta_1 = require("./schema-meta");
