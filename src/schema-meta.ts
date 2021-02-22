@@ -8,7 +8,7 @@ const metaProp = "meta", metaMarker = "@meta", separator = "\n";
  * @param schemaInPath base schema JSON filename to load from (which may already contain some metadata)
  * @param overlayInPath then merge in any schema.data.__schema.types metadata from overlay JSON file (containing metadata and type IDs)
  * Write merged results to any of the following output files:
- * @param defaultMeta an ES6 template string defining the default metadata (used for each type, in the absence of any other sources)
+ * @param defaultMeta an ES6 template file defining the default metadata (used for each type, in the absence of any other sources)
  * then also merge in any metadata from its entity and field descriptions (originally from PostgreSQL table and field comments)
  * @param schemaOutPath to updated schema JSON file (which can subsequently be used as new base schema)
  * @param overlayOutPath for schema.data.__schema.types, to JSON file with just metadata (and identifying type IDs)
@@ -27,7 +27,8 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
   function mergeMeta(item: any, overlay: any[]) {
     // Define meta to match GraphQL:
     // directive @meta(label: String, readonly: Boolean = false, templates: [String] = ["list", "crud"]) on OBJECT | FIELD_DEFINITION
-    const es6Meta = "`" + ((defaultMeta && fs.readFileSync(defaultMeta).toString()) || '{ label: "${u.toProperCase(item.name)}", readonly: false, templates: ["list", "crud"] }') + "`";
+    const es6Meta = "`" + ((defaultMeta && fs.readFileSync(defaultMeta).toString()) ||
+      '{label: "${u.toProperCase(item.name)}", attributes: null, readonly: false, templates: ["list", "crud"]}') + "`";
     item[metaProp] = JSON.parse(u.convert(eval(es6Meta)));
     if (item.description) {
       const [description, meta] = item.description.split(metaMarker);

@@ -6,7 +6,7 @@ An automated front-end (or full stack) application code generator/scaffolder, th
 
 Or rather, [PostGraphile](https://github.com/graphile/postgraphile) is used to automatically generate a GraphQL API/back-end (derived from your existing database, using introspection). Then the front-end components are generated similarly from the GraphQL using ES6 template files, and any additional metadata you can provide (see below).
 
-This version of Opinionate includes built-in templates that generate a fully functional front-ends using the latest frameworks and technologies, including [Apollo Client](https://www.apollographql.com/docs/angular). The generated code is [TypeScript](https://www.typescriptlang.org) (and HTML templates) and is fully human-readable, enabling ongoing development and hand crafting. Alternatively, you can refine or customize the templates to better suit your needs, or you can create your own (which could target other technologies, such as React, see below).
+This version of Opinionate includes built-in templates that generate functional front-ends using the latest frameworks and technologies. The generated code is [TypeScript](https://www.typescriptlang.org) (and HTML templates) and is fully human-readable, enabling ongoing development and hand crafting. Alternatively, you can refine or customize the templates to better suit your needs, or you can create your own (which could target other technologies, such as React, see below).
 
 Alternatively, Opinionate can be used with other GraphQL server-side technologies, to automatically generate just the front-end/client.
 
@@ -17,7 +17,6 @@ Alternatively, Opinionate can be used with other GraphQL server-side technologie
 - install [TypeScript](https://www.typescriptlang.org/)
 - install [PostgreSQL](https://www.postgresql.org)
 - install PostGraphile globally (you may need elevated privileges, e.g. prefix with sudo) `yarn global add postgraphile` (or `npm -g i postgraphile`)
-- install GraphQL Code Generator (to generate TypeScript types, again you may need elevated privileges): `yarn global add graphql @graphql-codegen/cli @graphql-codegen/typescript`
 - optionally install a good IDE with TypeScript support, e.g. [VS Code](https://code.visualstudio.com)
 
 ## Example database installation
@@ -62,54 +61,44 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 - change to your project directory: `cd ng-toh`
 - if using yarn, configure: `ng config cli.packageManager yarn`
 - add Angular and Material dependencies: `yarn add rxjs rxjs-compat @angular/material @angular/cdk graphql graphql-tag apollo-client apollo-angular apollo-link apollo-angular-link-http apollo-cache-inmemory`
-- install opinionate as a development dependency: `yarn -D add tjme/opinionate`
-- create the TypeScript type definitions for the schema, using graphql-codegen (which you may need to install globally): `graphql-codegen --config node_modules/opinionate/codegen.yml`
-- to automatically (re)generate fully functional List and CRUD components/pages for each GraphQL node/entity, as well as common items (including app.module.ts and app-routing.module.ts): `yarn run opinionate gen --template node_modules/opinionate/templates/angular-material`
-- Note that the above will replace previously generated code without warning, but will not automatically remove any components no longer present
-- for more help on options available you can use: `opinionate gen -h`
+- install development dependencies: `yarn add -D @graphql-codegen/cli @graphql-codegen/typescript tjme/opinionate`
+- create the TypeScript type definitions for the schema, using graphql-codegen: `yarn graphql-codegen --config node_modules/opinionate/codegen.yml`
+- to automatically (re)generate fully functional List and CRUD components/pages for each GraphQL node/entity, as well as common items (including app.module.ts and app-routing.module.ts): `yarn opinionate gen --template node_modules/opinionate/templates/angular-material --target ./src/app`
+- Note that the above will replace previously generated code without warning, but will not automatically remove any components no longer required
+- for more help on options available you can use: `yarn opinionate gen -h`
 - run the Angular server: `ng serve --open`
 - the front-end will open automatically in your browser, and you will be able to list, add, update and delete heroes that are then stored (persistently) in the database
 - you can use the Angular CLI to further build, develop and test (use `ng help` or refer to the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md))
 - you can restore the database, with its initial sample data, by re-running the toh.pgsql script (as above)
 
+## Example [Vue](https://vuejs.org)/[PrimeVue](https://github.com/primefaces/primevue) front-end, using [Vite](https://github.com/vitejs/vite) and [Villus](https://github.com/logaretm/villus)
+
+- install Vue CLI: `yarn global add @vue/cli`
+- initialize: `yarn create @vitejs/app --template vue-ts vue-toh`
+- change to your project directory: `cd vue-toh`
+- You are advised to initialize version control to help track source code changes (e.g. `git init`)
+- install some development dependencies: `yarn add -D @graphql-codegen/cli @graphql-codegen/typescript tjme/opinionate`
+- create the TypeScript type definitions for the schema, using graphql-codegen: `yarn graphql-codegen --config node_modules/opinionate/codegen.yml`
+- to automatically (re)generate fully functional components/pages for each GraphQL node/entity, as well as common items: `yarn opinionate gen --template node_modules/opinionate/templates/primevue`, and to include configuration from an overlay, append ` -o ../models/overlayOut.json`
+- Rename pakage~.json as package.json (or merge contents) then run `yarn`, or install remaining dependencies manually, including PrimeVue (with icons) GraphQL and Villus (a lightweight alternative to Apollo): `yarn add primevue primeicons villus graphql graphql-tag moment mitt`
+- run the development server, to deliver your new website: `yarn dev`
+
 ## Example [Vue](https://vuejs.org)/[Vuetify](https://vuetifyjs.com) front-end
 
-- __*** Work on this option has been suspended until Vue v3 and Vuetify v3 are available ***__
+- __*** Work on this option has been suspended until Vuetify is compatible with Vue v3 ***__
 
 - install vue CLI: `yarn global add @vue/cli`
-- create your Vue project: `vue create vue-toh`, and select manual with babel, pwa, router eslint, (or select the equivalent using `vue ui`), but not with TypeScript currently, due to Vue 3 beta limitations
-- change to your project directory: `cd vue-toh`
+- create your Vue project: `vue create vuetify-toh`, and select manual with babel, pwa, router eslint, (or select the equivalent using `vue ui`), but not with TypeScript currently, due to Vue 3 beta limitations
+- change to your project directory: `cd vuetify-toh`
 - install Vue v3 beta plugin: `vue add vue-next`
-- install Vue plugin: `vue add vuetify`
-- install Vue plugin: `vue add apollo` (this doesn't currently seem to work however, but villus may)
+- install Vuetify plugin: `vue add vuetify`
+- install Vue Apollo plugin: `vue add apollo` (this doesn't currently seem to work however, but villus may)
 - install other GraphQL/Apollo dependencies: `yarn add @vue/apollo-composable apollo-client apollo-link graphql graphql-tag`
 - add apollo-composable.js to plugins folder, and add to plugins list in nuxt.config.js
+- install development dependencies: `yarn add -D @graphql-codegen/cli @graphql-codegen/typescript tjme/opinionate`
+- create the TypeScript type definitions for the schema, using graphql-codegen: `yarn graphql-codegen --config node_modules/opinionate/codegen.yml`
+- to automatically (re)generate fully functional components/pages for each GraphQL node/entity, as well as common items: `yarn opinionate gen --template node_modules/opinionate/templates/vuetify`
 - run the development server, to deliver your new website: `yarn serve`
-
-## Example [Vue](https://vuejs.org)/[Nuxt](https://nuxtjs.org)/[Vuetify](https://vuetifyjs.com) front-end
-
-- __*** Work on this option has been suspended until Nuxt and Vue v3 compatibility has improved ***__
-
-- create your Nuxt project: `yarn create nuxt-app nuxt-toh`, and we recommend selecting the following options when prompted (use arrow keys and enter):
-    - Name: toh
-    - Description: Tour of Heroes
-    - Author: (yourself)
-    - Language: TypeScript
-    - Package Manager: Yarn
-    - Vuetify
-    - Server Framework: None
-    - Runtime for TypeScript: Default
-    - Modules: PWA
-    - Linting: (none)
-    - Testing: (none)
-    - Rendering: Universal (SSR)
-    - Dev Tools: jsconfig.json
-
-- change to your project directory: `cd nuxt-toh`
-- until Vue version 3 is available, install: `yarn add @vue/composition-api @vue/apollo-composable apollo-client apollo-link graphql graphql-tag`
- (in future you may be able to install apollo module: `yarn add @nuxtjs/apollo`, but currently it does not support the composition API that works better with TypeScript)
-- add apollo-composable.js to plugins folder, and add to plugins list in nuxt.config.js
-- run the development server, to deliver your new website: `yarn dev`
 
 ## Writing metadata
 
@@ -125,9 +114,9 @@ Note that you can use `opinionate meta -h` for more help, especially on options 
 
 ## Writing your own Opinionate ES6 template(s)
 
-You can create your own Opinionate template folder tree, and pass it as a parameter, to generate exactly the code you want. Use the existing one (in `node_modules/opinionate/template`) as a guide, along with the following tips.
+You can create your own Opinionate template folder tree, and pass it as a parameter, to generate exactly the code you want. Use the existing ones (in `node_modules/opinionate/template`) as guides, along with the following tips.
 
-All existing ES6 template strings (and any substitutions within them) in your code files must be escaped, ie. backticks: `` ` `` must become ``\` ``, and substituions, i.e. `${` combinations must become `$\{`.
+The quoting around all existing ES6 template strings (and any substitutions within them) in your code files must be escaped, ie. backticks: `` ` `` must become ``\` ``, and the beginnings of substituions, i.e. `${` must become `$\{`.
 
 Then add the substitutions required for the code generation.
 
@@ -135,7 +124,7 @@ Use `${types.name}` for the entity/table name.
 
 Similarly, in templates with filenames containing "types", use `${types.name}` for the entity/table name.
 Loop through fields with ``// The fields of entity ${types.name} are: ${types.fields.filter(f => isField(f)).map(fields => `${fields.name}`).join("\n")}``.
-Can place guard function at beginning of template when metadata should determine existence, e.g: ``${!types.meta.templates.includes("list") ? "" : ` ``.
+You can place a guard function at beginning of a template when metadata should determine existence, e.g: ``${!types.meta.templates.includes("list") ? "" : ` `` (and add `` `} `` at the end).
 Escape all embedded backquotes (especially the gql tagged strings) with backslash, e.g:
 
 ```js

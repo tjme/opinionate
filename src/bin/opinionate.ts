@@ -15,7 +15,6 @@ export class App {
             .version(this.package.version)
             .command('meta [options]', 'merge and/or convert schema metadata, from and to various sources and file formats')
             .command('gen [options]', 'generate front-end components from schema intraspection and/or metadata', {isDefault: true})
-            // .command('write [message]', 'say hello!')
             .parse(process.argv);
     }
 

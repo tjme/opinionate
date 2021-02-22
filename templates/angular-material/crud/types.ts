@@ -17,25 +17,25 @@ import gql from 'graphql-tag';
 import { ComponentCanDeactivate } from '../pending-changes.guard';
 import { ${types.name}, ${types.name}Patch } from '../../../../models/types';
 
-const ${types.name}Fields = gql\`fragment ${types.name.toLowerCase()}Fields on ${types.name} { nodeId,${types.fields
+const ${types.name}Fields = gql\`fragment ${types.name}Fields on ${types.name} { nodeId,${types.fields
   .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `${fields.name}`)} }\`;
 const Read = gql\`query read($nodeId:ID!){ ${types.name.toLowerCase()}(nodeId:$nodeId)
-  {...${types.name.toLowerCase()}Fields } } $\{ ${types.name}Fields}\`;
+  {...${types.name}Fields } } $\{ ${types.name}Fields}\`;
 const Create = gql\`mutation create(${types.fields
-  .filter(f => isField(f) && f.meta.templates.includes("crud") && f.meta.templates.includes("crud")).map(fields => `$${fields.name}:${getType(fields)}${!fields.hasOwnProperty("isRequired") ? "" : "!"}`)})
+  .filter(f => isField(f) && f.meta.templates.includes("crud") && f.meta.templates.includes("crud")).map(fields => `$${fields.name}:${getType(fields)}${!fields.hasOwnProperty("isRequired") ? "!" : ""}`)})
   {create${types.name}(input:{
     ${types.name.toLowerCase()}:{ ${types.fields
       .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `${fields.name}:\$${fields.name}`)} } })
-  { ${types.name.toLowerCase()}{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
+  { ${types.name.toLowerCase()}{...${types.name}Fields } } } $\{ ${types.name}Fields}\`;
 const Update = gql\`mutation update($nodeId:ID!,${types.fields
   .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `$${fields.name}:${getType(fields)}`)})
   {update${types.name}(input:{nodeId:$nodeId,
   ${types.name.toLowerCase()}Patch:{ ${types.fields
     .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `${fields.name}:\$${fields.name}`)} } })
-  { ${types.name.toLowerCase()}{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
+  { ${types.name.toLowerCase()}{...${types.name}Fields } } } $\{ ${types.name}Fields}\`;
 const Delete = gql\`mutation delete($nodeId:ID!)
   {delete${types.name}(input:{nodeId:$nodeId})
-  { ${types.name.toLowerCase()}{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
+  { ${types.name.toLowerCase()}{...${types.name}Fields } } } $\{ ${types.name}Fields}\`;
 
 @Component({
   selector: 'app-${types.name.toLowerCase()}',

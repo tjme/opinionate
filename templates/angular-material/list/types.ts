@@ -17,13 +17,13 @@ import { GraphQLService } from '../graphql.service';
 import gql from 'graphql-tag';
 import { ${types.name}, ${types.name}Patch } from '../../../../models/types';
 
-const ${types.name}Fields = gql\`fragment ${types.name.toLowerCase()}Fields on ${types.name} { nodeId,${types.fields
+const ${types.name}Fields = gql\`fragment ${types.name}Fields on ${types.name} { nodeId,${types.fields
   .filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `${fields.name}`)} }\`;
 const ReadAll = gql\`query readAll{all${pluralize(types.name)}
-  {nodes{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
+  {nodes{...${types.name}Fields } } } $\{ ${types.name}Fields}\`;
 // const Delete = gql\`mutation delete($nodeId:ID!)
 //   {delete${types.name}(input:{nodeId:$nodeId})
-//   { ${types.name.toLowerCase()}{...${types.name.toLowerCase()}Fields } } } $\{ ${types.name}Fields}\`;
+//   { ${types.name.toLowerCase()}{...${types.name}Fields } } } $\{ ${types.name}Fields}\`;
 
 @Component({
   selector: 'app-${types.name.toLowerCase()}-list',

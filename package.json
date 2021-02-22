@@ -1,6 +1,6 @@
 {
 	"name": "opinionate",
-	"version": "0.1.6",
+	"version": "0.2.0",
 	"description": "Automated full stack application code generator/scaffolder",
 	"license": "MIT",
 	"repository": {
@@ -8,7 +8,6 @@
 		"url": "git+https://github.com/tjme/opinionate.git"
 	},
 	"scripts": {
-		"gencodeclean": "rm src/app/app.module.ts && rm src/app/app-routing.module.ts && rm src/app/app.component.html && rm src/app/crud/*.ts && rm src/app/crud/*.html && rm src/app/list/*.ts && rm src/app/list/*.html",
 		"clean": "rimraf dist",
 		"build": "rimraf dist && tsc --pretty",
 		"test": "rimraf dist && tsc --pretty && mocha --compilers ts:ts-node/register --recursive test/**/*-spec.ts",
@@ -25,6 +24,7 @@
 		"code-generator",
 		"vue",
 		"vuejs",
+		"primevue",
 		"vuetify",
 		"vuetifyjs",
 		"nuxt",
