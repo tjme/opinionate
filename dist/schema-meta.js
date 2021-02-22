@@ -6,7 +6,8 @@ const u = require("./utils");
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, returnOverlay = false) {
     function mergeMeta(item, overlay) {
-        const es6Meta = "`" + ((defaultMeta && fs.readFileSync(defaultMeta).toString()) || '{ label: "${u.toProperCase(item.name)}", readonly: false, templates: ["list", "crud"] }') + "`";
+        const es6Meta = "`" + ((defaultMeta && fs.readFileSync(defaultMeta).toString()) ||
+            '{label: "${u.toProperCase(item.name)}", attributes: null, readonly: false, templates: ["list", "crud"]}') + "`";
         item[metaProp] = JSON.parse(u.convert(eval(es6Meta)));
         if (item.description) {
             const [description, meta] = item.description.split(metaMarker);
