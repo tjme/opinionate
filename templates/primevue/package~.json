@@ -6,7 +6,7 @@
   "scripts": {
     "gen-json": "postgraphile -c postgres://test:testpass@/toh -s public -X --export-schema-json ../models/schema.json",
     "gen-gql": "postgraphile -c postgres://test:testpass@/toh -s public -X --export-schema-graphql ../models/schema.gql",
-    "gen-ts": "graphql-codegen --config codegen.yml",
+    "gen-ts": "graphql-codegen --config node_modules/opinionate/codegen.yml",
     "gen": "opinionate gen --template node_modules/opinionate/templates/primevue -o ../models/overlayOut.json",
     "backend": "postgraphile -c postgres://test:testpass@/toh -s public",
     "dev": "vite",
