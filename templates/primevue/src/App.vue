@@ -37,31 +37,33 @@ ${types.map(types => `
 .error { color: red; }
 
   /* Make more compact/dense */
-  .op-compact .p-mr-2 { margin-right: .5rem!important; }
-  .op-compact .p-m-0 { margin:.2rem; font-size: 1.2rem; }
+  .op-compact .p-mr-2 { margin: 0 0.2rem!important; }
+  .op-compact .p-m-0 { margin: 0 0.2rem; }
   .op-compact .p-datatable-header,
   .op-compact .p-datatable-thead > tr > th,
   .op-compact .p-datatable-tbody > tr > td,
   .op-compact .p-paginator,
   .op-compact .p-toolbar,
-  .op-compact .p-inputtext { padding: 0.2rem 0.4rem; }
-  .op-compact .p-input-icon-left > .p-inputtext { padding-left: 2rem; }
-  .op-compact .p-dropdown { height: 2rem; }
-  .op-compact .p-dropdown-label { padding-top: 0.4rem; }
-  .op-compact .p-paginator-pages .p-paginator-page,
+  .op-compact .p-inputtext { padding: 0.2rem 0.4rem!important; }
+  .op-compact .p-input-icon-left > .p-inputtext { padding-left: 2rem!important; }
+  /* .op-compact .p-dropdown { height: 2rem; } */
+  .op-compact .p-dropdown-label { padding-top: 0.7rem!important; }
+  /* .op-compact .p-paginator-pages .p-paginator-page,
   .op-compact .p-paginator-first,
   .op-compact .p-paginator-prev,
   .op-compact .p-paginator-next,
   .op-compact .p-paginator-last,
-  .op-compact .p-paginator-current { height: 2rem; min-width: 2rem; }
+  .op-compact .p-paginator-current { height: 2rem; min-width: 2rem; } */
   .op-compact .p-button { padding: 0.2rem; }
-  .op-compact .p-button.p-button-icon-only { height: 1.8rem; width: 1.8rem; }
-  .op-compact .button-nogap,
-  .op-compact .p-fileupload { margin-right: 0!important; }
-  .op-compact .p-input-icon-left,
+  .op-compact .p-button.p-button-icon-only { height: 2rem; width: 2rem; }
+  .op-compact .p-input-icon-left > i:first-of-type { position: relative; left: 1.5rem; }
+  .op-compact .p-hidden-accessible { width: 1px; overflow: hidden; }
+  /* .op-compact .button-nogap,
+  .op-compact .p-fileupload { margin-right: 0!important; } */
+  /* .op-compact .p-input-icon-left,
   .op-compact .p-input-icon-right,
   .op-compact .p-button,
-  .op-compact .p-buttonset { margin-right: 4px!important; }
-  .op-compact .header-button-group { text-align: right; }
+  .op-compact .p-buttonset { margin-right: 4px!important; } */
+  /* .op-compact .header-button-group { text-align: right; } */
   /* #app .header-button-group .p-input-icon-left { flex-shrink: 3; } */
 </style>

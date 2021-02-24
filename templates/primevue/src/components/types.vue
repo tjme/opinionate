@@ -49,7 +49,10 @@ ${types.meta.readonly ? "" : `\
       <Column :exportable="false" draggable="false" selectionMode="multiple" headerStyle="width:2rem"></Column>
 `}${types.fields.filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `\
       <Column field="${fields.name}" header="${fields.meta.label}" ${fields.meta.attributes || ":sortable='true'"}\
-${isType(fields, "Int") ? ' headerStyle="text-align:right" bodyStyle="text-align:right"' : ''}></Column>`).join("\n")}
+${isType(fields, "Int") ? ' headerStyle="text-align:right" bodyStyle="text-align:right"' : ''}>
+${isType(fields, "Dec192") ? '<template #body="slotProps">{{formatCurrency(slotProps.data.${fields.name})}}</template>' : ''}\
+${isType(fields, "Datetime") ? '<template #body="slotProps">{{formatDate(slotProps.data.${fields.name})}}</template>' : ''}\
+      </Column>`).join("\n")}
 ${types.meta.readonly ? "" : `\
       <Column :exportable="false" draggable="false" headerStyle="width:5rem">
         <template #body="slotProps">
