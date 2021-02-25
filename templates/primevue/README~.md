@@ -18,7 +18,6 @@ Communications with the GraphQL server are supported by Villus (rather than the 
 
 Work in progress:
 
-- Fix auto generation of nullRecord, recordName and create record parameters in saveRecord
 - Menu and/or switchboard not yet generated
 - linking fields/columns not yet covered (e.g. counts of related)
 - Add proper form validation
