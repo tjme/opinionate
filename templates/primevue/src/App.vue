@@ -2,8 +2,12 @@
   <SuspenseWithError>
     <template #default>
       <Toast position="top-right" />
-${types.map(types => `
-      <${types.name} />`).join("\n")}
+      <Accordion :multiple="true">
+${types.map(types => `\
+	      <AccordionTab header="${types.meta.label}">
+          <${types.name} />
+        </AccordionTab>`).join("\n")}
+        </Accordion>
     </template>
     <template #fallback>
       <p class="big-center">Loading, please wait ...</p>
@@ -18,7 +22,9 @@ ${types.map(types => `
   import { defineComponent } from "vue";
   import SuspenseWithError from "./components/SuspenseWithError.vue";
   import Toast from "primevue/toast";
-${types.map(types => `
+  import Accordion from "primevue/accordion";
+  import AccordionTab from 'primevue/accordiontab';
+${types.map(types => `\
   import ${types.name} from "./components/${types.name.toLowerCase()}.vue";`).join("\n")}
 
   export default defineComponent({
@@ -26,7 +32,9 @@ ${types.map(types => `
     components: {
       SuspenseWithError,
       Toast,
-${types.map(types => `
+      Accordion,
+      AccordionTab,
+${types.map(types => `\
       ${types.name},`).join("\n")}
     }
   })

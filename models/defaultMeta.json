@@ -1,0 +1,9 @@
+label: "${toProperCase(item.name).replace('ref',' Ref').replace('updated','  Updated').replace('date',' Date').replace('type',' Type').replace('id',' ID')}",
+sType: "${getType(item)}",
+format: "${['Dec192','Dec192!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime','Datetime!'].includes(getType(item)) ? 'date' : ['Int','Int!','Float','Float!'].includes(getType(item)) ? 'number' : 'string'}",
+required: ${getType(item) && '!'==getType(item).slice(-1) ? true : false},
+validation: null,
+align: "${['Dec192','Dec192!','Datetime','Datetime!','Int','Int!','Float','FLoat!'].includes(getType(item)) ? 'right' : 'left'}",
+attributes: null,
+readonly: false,
+templates: ["list", "crud"]

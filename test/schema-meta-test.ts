@@ -1,4 +1,4 @@
-import { metaMerge } from "../src/schema-meta";
+import { metaMerge } from "../src/generate";
 
 const schema = metaMerge(
   "./src/models/schema.json",

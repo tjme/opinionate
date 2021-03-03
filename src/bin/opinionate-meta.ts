@@ -1,5 +1,5 @@
 import * as commander from 'commander';
-import { metaMerge } from '../schema-meta';
+import { metaMerge } from '../generate';
 
 export class AppMetaMerge {
 
@@ -14,7 +14,7 @@ export class AppMetaMerge {
   public initialize() {
     this.program
       .version(this.package.version)
-      .option("-s, --schema <file>", "JSON file to read (base) schema from", "./src/models/schema.json")
+      .option("-s, --schema <file>", "JSON file to read (base) schema from", "../models/schema.json")
       .option("-o, --overlay <file>", "JSON file to read, defining additions to the schema.data.__schema.types (especially metadata)")
       .option("-d, --default-meta <file>","ES6 template file defining the metadata structure and default values (used for each type, in the absence of any other sources)")
       .option("-m, --schema-out <file>", "JSON file to write, defining schema with merged in metadata")

@@ -46,14 +46,6 @@ ${types.meta.readonly ? "" : `\
         </div>
       </template>
 ${types.meta.readonly ? "" : `\
-      <Column :exportable="false" draggable="false" selectionMode="multiple" headerStyle="width:2rem"></Column>
-`}${types.fields.filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `\
-      <Column field="${fields.name}" header="${fields.meta.label}" ${fields.meta.attributes || ":sortable='true'"}\
-${isType(fields, "Int") ? ' headerStyle="text-align:right" bodyStyle="text-align:right"' : ''}>
-${isType(fields, "Dec192") ? '<template #body="slotProps">{{formatCurrency(slotProps.data.${fields.name})}}</template>' : ''}\
-${isType(fields, "Datetime") ? '<template #body="slotProps">{{formatDate(slotProps.data.${fields.name})}}</template>' : ''}\
-      </Column>`).join("\n")}
-${types.meta.readonly ? "" : `\
       <Column :exportable="false" draggable="false" headerStyle="width:5rem">
         <template #body="slotProps">
           <Button
@@ -68,7 +60,15 @@ ${types.meta.readonly ? "" : `\
           />
         </template>
       </Column>
-`}    </DataTable>
+      <Column :exportable="false" draggable="false" selectionMode="multiple" headerStyle="width:2rem"></Column>
+`}${types.fields.filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `\
+      <Column field="${fields.name}" header="${fields.meta.label}" ${fields.meta.attributes || ":sortable='true'"}\
+${fields.meta.align!='left' ? ' headerStyle="text-align:'+fields.meta.align+'" bodyStyle="text-align:'+fields.meta.align+'"' : ''}\
+${fields.meta.format=='currency' ? ' sortField="'+fields.name+'"' : ''}>\
+${fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(slotProps.data.'+fields.name+')}}</template>' : ''}\
+${fields.meta.format=='date' ? '<template #body="slotProps">{{formatDate(slotProps.data.'+fields.name+')}}</template>' : ''}\
+</Column>`).join("\n")}
+    </DataTable>
   </div>
 ${types.meta.readonly ? "" : `\
   <Dialog
@@ -171,24 +171,9 @@ ${types.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(
   import Button from "primevue/button";
   import Dialog from "primevue/dialog";
   import { useToast } from "primevue/usetoast";
-  import moment from "moment";
   import { useQuery, useMutation } from "villus";
   import gql from 'graphql-tag';
   import { ${types.name}, ${types.name}Patch } from '../../../models/types';
-
-  function formatCurrency(value: string): string {
-    const num = +value;
-    return num.toLocaleString("en-GB", {
-      style: "currency",
-      currency: "GBP",
-      maximumFractionDigits: 0,
-    });
-  };
-  function formatDate(value: string, format?: string): string | void {
-    if (value) {
-      return moment(String(value)).format(format || "DD MMM YYYY HH:mm");
-    }
-  };
 
   const ${types.name}Fields = gql\`fragment ${types.name}Fields on ${types.name} { nodeId,${types.fields
     .filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `${fields.name}`)} }\`;
@@ -228,6 +213,18 @@ ${types.fields.filter(f => isField(f)).map(fields => ` ${fields.name}: ${fields.
       Dialog,
     },
     async setup() {
+      function formatCurrency(value: string, format?: string): string | void {
+        if (value) {
+          const v = +value;
+          return v.toLocaleString("en-GB", {style: "currency", currency: "GBP"});
+        }
+      };
+      function formatDate(value: string, format?: string): string | void {
+        if (value) {
+          const v = new Date(value);
+          return v.toLocaleString("en-GB", {year: "numeric", month: "short", day: "numeric"});
+        }
+      };
       const filters = ref({});
       const toast = useToast();
       const dtMaster = ref(null);
@@ -329,6 +326,8 @@ ${types.fields.filter(f => isField(f)).map(fields => ` ${fields.name}: record.va
         });
       };
       return {
+        formatCurrency,
+        formatDate,
         recordName,
         openNew,
         hideDialog,

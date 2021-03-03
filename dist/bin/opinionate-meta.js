@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppMetaMerge = void 0;
 const commander = require("commander");
-const schema_meta_1 = require("../schema-meta");
+const generate_1 = require("../generate");
 class AppMetaMerge {
     constructor() {
         this.program = commander;
@@ -24,7 +24,7 @@ class AppMetaMerge {
             .parse(process.argv);
         if (typeof this.program.schema !== 'string')
             throw new Error(`No schema file supplied`);
-        schema_meta_1.metaMerge(this.program.schema, this.program.overlay, this.program.defaultMeta, this.program.schemaOut, this.program.overlayOut, this.program.commentsOut, this.program.allowExisting, this.program.cleanDescriptions, this.program.ignoreComments, this.program.relaxedStructure);
+        generate_1.metaMerge(this.program.schema, this.program.overlay, this.program.defaultMeta, this.program.schemaOut, this.program.overlayOut, this.program.commentsOut, this.program.allowExisting, this.program.cleanDescriptions, this.program.ignoreComments, this.program.relaxedStructure);
         process.exit();
     }
 }
