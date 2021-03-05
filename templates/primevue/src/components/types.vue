@@ -20,7 +20,7 @@ ${!types.meta.templates.includes("list") ? "" : `\
           <div class="header-button-group">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
-              <InputText v-model="filters['global']" placeholder="Search..." style="width:8rem" />
+              <InputText v-model="filters['global'].value" placeholder="Search..." style="width:8rem" />
             </span>
 ${types.meta.readonly ? "" : `\
             <Button
@@ -225,7 +225,7 @@ ${types.fields.filter(f => isField(f)).map(fields => ` ${fields.name}: ${fields.
           return v.toLocaleString("en-GB", {year: "numeric", month: "short", day: "numeric"});
         }
       };
-      const filters = ref({});
+      const filters = ref({'global': {value: null}});
       const toast = useToast();
       const dtMaster = ref(null);
       const recordDialog = ref(false);

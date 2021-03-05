@@ -17,8 +17,6 @@
   "dependencies": {
     "graphql": "^15.5.0",
     "graphql-tag": "^2.11.0",
-    "mitt": "^2.1.0",
-    "moment": "^2.29.1",
     "primeicons": "^4.1.0",
     "primevue": "^3.3.0",
     "villus": "^1.0.0-rc.12",

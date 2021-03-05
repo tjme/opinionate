@@ -43,6 +43,7 @@ ${types.map(types => `\
 <style>
 .big-center { text-align: center; margin: 4rem 2rem; font-size: 2rem; }
 .error { color: red; }
+.p-datatable-resizable .p-datatable-thead > tr > th { white-space: inherit; }
 
   /* Make more compact/dense */
   .op-compact .p-mr-2 { margin: 0 0.2rem!important; }
@@ -63,7 +64,7 @@ ${types.map(types => `\
   .op-compact .p-paginator-last,
   .op-compact .p-paginator-current { height: 2rem; min-width: 2rem; } */
   .op-compact .p-button { padding: 0.2rem; }
-  .op-compact .p-button.p-button-icon-only { height: 2rem; width: 2rem; }
+  .op-compact .p-button.p-button-icon-only { height: 1.7rem!important; width: 1.7rem; }
   .op-compact .p-input-icon-left > i:first-of-type { position: relative; left: 1.5rem; }
   .op-compact .p-hidden-accessible { width: 1px; overflow: hidden; }
   /* .op-compact .button-nogap,
