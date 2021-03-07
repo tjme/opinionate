@@ -63,10 +63,10 @@ ${types.meta.readonly ? "" : `\
       <Column :exportable="false" draggable="false" selectionMode="multiple" headerStyle="width:2rem"></Column>
 `}${types.fields.filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `\
       <Column field="${fields.name}" header="${fields.meta.label}" ${fields.meta.attributes || ":sortable='true'"}\
-${fields.meta.align!='left' ? ' headerStyle="text-align:'+fields.meta.align+'" bodyStyle="text-align:'+fields.meta.align+'"' : ''}\
-${fields.meta.format=='currency' ? ' sortField="'+fields.name+'"' : ''}>\
+${fields.meta.align!='left' ? ' headerStyle="text-align:'+fields.meta.align+'" bodyStyle="text-align:'+fields.meta.align+'"' : ''} >\
 ${fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(slotProps.data.'+fields.name+')}}</template>' : ''}\
 ${fields.meta.format=='date' ? '<template #body="slotProps">{{formatDate(slotProps.data.'+fields.name+')}}</template>' : ''}\
+${fields.meta.format=='boolean' ? '<template #body="slotProps"><input type="checkbox" disabled=true v-model="slotProps.data.'+fields.name+'" /></template>' : ''}\
 </Column>`).join("\n")}
     </DataTable>
   </div>
@@ -81,11 +81,8 @@ ${types.meta.readonly ? "" : `\
 ${types.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `\
     <div class="p-field">
       <label for="${fields.name}">${fields.meta.label}</label>
-      <${isType(fields, "Int") ? "InputNumber" : "InputText"}
-        id="${fields.name}"
-        v-model="record.${fields.name.toLowerCase()}"
-        ${!fields.meta.readonly ? "" : "readonly disabled"}
-      />
+      <${fields.meta.format=='date' ? "Calendar" : fields.meta.format=='boolean' ? "Checkbox" : fields.meta.format=='number' ? "InputNumber" : "InputText"} \
+:binary="true" id="${fields.name}" v-model="record.${fields.name.toLowerCase()}" ${!fields.meta.readonly ? "" : "readonly disabled"} />
     </div>`).join("\n")}
     <template #footer>
       <Button
@@ -168,6 +165,8 @@ ${types.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(
   import Column from "primevue/column";
   import InputText from "primevue/inputtext";
   import InputNumber from "primevue/inputnumber";
+  import Calendar from "primevue/calendar";
+  import Checkbox from "primevue/checkbox";
   import Button from "primevue/button";
   import Dialog from "primevue/dialog";
   import { useToast } from "primevue/usetoast";
@@ -209,6 +208,8 @@ ${types.fields.filter(f => isField(f)).map(fields => ` ${fields.name}: ${fields.
       Column,
       InputText,
       InputNumber,
+      Calendar,
+      Checkbox,
       Button,
       Dialog,
     },
@@ -238,7 +239,9 @@ ${types.fields.filter(f => isField(f)).map(fields => ` ${fields.name}: ${fields.
       const { data: uRecs, execute: uEx } = useMutation(Update); // Must be defined before first await
       const { data: dRecs, execute: dEx } = useMutation(Delete); // Must be defined before first await
       const { data: raRecs } = await useQuery({query: ReadAll});
-      const records = ref( raRecs.value.all${pluralize(types.name)}.nodes );
+      const records = ref( raRecs.value.all${pluralize(types.name)}.nodes.map(r => {\ // fix for string columns that should be/sort as numeric
+${types.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f => 'r.'+f.name+' = r.'+f.name+' && +r.'+f.name+';').join('')}
+      return r }));
 ${types.meta.readonly ? `      return {
 ` : `\
       function recordName(record: ${types.name}): string | null {

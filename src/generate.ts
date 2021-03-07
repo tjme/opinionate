@@ -113,7 +113,16 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
     // Define meta to match GraphQL:
     // directive @meta(label: String, readonly: Boolean = false, templates: [String] = ["list", "crud"]) on OBJECT | FIELD_DEFINITION
     const es6Meta = "`" + ((defaultMeta && fs.readFileSync(defaultMeta).toString()) ||
-      '{label: "${toProperCase(item.name)}", attributes: null, readonly: false, templates: ["list", "crud"]}') + "`";
+      `
+        label: "${toProperCase(item.name)}",
+        format: "${['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime','Datetime!'].includes(getType(item)) ? 'date' : ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
+        required: ${getType(item) && '!'==getType(item).slice(-1) ? true : false},
+        validation: null,
+        align: "${['money','money!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : 'left'}",
+        attributes: null,
+        readonly: false,
+        templates: ["switchboard","list", "crud"]
+      `) + "`";
     item[metaProp] = JSON.parse(convert(eval(es6Meta)));
     if (item.description) {
       const [description, meta] = item.description.split(metaMarker);

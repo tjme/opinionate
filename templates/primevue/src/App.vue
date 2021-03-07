@@ -3,7 +3,7 @@
     <template #default>
       <Toast position="top-right" />
       <Accordion :multiple="true">
-${types.map(types => `\
+${types.map(types => !types.meta.templates.includes("switchboard") ? "" : `\
 	      <AccordionTab header="${types.meta.label}">
           <${types.name} />
         </AccordionTab>`).join("\n")}
@@ -44,6 +44,9 @@ ${types.map(types => `\
 .big-center { text-align: center; margin: 4rem 2rem; font-size: 2rem; }
 .error { color: red; }
 .p-datatable-resizable .p-datatable-thead > tr > th { white-space: inherit; }
+.p-datatable-resizable .p-datatable-tbody > tr > td { max-width: 20rem; white-space: inherit; }
+.p-dialog-content .p-field { padding-top: 0.3rem; }
+.p-dialog-content .p-checkbox { padding-left: 0.3rem; }
 
   /* Make more compact/dense */
   .op-compact .p-mr-2 { margin: 0 0.2rem!important; }
