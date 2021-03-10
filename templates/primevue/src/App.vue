@@ -41,12 +41,13 @@ ${types.map(types => `\
 </script>
 
 <style>
-.big-center { text-align: center; margin: 4rem 2rem; font-size: 2rem; }
-.error { color: red; }
-.p-datatable-resizable .p-datatable-thead > tr > th { white-space: inherit; }
-.p-datatable-resizable .p-datatable-tbody > tr > td { max-width: 20rem; white-space: inherit; }
-.p-dialog-content .p-field { padding-top: 0.3rem; }
-.p-dialog-content .p-checkbox { padding-left: 0.3rem; }
+  .big-center { text-align: center; margin: 4rem 2rem; font-size: 2rem; }
+  .error { color: red; }
+  .p-datatable-resizable .p-datatable-thead > tr > th { white-space: inherit; }
+  .p-datatable-resizable .p-datatable-tbody > tr > td { max-width: 20rem; white-space: inherit; }
+  .p-dialog-content .p-field { padding-top: 0.3rem; }
+  .p-dialog-content .p-checkbox { padding-left: 0.3rem; }
+  .p-dialog-content .p-field textarea { width: 100%; height: 4rem; }
 
   /* Make more compact/dense */
   .op-compact .p-mr-2 { margin: 0 0.2rem!important; }

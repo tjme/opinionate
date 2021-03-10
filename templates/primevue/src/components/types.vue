@@ -1,7 +1,7 @@
 ${!types.meta.templates.includes("list") ? "" : `\
 <template>
   <div class="card">
-    <DataTable ${types.meta.attributes || ":autoLayout='true' :resizableColumns='true'"}
+    <DataTable ${types.meta.attributes || ":autoLayout='true' :resizableColumns='true' columnResizeMode='expand'"}
       ref="dtMaster"
       :value="records"
       v-model:selection="selectedRecords"
@@ -62,11 +62,12 @@ ${types.meta.readonly ? "" : `\
       </Column>
       <Column :exportable="false" draggable="false" selectionMode="multiple" headerStyle="width:2rem"></Column>
 `}${types.fields.filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `\
-      <Column field="${fields.name}" header="${fields.meta.label}" ${fields.meta.attributes || ":sortable='true'"}\
+      <Column field="${fields.name}" header="${fields.meta.label}" ${fields.meta.readonly ? 'readonly' : ''} ${fields.meta.attributes || ":sortable='true'"}\
 ${fields.meta.align!='left' ? ' headerStyle="text-align:'+fields.meta.align+'" bodyStyle="text-align:'+fields.meta.align+'"' : ''} >\
-${fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(slotProps.data.'+fields.name+')}}</template>' : ''}\
-${fields.meta.format=='date' ? '<template #body="slotProps">{{formatDate(slotProps.data.'+fields.name+')}}</template>' : ''}\
 ${fields.meta.format=='boolean' ? '<template #body="slotProps"><input type="checkbox" disabled=true v-model="slotProps.data.'+fields.name+'" /></template>' : ''}\
+${fields.meta.format=='date' ? '<template #body="slotProps">{{formatDate(slotProps.data.'+fields.name+')}}</template>' : ''}\
+${fields.meta.format=='datetime' ? '<template #body="slotProps">{{formatDateTime(slotProps.data.'+fields.name+')}}</template>' : ''}\
+${fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(slotProps.data.'+fields.name+')}}</template>' : ''}\
 </Column>`).join("\n")}
     </DataTable>
   </div>
@@ -81,8 +82,14 @@ ${types.meta.readonly ? "" : `\
 ${types.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `\
     <div class="p-field">
       <label for="${fields.name}">${fields.meta.label}</label>
-      <${fields.meta.format=='date' ? "Calendar" : fields.meta.format=='boolean' ? "Checkbox" : fields.meta.format=='number' ? "InputNumber" : "InputText"} \
-:binary="true" id="${fields.name}" v-model="record.${fields.name.toLowerCase()}" ${!fields.meta.readonly ? "" : "readonly disabled"} />
+      <${fields.meta.format=='text' ? 'Textarea :autoResize="true"'
+      : fields.meta.format=='boolean' ? 'Checkbox :binary="true"'
+      : fields.meta.format=='date' ? 'Calendar dateFormat="d M yy"'
+      : fields.meta.format=='datetime' ? 'Calendar dateFormat="d M yy" :showTime="true"'
+      : fields.meta.format=='currency' ? 'InputNumber mode="currency" currency="GBP"'
+      : fields.meta.format=='number' ? 'InputNumber :useGrouping=false'
+      : 'InputText'} \
+id="${fields.name}" v-model="record.${fields.name.toLowerCase()}" ${!fields.meta.readonly ? '' : 'readonly disabled'} />
     </div>`).join("\n")}
     <template #footer>
       <Button
@@ -167,6 +174,7 @@ ${types.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(
   import InputNumber from "primevue/inputnumber";
   import Calendar from "primevue/calendar";
   import Checkbox from "primevue/checkbox";
+  import Textarea from "primevue/textarea";
   import Button from "primevue/button";
   import Dialog from "primevue/dialog";
   import { useToast } from "primevue/usetoast";
@@ -175,13 +183,13 @@ ${types.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(
   import { ${types.name}, ${types.name}Patch } from '../../../models/types';
 
   const ${types.name}Fields = gql\`fragment ${types.name}Fields on ${types.name} { nodeId,${types.fields
-    .filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `${fields.name}`)} }\`;
+    .filter(f => isField(f)).map(fields => `${fields.name}`)} }\`;
   const ReadAll = gql\`query readAll{all${pluralize(types.name)}
     {nodes{...${types.name}Fields } } } $\{ ${types.name}Fields}\`;
   const Read = gql\`query read($nodeId:ID!){ ${types.name.toLowerCase()}(nodeId:$nodeId)
     {...${types.name}Fields } } $\{ ${types.name}Fields}\`;
   const Create = gql\`mutation create(${types.fields
-    .filter(f => isField(f) && f.meta.templates.includes("crud") && f.meta.templates.includes("crud")).map(fields => `$${fields.name}:${getType(fields)}${!fields.hasOwnProperty("isRequired") ? "!" : ""}`)})
+    .filter(f => isField(f) && f.meta.templates.includes("crud") && f.meta.templates.includes("crud")).map(fields => `$${fields.name}:${getType(fields)}${fields.hasOwnProperty("isRequired") ? "!" : ""}`)})
     {create${types.name}(input:{
       ${types.name.toLowerCase()}:{ ${types.fields
         .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `${fields.name}:\$${fields.name}`)} } })
@@ -210,20 +218,27 @@ ${types.fields.filter(f => isField(f)).map(fields => ` ${fields.name}: ${fields.
       InputNumber,
       Calendar,
       Checkbox,
+      Textarea,
       Button,
       Dialog,
     },
     async setup() {
-      function formatCurrency(value: string, format?: string): string | void {
+      function formatCurrency(value: string): string | void {
         if (value) {
           const v = +value;
           return v.toLocaleString("en-GB", {style: "currency", currency: "GBP"});
         }
       };
-      function formatDate(value: string, format?: string): string | void {
+      function formatDate(value: string): string | void {
         if (value) {
           const v = new Date(value);
           return v.toLocaleString("en-GB", {year: "numeric", month: "short", day: "numeric"});
+        }
+      };
+      function formatDateTime(value: string): string | void {
+        if (value) {
+          const v = new Date(value);
+          return v.toLocaleString("en-GB", {year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit"});
         }
       };
       const filters = ref({'global': {value: null}});
@@ -235,12 +250,17 @@ ${types.fields.filter(f => isField(f)).map(fields => ` ${fields.name}: ${fields.
       const record = ref(<any>null);
       const selectedRecords = ref(null);
       const submitted = ref(false);
-      const { data: cRecs, execute: cEx } = useMutation(Create); // Must be defined before first await
-      const { data: uRecs, execute: uEx } = useMutation(Update); // Must be defined before first await
-      const { data: dRecs, execute: dEx } = useMutation(Delete); // Must be defined before first await
-      const { data: raRecs } = await useQuery({query: ReadAll});
+      const { data: cRecs, execute: cEx, error: cErrors } = useMutation(Create); // Must be defined before first await
+      const { data: uRecs, execute: uEx, error: uErrors } = useMutation(Update); // Must be defined before first await
+      const { data: dRecs, execute: dEx, error: dErrors } = useMutation(Delete); // Must be defined before first await
+      const { data: raRecs, error: raErrors } = await useQuery({query: ReadAll});
+      console.log("ReadAll Errors:"+JSON.stringify(raErrors.value && raErrors.value.response.body.errors));
       const records = ref( raRecs.value.all${pluralize(types.name)}.nodes.map(r => {\ // fix for string columns that should be/sort as numeric
-${types.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f => 'r.'+f.name+' = r.'+f.name+' && +r.'+f.name+';').join('')}
+${types.fields.filter(f => isField(f)).map(f =>
+['number','currency'].includes(f.meta.format) ? 'r.'+f.name+' = r.'+f.name+' && +r.'+f.name+';' :
+//['date'].includes(f.meta.format) ? 'r.'+f.name+' = formatDate(r.'+f.name+');' :
+//['datetime'].includes(f.meta.format) ? 'r.'+f.name+' = formatDate(r.'+f.name+');' :
+'').join('')}
       return r }));
 ${types.meta.readonly ? `      return {
 ` : `\
@@ -271,7 +291,9 @@ ${types.fields.filter(f => isField(f)).map(fields => `"${fields.meta.label}: "+r
         submitted.value = true;
 
         if (record.value.nodeId) { // it's an update:
+          console.log("Update Pre:"+JSON.stringify(record.value));
           await uEx( record.value );
+          console.log("Update Errors:"+JSON.stringify(uErrors.value && uErrors.value.response.body.errors));
           records.value[findIndexById(record.value.nodeId)] = uRecs.value.update${types.name}.${types.name.toLowerCase()};
           toast.add({
             severity: "success",
@@ -280,8 +302,10 @@ ${types.fields.filter(f => isField(f)).map(fields => `"${fields.meta.label}: "+r
             life: 3000,
           });
         } else { // it's a create:
+          console.log("Create Pre:"+JSON.stringify(record.value));
           await cEx( {\
 ${types.fields.filter(f => isField(f)).map(fields => ` ${fields.name}: record.value.${fields.name}`).join(",")} } );
+          console.log("Create Errors:"+JSON.stringify(cErrors.value && cErrors.value.response.body.errors));
           records.value.push(cRecs.value.create${types.name}.${types.name.toLowerCase()});
           toast.add({
             severity: "success",
@@ -303,7 +327,9 @@ ${types.fields.filter(f => isField(f)).map(fields => ` ${fields.name}: record.va
       };
       async function deleteRecord() {
         deleteRecordDialog.value = false;
+        console.log("Delete Pre:"+JSON.stringify(record.value));
         await dEx( record.value );
+        console.log("Delete Errors:"+JSON.stringify(dErrors.value && dErrors.value.response.body.errors));
         records.value = records.value.filter((val: ${types.name}) => val.nodeId !== dRecs.value.delete${types.name}.${types.name.toLowerCase()}.nodeId);
         record.value = { ...defaultRecord };
         toast.add({
@@ -331,6 +357,7 @@ ${types.fields.filter(f => isField(f)).map(fields => ` ${fields.name}: record.va
       return {
         formatCurrency,
         formatDate,
+        formatDateTime,
         recordName,
         openNew,
         hideDialog,
