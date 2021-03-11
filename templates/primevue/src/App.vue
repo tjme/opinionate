@@ -48,6 +48,7 @@ ${types.map(types => `\
   .p-dialog-content .p-field { padding-top: 0.3rem; }
   .p-dialog-content .p-checkbox { padding-left: 0.3rem; }
   .p-dialog-content .p-field textarea { width: 100%; height: 4rem; }
+  .p-accordion .p-accordion-content { padding: 0; }
 
   /* Make more compact/dense */
   .op-compact .p-mr-2 { margin: 0 0.2rem!important; }

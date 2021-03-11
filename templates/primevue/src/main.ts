@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import { createClient } from 'villus';
+import { gql_n, gql_p, gql_q } from '../package.json';
 import App from './App.vue';
 
 // import 'primevue/resources/themes/saga-blue/theme.css';
@@ -14,7 +15,7 @@ import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
 
 const client = createClient({
-    url: 'http://localhost:5000/graphql',
+    url: "http://"+gql_n+":"+gql_p+gql_q,
   });
   
 createApp(App)

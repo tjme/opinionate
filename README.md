@@ -156,10 +156,6 @@ Though modern frameworks like Angular and technologies such as GraphQL offer a l
 
 ![Opinionate UML component diagram](src/Opinionate.png)
 
-## Issues (mostly with the built-in template)
-
-The generated front-end is currently very basic, both in form and function. Though it is more straightforward to address the former through manually added theming and CSS styling, the latter should be addressed in susequent releases, through deeper introspection (e.g. to support linking between entities), and perhaps through additional direction in the form of schema annotations/directives.
-
 Any feedback would be gratefully received!
 
 Thanks,

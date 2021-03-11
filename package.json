@@ -1,6 +1,6 @@
 {
 	"name": "opinionate",
-	"version": "0.2.8",
+	"version": "0.2.9",
 	"description": "Automated full stack application code generator",
 	"license": "MIT",
 	"repository": {
@@ -8,10 +8,10 @@
 		"url": "git+https://github.com/tjme/opinionate.git"
 	},
 	"scripts": {
-		"clean": "rimraf dist",
-		"build": "rimraf dist && tsc --pretty",
-		"test": "rimraf dist && tsc --pretty && mocha --compilers ts:ts-node/register --recursive test/**/*-spec.ts",
-		"watch": "rimraf dist && tsc --watch"
+		"prebuild": "rimraf dist",
+		"build": "tsc --pretty",
+		"test": "mocha --compilers ts:ts-node/register --recursive test/**/*-spec.ts",
+		"watch": "tsc --watch"
 	},
 	"keywords": [
 		"graphql",
