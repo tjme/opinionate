@@ -23,7 +23,8 @@
     "primeicons": "^4.1.0",
     "primevue": "^3.3.5",
     "villus": "^1.0.0-rc.12",
-    "vue": "^3.0.5"
+    "vue": "^3.0.5",
+    "vue-router": "4"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.20.1",

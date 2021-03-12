@@ -185,7 +185,7 @@ id="${fields.name}" v-model="record.${fields.name.toLowerCase()}" ${!fields.meta
   const Read = gql\`query read($nodeId:ID!){ ${types.name.toLowerCase()}(nodeId:$nodeId)
     {...${types.name}Fields } } $\{ ${types.name}Fields}\`;
   const Create = gql\`mutation create(${types.fields
-    .filter(f => isField(f) && f.meta.templates.includes("crud") && f.meta.templates.includes("crud")).map(fields => `$${fields.name}:${getType(fields)}${fields.hasOwnProperty("isRequired") ? "!" : ""}`)})
+    .filter(f => isField(f) && f.meta.templates.includes("crud") && f.meta.templates.includes("crud")).map(fields => `$${fields.name}:${getType(fields)}${fields.type.kind=="NON_NULL" ? "!" : ""}`)})
     {create${types.name}(input:{
       ${types.name.toLowerCase()}:{ ${types.fields
         .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `${fields.name}:\$${fields.name}`)} } })

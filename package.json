@@ -1,6 +1,6 @@
 {
 	"name": "opinionate",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "Automated full stack application code generator",
 	"license": "MIT",
 	"repository": {
