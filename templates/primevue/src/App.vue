@@ -2,12 +2,9 @@
   <SuspenseWithError>
     <template #default>
       <Toast position="top-right" />
-      <Accordion :multiple="true">
-${types.map(types => !types.meta.templates.includes("switchboard") ? "" : `\
-	      <AccordionTab header="${types.meta.label}">
-          <${types.name} />
-        </AccordionTab>`).join("\n")}
-        </Accordion>
+      <Menubar :model="[{icon: 'pi pi-align-left', label: 'Entities', items:[\
+${types.map(types => `{icon: 'pi pi-table', label: '${types.meta.label}', to: '/${types.name.toLowerCase()}'}`).join()}] }]" />
+      <router-view></router-view>
     </template>
     <template #fallback>
       <p class="big-center">Loading, please wait ...</p>
@@ -20,22 +17,16 @@ ${types.map(types => !types.meta.templates.includes("switchboard") ? "" : `\
 
 <script lang="ts">
   import { defineComponent } from "vue";
+  import Menubar from "primevue/menubar";
   import SuspenseWithError from "./components/SuspenseWithError.vue";
   import Toast from "primevue/toast";
-  import Accordion from "primevue/accordion";
-  import AccordionTab from 'primevue/accordiontab';
-${types.map(types => `\
-  import ${types.name} from "./components/${types.name.toLowerCase()}.vue";`).join("\n")}
 
   export default defineComponent({
     name: "App",
     components: {
+      Menubar,
       SuspenseWithError,
       Toast,
-      Accordion,
-      AccordionTab,
-${types.map(types => `\
-      ${types.name},`).join("\n")}
     }
   })
 </script>
@@ -49,6 +40,7 @@ ${types.map(types => `\
   .p-dialog-content .p-checkbox { padding-left: 0.3rem; }
   .p-dialog-content .p-field textarea { width: 100%; height: 4rem; }
   .p-accordion .p-accordion-content { padding: 0; }
+  li.p-menuitem:hover .p-submenu-list { display: block; } /* fix for submenus in PrimeVue v3.3.5 */
 
   /* Make more compact/dense */
   .op-compact .p-mr-2 { margin: 0 0.2rem!important; }
