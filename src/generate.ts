@@ -76,7 +76,8 @@ export function convert(ob: string): string {
  * 
  * @param txt the string to convert to Proper case (initial capital, followed by all lower case)
  */
-export function toProperCase(txt: string): string { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); }
+export function toProperCase(txt: string): string {
+  return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); }
 
 export function isEntity(entity: any): boolean {
   return entity.kind == "OBJECT" && entity.name !== "Query" && entity.interfaces.length > 0 && entity.interfaces[0].name == "Node" }
@@ -84,7 +85,13 @@ export function isEntity(entity: any): boolean {
 export function isField(field: any): boolean {
   return field.name !== "nodeId" && field.type && (field.type.kind == "SCALAR" || (field.type["ofType"] && field.type.ofType["kind"] == "SCALAR")) }
 
-export function getType(field: any): string { return isField(field) && (field.type.name || (field.type.ofType && field.type.ofType.name)) }
+export function getType(field: any): string {
+  return isField(field) && (field.type.name || (field.type.ofType && field.type.ofType.name)) }
+
+export function isType(field: any, type: string): boolean { return (getType(field) === type) };
+
+export function pluralize(word: string) {
+  return _pluralize.plural(word) };
 
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 
@@ -146,6 +153,7 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
   }
   
   let schema = JSON.parse(fs.readFileSync(schemaInPath).toString());
+  if (!schema.data) schema = { "data": schema }; // adjust for non PostGraphile structures, e.g. MusicBrainz
   const overlayIn = overlayInPath && JSON.parse(fs.readFileSync(overlayInPath).toString());
   schema.data.__schema.types
   .filter((ft: any) => isEntity(ft))
@@ -186,12 +194,6 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
  */
 export function generate(templateDir: string, targetDir: string, schemaInPath: string, overlayInPath?: string, defaultMeta?: string): void {
 
-  function pluralize(word: string) { return _pluralize.plural(word) };
-  function getType(field: any): string { return (field.type && field.type.name) || (field.type.ofType && field.type.ofType.name) };
-  function isType(field: any, type: string): boolean { return (getType(field) === type) };
-  function isEntity(entity: any): boolean { return entity.hasOwnProperty("meta") };
-  function isField(field: any): boolean { return field.hasOwnProperty("meta") };
-  
   const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta);
   const types = schema.data.__schema.types.filter((f: any) => isEntity(f));
 

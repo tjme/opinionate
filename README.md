@@ -148,9 +148,9 @@ const Fields = gql\`fragment theFields on ${types.name} { nodeId,${types.fields.
 
 ## Motivation
 
-Writing code is frequently difficult and time consuming, and can often be highly repetitive. Code is regularly needed simply to translate from one data representation to another (e.g. SQL to JSON). It would be much easier to produce an application if it could simply be defined (declaratively) in one place, using a single language or notation (some refer to this as DRY, Don't Repeat Yourself).
+Writing code can be difficult and time consuming, and is often highly repetitive. Code is regularly needed simply to translate from one data representation to another (e.g. SQL to JSON). It would be much easier to produce an application if it could simply be defined (declaratively) in one place, using a single language or notation (some refer to this as DRY: Don't Repeat Yourself).
 
-Though modern frameworks like Angular and technologies such as GraphQL offer a lot of power and flexibility (and the Angular CLI provides some shortcuts) a lot of boilerplate code is still required, to build a full stack application (so it's not very DRY). By making some assumptions (which may arguably be opinionated), a lot of boilerplate code can be generated automatically. Even if some of the code is not quite appropriate or requires further development or hand-crafting, it might still save a lot of time. Hopefully also, it might often be more efficient to refine the code generation/tool, rather than hand working the code afterwards.
+Though modern frameworks such as Vue and Angular, and technologies such as GraphQL offer a lot of power and flexibility (and their CLIs provides some shortcuts) a lot of boilerplate code is still required to build a full stack application (so it's not very DRY). By making some assumptions (which are arguably opinionated), a lot of boilerplate code can be generated automatically. Even if some of the code is not quite appropriate or requires further development or hand-crafting, it might still save a lot of time. Hopefully also, it might be more efficient to refine the code generation/tool, rather than hand working the code afterwards.
 
 ## Structure
 

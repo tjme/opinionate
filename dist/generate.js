@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generate = exports.metaMerge = exports.getType = exports.isField = exports.isEntity = exports.toProperCase = exports.convert = exports.stringify = exports.merge = exports.get = exports.isObject = void 0;
+exports.generate = exports.metaMerge = exports.pluralize = exports.isType = exports.getType = exports.isField = exports.isEntity = exports.toProperCase = exports.convert = exports.stringify = exports.merge = exports.get = exports.isObject = void 0;
 const fs = require("fs");
 const _pluralize = require("pluralize");
 function isObject(item) {
@@ -53,7 +53,9 @@ function convert(ob) {
         .replace(/@colon@/g, ':') + "}";
 }
 exports.convert = convert;
-function toProperCase(txt) { return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); }
+function toProperCase(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+}
 exports.toProperCase = toProperCase;
 function isEntity(entity) {
     return entity.kind == "OBJECT" && entity.name !== "Query" && entity.interfaces.length > 0 && entity.interfaces[0].name == "Node";
@@ -63,8 +65,18 @@ function isField(field) {
     return field.name !== "nodeId" && field.type && (field.type.kind == "SCALAR" || (field.type["ofType"] && field.type.ofType["kind"] == "SCALAR"));
 }
 exports.isField = isField;
-function getType(field) { return isField(field) && (field.type.name || (field.type.ofType && field.type.ofType.name)); }
+function getType(field) {
+    return isField(field) && (field.type.name || (field.type.ofType && field.type.ofType.name));
+}
 exports.getType = getType;
+function isType(field, type) { return (getType(field) === type); }
+exports.isType = isType;
+;
+function pluralize(word) {
+    return _pluralize.plural(word);
+}
+exports.pluralize = pluralize;
+;
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, returnOverlay = false) {
     function mergeMeta(item, overlay) {
@@ -107,6 +119,8 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, over
         return description + separator + metaWithMarker;
     }
     let schema = JSON.parse(fs.readFileSync(schemaInPath).toString());
+    if (!schema.data)
+        schema = { "data": schema };
     const overlayIn = overlayInPath && JSON.parse(fs.readFileSync(overlayInPath).toString());
     schema.data.__schema.types
         .filter((ft) => isEntity(ft))
@@ -141,16 +155,6 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, over
 }
 exports.metaMerge = metaMerge;
 function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMeta) {
-    function pluralize(word) { return _pluralize.plural(word); }
-    ;
-    function getType(field) { return (field.type && field.type.name) || (field.type.ofType && field.type.ofType.name); }
-    ;
-    function isType(field, type) { return (getType(field) === type); }
-    ;
-    function isEntity(entity) { return entity.hasOwnProperty("meta"); }
-    ;
-    function isField(field) { return field.hasOwnProperty("meta"); }
-    ;
     const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta);
     const types = schema.data.__schema.types.filter((f) => isEntity(f));
     fs.readdirSync(templateDir).forEach((targetName) => {

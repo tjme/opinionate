@@ -18,8 +18,7 @@ Communications with the GraphQL server are supported by Villus (rather than the 
 
 Work in progress:
 
-- Main page accordion is useful for testing, but not production use
-- Menu not yet generated
+- Switchboard accordion is useful for testing, but not really production use
 - linking fields/columns not yet covered (e.g. counts of related)
 - Add proper form validation
 - There could be more error checking

@@ -40,7 +40,7 @@ ${types.map(types => `{icon: 'pi pi-table', label: '${types.meta.label}', to: '/
   .p-dialog-content .p-checkbox { padding-left: 0.3rem; }
   .p-dialog-content .p-field textarea { width: 100%; height: 4rem; }
   .p-accordion .p-accordion-content { padding: 0; }
-  li.p-menuitem:hover .p-submenu-list { display: block; } /* fix for submenus in PrimeVue v3.3.5 */
+  .p-menubar li.p-menuitem:hover .p-submenu-list { display: block; } /* fix for submenus in PrimeVue v3.3.5 */
 
   /* Make more compact/dense */
   .op-compact .p-mr-2 { margin: 0 0.2rem!important; }
@@ -72,4 +72,6 @@ ${types.map(types => `{icon: 'pi pi-table', label: '${types.meta.label}', to: '/
   .op-compact .p-buttonset { margin-right: 4px!important; } */
   /* .op-compact .header-button-group { text-align: right; } */
   /* #app .header-button-group .p-input-icon-left { flex-shrink: 3; } */
+  .op-compact .p-menubar { padding: 0.3rem; }
+  .op-compact .p-menubar .p-menuitem-link { padding: 0.3rem; }
 </style>
