@@ -2,8 +2,12 @@
   <SuspenseWithError>
     <template #default>
       <Toast position="top-right" />
-      <Menubar :model="[{icon: 'pi pi-align-left', label: 'Entities', items:[\
-${types.map(types => `{icon: 'pi pi-table', label: '${types.meta.label}', to: '/${types.name.toLowerCase()}'}`).join()}] }]" />
+      <Menubar class="op-compact" :model="[
+        {icon: 'pi pi-align-left', label: 'Entities', items:[
+${types.map(types => `\
+          {icon: 'pi pi-table', label: '${types.meta.label}', to: '/${types.name.toLowerCase()}'}`).join(',\n')}
+          ] }
+        ]" />
       <router-view></router-view>
     </template>
     <template #fallback>
@@ -72,6 +76,6 @@ ${types.map(types => `{icon: 'pi pi-table', label: '${types.meta.label}', to: '/
   .op-compact .p-buttonset { margin-right: 4px!important; } */
   /* .op-compact .header-button-group { text-align: right; } */
   /* #app .header-button-group .p-input-icon-left { flex-shrink: 3; } */
-  .op-compact .p-menubar { padding: 0.3rem; }
-  .op-compact .p-menubar .p-menuitem-link { padding: 0.3rem; }
+  .op-compact.p-menubar { padding: 0.3rem; }
+  .op-compact.p-menubar .p-menuitem-link { padding: 0.3rem; }
 </style>

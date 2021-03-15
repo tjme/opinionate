@@ -131,7 +131,7 @@ Note that you can use `opinionate meta -h` for more help, especially on defaults
 
 You can create your own Opinionate template folder tree, and pass it as a parameter, to generate exactly the code you want. Use the existing [templates](templates) as guides, along with the following tips.
 
-The quoting around all existing ES6 template strings (and any substitutions within them) in your code files must be escaped, ie. backticks: `` ` `` must become ``\` ``, and the beginnings of substituions, i.e. `${` must become `$\{`.
+The quoting around all existing ES6 template strings (and any substitutions within them) in your code files must be escaped, ie. backticks: `` ` `` must become ``\` ``, and the beginnings of substituions, i.e. `${` must become `$\{`. Also any backslashes (e.g. for escaping) must be doubled-up.
 
 Then add the substitutions required for the code generation.
 
@@ -139,7 +139,7 @@ Use `${types.name}` for the entity/table name.
 
 Similarly, in templates with filenames containing "types", use `${types.name}` for the entity/table name.
 Loop through fields with ``// The fields of entity ${types.name} are: ${types.fields.filter(f => isField(f)).map(fields => `${fields.name}`).join("\n")}``.
-You can place a guard function at beginning of a template when metadata should determine existence, e.g: ``${!types.meta.templates.includes("list") ? "" : ` `` (and add `` `} `` at the end).
+You can place a guard function at the beginning of a template when metadata should determine existence, e.g: ``${!types.meta.templates.includes("list") ? "" : ` `` (and add `` `} `` at the end).
 Escape all embedded backquotes (especially the gql tagged strings) with backslash, e.g:
 
 ```js
