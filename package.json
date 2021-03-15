@@ -1,6 +1,6 @@
 {
 	"name": "opinionate",
-	"version": "0.3.3",
+	"version": "0.3.4",
 	"description": "Automated full stack application code generator",
 	"license": "MIT",
 	"repository": {
@@ -15,8 +15,6 @@
 	},
 	"keywords": [
 		"graphql",
-		"angular",
-		"angular-material",
 		"typescript",
 		"postgresql",
 		"postgraphile",
@@ -25,10 +23,11 @@
 		"vuejs",
 		"vite",
 		"primevue",
+		"primefaces",
 		"vuetify",
 		"vuetifyjs",
-		"nuxt",
-		"nuxtjs"
+		"angular",
+		"angular-material"
 	],
 	"author": "Tim Merrison <tim@merrison.co.uk>",
 	"bugs": {

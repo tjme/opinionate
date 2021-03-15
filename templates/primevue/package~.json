@@ -3,16 +3,23 @@
   "version": "0.0.0",
   "license": "MIT",
 	"author": "Tim Merrison <tim@merrison.co.uk>",
-  "gql_n": "192.168.200.31",
-  "gql_p": "5000",
-  "gql_q": "/graphql",
+  "gql_api": {
+    "prefix": "http://",
+    "hostname": "localhost",
+    "port": 5000,
+    "path": "/graphql"
+  },
   "scripts": {
     "gen-json": "postgraphile -c postgres://test:testpass@/toh -s public -X --export-schema-json ../models/schema.json",
     "gen-gql": "postgraphile -c postgres://test:testpass@/toh -s public -X --export-schema-graphql ../models/schema.gql",
+    "gen-json-a": "apollo client:download-schema --endpoint=$npm_package_gql_api_hostname models/schema.json",
+    "gen-gql-a": "apollo client:download-schema --endpoint=$npm_package_gql_api_hostname models/schema.gql",
+    "gen-json-g": "get-graphql-schema $npm_package_gql_api_hostname -j > models/schema.json",
+    "gen-gql-g": "get-graphql-schema $npm_package_gql_api_hostname > models/schema.gql",
     "gen-ts": "graphql-codegen --config node_modules/opinionate/codegen.yml",
     "gen-overlay": "opinionate meta --overlay-out ../models/overlayOut.json",
     "gen": "opinionate gen --template node_modules/opinionate/templates/primevue -o ../models/overlayOut.json",
-    "backend": "postgraphile -c postgres://test:testpass@/i2k -s dbo --enhance-graphiql -n $npm_package_gql_n -p $npm_package_gql_p -q $npm_package_gql_q --cors",
+    "backend": "postgraphile -c postgres://test:testpass@/i2k -s dbo --enhance-graphiql -n $npm_package_gql_api_hostname -p $npm_package_gql_api_port -q $npm_package_gql_api_path",
     "dev": "vite",
     "build": "vuedx-typecheck . && vite build",
     "serve": "vite preview --port=5001"
