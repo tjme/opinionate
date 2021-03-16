@@ -16,7 +16,7 @@ export class AppGen {
       .version(this.package.version)
       .option("-t, --template <dir>", "folder from which to fetch the template(s)", "./template")
       .option("-w, --target <dir>", "folder in which to write the generated code file(s)", "./")
-      .option("-s, --schema <file>", "JSON file to read (base) schema from", "../models/schema.json")
+      .option("-s, --schema <file>", "JSON file to read (base) schema from", "models/schema.json")
       .option("-o, --overlay <file>", "JSON file to read, defining additions to the schema.data.__schema.types (especially metadata)")
       .option("-d, --default-meta <file>","ES6 template file defining the default metadata (used for each type, in the absence of any other sources)")
       .parse(process.argv);
