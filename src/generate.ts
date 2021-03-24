@@ -80,18 +80,19 @@ export function toProperCase(txt: string): string {
   return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); }
 
 export function isEntity(entity: any): boolean {
-  return entity.kind == "OBJECT" && entity.name !== "Query" && entity.interfaces.length > 0 && entity.interfaces[0].name == "Node" }
+  return entity.kind == "OBJECT" && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
+  && !entity.name.endsWith("Connection") && !entity.name.endsWith("Edge") && !entity.name.endsWith("Payload") }
 
 export function isField(field: any): boolean {
-  return field.name !== "nodeId" && field.type && (field.type.kind == "SCALAR" || (field.type["ofType"] && field.type.ofType["kind"] == "SCALAR")) }
+  return field.type && (field.type.kind == "SCALAR" || (field.type["ofType"] && field.type.ofType["kind"] == "SCALAR")) }
 
 export function getType(field: any): string {
   return isField(field) && (field.type.name || (field.type.ofType && field.type.ofType.name)) }
 
-export function isType(field: any, type: string): boolean { return (getType(field) === type) };
+export function isType(field: any, type: string): boolean { return (getType(field) === type) }
 
 export function pluralize(word: string) {
-  return _pluralize.plural(word) };
+  return _pluralize.plural(word) }
 
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 
@@ -197,17 +198,21 @@ export function generate(templateDir: string, targetDir: string, schemaInPath: s
   const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta);
   const types = schema.data.__schema.types.filter((f: any) => isEntity(f));
 
-  fs.readdirSync(templateDir).forEach((targetName: string) => {
-    if (fs.statSync(templateDir + "/" + targetName).isDirectory()){
-      try {fs.mkdirSync(targetDir + "/" + targetName)} catch (err) {if (err.code !== 'EEXIST') throw err}
-      generate(templateDir + "/" + targetName, targetDir + "/" + targetName, schemaInPath, overlayInPath, defaultMeta);
-    } else {
-      const templateContent = "`" + fs.readFileSync(templateDir + "/" + targetName) + "`";
-      if (targetName.includes("types")) {
-        types.map((types: any) => {
-          fs.writeFileSync(targetDir + "/" + targetName.replace("types", types.name).toLowerCase(), eval(templateContent));
-        })
-      } else fs.writeFileSync(targetDir + "/" + targetName, eval(templateContent));
-    }
-  });
+  function genCore(templateDir: string, targetDir: string) {
+    fs.readdirSync(templateDir).forEach((targetName: string) => {
+      if (fs.statSync(templateDir + "/" + targetName).isDirectory()){
+        try {fs.mkdirSync(targetDir + "/" + targetName)} catch (err) {if (err.code !== 'EEXIST') throw err}
+        genCore(templateDir + "/" + targetName, targetDir + "/" + targetName);
+      } else {
+        const templateContent = "`" + fs.readFileSync(templateDir + "/" + targetName) + "`";
+        if (targetName.includes("types")) {
+          types.map((types: any) => {
+            fs.writeFileSync(targetDir + "/" + targetName.replace("types", types.name).toLowerCase(), eval(templateContent));
+          })
+        } else fs.writeFileSync(targetDir + "/" + targetName, eval(templateContent));
+      }
+    });
+  }
+
+  genCore(templateDir, targetDir);
 }

@@ -4,5 +4,7 @@ required: ${getType(item) && '!'==getType(item).slice(-1) ? true : false},
 validation: null,
 align: "${['money','money!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : 'left'}",
 attributes: null,
-readonly: false,
-templates: ["switchboard","list", "crud"]
+readonly: ${(isEntity(item) && item.fields[0].name!=='nodeId') || (['nodeId','created','lastupdated','by'].includes(item.name) && isField(item))},
+templates: [ "switchboard"
+${item.name=='nodeId' ? '' : ', "list"'}
+${item.name=='nodeId' ? '' : ', "crud"'} ]

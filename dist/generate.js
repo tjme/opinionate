@@ -58,11 +58,12 @@ function toProperCase(txt) {
 }
 exports.toProperCase = toProperCase;
 function isEntity(entity) {
-    return entity.kind == "OBJECT" && entity.name !== "Query" && entity.interfaces.length > 0 && entity.interfaces[0].name == "Node";
+    return entity.kind == "OBJECT" && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
+        && !entity.name.endsWith("Connection") && !entity.name.endsWith("Edge") && !entity.name.endsWith("Payload");
 }
 exports.isEntity = isEntity;
 function isField(field) {
-    return field.name !== "nodeId" && field.type && (field.type.kind == "SCALAR" || (field.type["ofType"] && field.type.ofType["kind"] == "SCALAR"));
+    return field.type && (field.type.kind == "SCALAR" || (field.type["ofType"] && field.type.ofType["kind"] == "SCALAR"));
 }
 exports.isField = isField;
 function getType(field) {
@@ -71,12 +72,10 @@ function getType(field) {
 exports.getType = getType;
 function isType(field, type) { return (getType(field) === type); }
 exports.isType = isType;
-;
 function pluralize(word) {
     return _pluralize.plural(word);
 }
 exports.pluralize = pluralize;
-;
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, returnOverlay = false) {
     function mergeMeta(item, overlay) {
@@ -157,27 +156,30 @@ exports.metaMerge = metaMerge;
 function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMeta) {
     const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta);
     const types = schema.data.__schema.types.filter((f) => isEntity(f));
-    fs.readdirSync(templateDir).forEach((targetName) => {
-        if (fs.statSync(templateDir + "/" + targetName).isDirectory()) {
-            try {
-                fs.mkdirSync(targetDir + "/" + targetName);
+    function genCore(templateDir, targetDir) {
+        fs.readdirSync(templateDir).forEach((targetName) => {
+            if (fs.statSync(templateDir + "/" + targetName).isDirectory()) {
+                try {
+                    fs.mkdirSync(targetDir + "/" + targetName);
+                }
+                catch (err) {
+                    if (err.code !== 'EEXIST')
+                        throw err;
+                }
+                genCore(templateDir + "/" + targetName, targetDir + "/" + targetName);
             }
-            catch (err) {
-                if (err.code !== 'EEXIST')
-                    throw err;
+            else {
+                const templateContent = "`" + fs.readFileSync(templateDir + "/" + targetName) + "`";
+                if (targetName.includes("types")) {
+                    types.map((types) => {
+                        fs.writeFileSync(targetDir + "/" + targetName.replace("types", types.name).toLowerCase(), eval(templateContent));
+                    });
+                }
+                else
+                    fs.writeFileSync(targetDir + "/" + targetName, eval(templateContent));
             }
-            generate(templateDir + "/" + targetName, targetDir + "/" + targetName, schemaInPath, overlayInPath, defaultMeta);
-        }
-        else {
-            const templateContent = "`" + fs.readFileSync(templateDir + "/" + targetName) + "`";
-            if (targetName.includes("types")) {
-                types.map((types) => {
-                    fs.writeFileSync(targetDir + "/" + targetName.replace("types", types.name).toLowerCase(), eval(templateContent));
-                });
-            }
-            else
-                fs.writeFileSync(targetDir + "/" + targetName, eval(templateContent));
-        }
-    });
+        });
+    }
+    genCore(templateDir, targetDir);
 }
 exports.generate = generate;

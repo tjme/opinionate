@@ -4,12 +4,34 @@
     "description": null,
     "fields": [
       {
+        "name": "nodeId",
+        "description": "A globally unique identifier. Can be used in various places throughout the system to identify this single value.",
+        "meta": {
+          "label": "Node ID",
+          "format": "string",
+          "required": false,
+          "validation": null,
+          "align": "left",
+          "attributes": null,
+          "readonly": true,
+          "templates": [
+            "switchboard"
+          ]
+        }
+      },
+      {
         "name": "id",
         "description": null,
         "meta": {
           "label": "Id",
+          "format": "number",
+          "required": false,
+          "validation": null,
+          "align": "right",
+          "attributes": null,
           "readonly": false,
           "templates": [
+            "switchboard",
             "list",
             "crud"
           ]
@@ -20,8 +42,14 @@
         "description": null,
         "meta": {
           "label": "Name",
+          "format": "string",
+          "required": false,
+          "validation": null,
+          "align": "left",
+          "attributes": null,
           "readonly": false,
           "templates": [
+            "switchboard",
             "list",
             "crud"
           ]
@@ -30,8 +58,14 @@
     ],
     "meta": {
       "label": "Hero",
+      "format": "string",
+      "required": false,
+      "validation": null,
+      "align": "left",
+      "attributes": null,
       "readonly": false,
       "templates": [
+        "switchboard",
         "list",
         "crud"
       ]
