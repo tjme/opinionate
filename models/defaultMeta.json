@@ -1,4 +1,5 @@
 label: "${toProperCase(item.name).replace('ref',' Ref').replace('updated','  Updated').replace('date',' Date').replace('type',' Type').replace('id',' ID')}",
+menu: null,
 format: "${['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime','Datetime!'].includes(getType(item)) ? 'date' : ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
 required: ${getType(item) && '!'==getType(item).slice(-1) ? true : false},
 validation: null,

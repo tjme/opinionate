@@ -8,6 +8,7 @@
         "description": "A globally unique identifier. Can be used in various places throughout the system to identify this single value.",
         "meta": {
           "label": "Node ID",
+          "menu": null,
           "format": "string",
           "required": false,
           "validation": null,
@@ -24,6 +25,7 @@
         "description": null,
         "meta": {
           "label": "Id",
+          "menu": null,
           "format": "number",
           "required": false,
           "validation": null,
@@ -42,6 +44,7 @@
         "description": null,
         "meta": {
           "label": "Name",
+          "menu": null,
           "format": "string",
           "required": false,
           "validation": null,
@@ -58,6 +61,7 @@
     ],
     "meta": {
       "label": "Hero",
+      "menu": null,
       "format": "string",
       "required": false,
       "validation": null,

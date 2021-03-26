@@ -16,7 +16,7 @@ ${!types.meta.templates.includes("list") ? "" : `\
           <div class="header-button-group">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
-              <InputText v-model="filters['global'].value" placeholder="Search..." style="width:8rem" />
+              <InputText v-model="filters['global'].value" placeholder="Filter..." style="width:8rem" />
             </span>
 `+(types.meta.readonly ? "" : `\
             <Button

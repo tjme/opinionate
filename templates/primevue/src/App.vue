@@ -4,9 +4,11 @@
       <Toast position="top-right" />
       <Menubar class="op-compact" :model="[
         {icon: 'pi pi-align-left', label: 'Entities', items:[
-${types.map(types => `\
-          {icon: 'pi pi-table', label: '${types.meta.label}', to: '/${types.name.toLowerCase()}'}`).join(',\n')}
-          ] }
+${types.filter(t => !t.meta.menu || t.meta.menu=="Entities").map(types => `\
+          {icon: 'pi pi-table', label: '${types.meta.label}', to: '/${types.name.toLowerCase()}'}`).join(',\n')} ] },
+        {icon: 'pi pi-align-left', label: 'Admin', items:[
+${types.filter(t => t.meta.menu && t.meta.menu=="Admin").map(types => `\
+          {icon: 'pi pi-table', label: '${types.meta.label}', to: '/${types.name.toLowerCase()}'}`).join(',\n')} ] }
         ]" />
       <router-view></router-view>
     </template>
