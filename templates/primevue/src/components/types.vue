@@ -76,10 +76,10 @@ ${!types.meta.templates.includes("list") ? "" : `\
     :style="{ width: '450px' }"
     header="`+types.meta.label+` Details"
     :modal="true"
-    class="p-fluid"
+    class="op-compact p-fluid"
   >
 `+(types.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields =>
-    '<div class="p-field"><label for="'+fields.name+'">'+fields.meta.label+'</label><'
+    '<div class="p-field"><span class="p-float-label"><'
 +(fields.meta.format=='text' ? 'Textarea :autoResize="true"'
 : fields.meta.format=='boolean' ? 'Checkbox :binary="true"'
 : fields.meta.format=='date' ? 'Calendar dateFormat="d M yy"'
@@ -87,7 +87,7 @@ ${!types.meta.templates.includes("list") ? "" : `\
 : fields.meta.format=='currency' ? 'InputNumber mode="currency" currency="GBP"'
 : fields.meta.format=='number' ? 'InputNumber :useGrouping=false'
 : 'InputText')+' id="'+fields.name+'" v-model="record.'+fields.name.toLowerCase()+'" '
-+(!fields.meta.readonly ? '' : 'readonly disabled')+' /></div>').join("\n"))+`
++(!fields.meta.readonly && !types.meta.readonly ? '' : 'readonly disabled')+' /><label for="'+fields.name+'">'+fields.meta.label+'</label></span></div>').join("\n"))+`
     <template #footer>
       <Button label="`+(types.meta.readonly ? 'Close' : 'Cancel')+`" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
 `+(types.meta.readonly ? '' : `\

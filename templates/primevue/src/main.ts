@@ -10,6 +10,7 @@ ${types.map(types => `\
 import ${types.name} from "./components/${types.name.toLowerCase()}.vue";`).join("\n")}
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
+import 'primeflex/primeflex.css';
 
 const url = (gql_api.prefix || "")+gql_api.hostname+(":"+gql_api.port || "")+(gql_api.path || "");
 const client = createClient({ url });
