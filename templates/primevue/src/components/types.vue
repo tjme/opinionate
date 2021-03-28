@@ -76,7 +76,7 @@ ${!types.meta.templates.includes("list") ? "" : `\
     :style="{ width: '450px' }"
     header="`+types.meta.label+` Details"
     :modal="true"
-    class="op-compact p-fluid"
+    class="op-compact p-fluid p-input-filled"
   >
 `+(types.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields =>
     '<div class="p-field"><span class="p-float-label"><'

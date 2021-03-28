@@ -53,23 +53,23 @@ ${types.filter(t => t.meta.menu && t.meta.menu=="Admin").map(types => `\
   .op-compact .p-datatable-tbody > tr > td,
   .op-compact .p-paginator,
   .op-compact .p-toolbar,
-  .op-compact .p-inputtext { padding: 0.2rem 0.4rem!important; }
-  .op-compact .p-input-icon-left > .p-inputtext { padding-left: 2rem!important; }
-  /* .op-compact .p-dropdown { height: 2rem; } */
-  .op-compact .p-dropdown-label { padding-top: 0.7rem!important; }
-  .op-compact .p-dialog-content .p-field { padding-top: 0.3rem; }
-  .op-compact .p-dialog-content .p-checkbox { padding-left: 0.3rem; }
-  .op-compact .p-dialog-content .p-field textarea { width: 100%; height: 4rem; }
-  .op-compact .p-float-label input:focus ~ label, .op-compact .p-float-label input.p-filled ~ label,
-  .op-compact .p-float-label textarea:focus ~ label, .op-compact .p-float-label textarea.p-filled ~ label,
-  .op-compact .p-float-label .p-inputwrapper-focus ~ label,
-  .op-compact .p-float-label .p-inputwrapper-filled ~ label { top: -.5rem; }
-  /* .op-compact .p-paginator-pages .p-paginator-page,
+  .op-compact .header-button-group .p-inputtext { padding: 0.2rem 0.4rem; }
+  .op-compact .header-button-group .p-input-icon-left > .p-inputtext { padding-left: 2rem; }
+  .op-compact .p-paginator .p-dropdown { height: 2rem; }
+  .op-compact .p-paginator .p-dropdown-label { padding-top: 0.4rem; }
+  .op-compact .p-paginator-pages .p-paginator-page,
   .op-compact .p-paginator-first,
   .op-compact .p-paginator-prev,
   .op-compact .p-paginator-next,
   .op-compact .p-paginator-last,
-  .op-compact .p-paginator-current { height: 2rem; min-width: 2rem; } */
+  .op-compact .p-paginator-current { height: 2rem; min-width: 2rem; }
+  /* .op-compact .p-dialog-content .p-field { padding-top: 0.3rem; } */
+  /* .op-compact .p-dialog-content .p-checkbox { padding-left: 0.3rem; } */
+  /* .op-compact .p-dialog-content .p-field textarea { width: 100%; height: 4rem; } */
+  /* .op-compact .p-float-label input:focus ~ label, .op-compact .p-float-label input.p-filled ~ label,
+  .op-compact .p-float-label textarea:focus ~ label, .op-compact .p-float-label textarea.p-filled ~ label,
+  .op-compact .p-float-label .p-inputwrapper-focus ~ label,
+  .op-compact .p-float-label .p-inputwrapper-filled ~ label { top: -.5rem; } */
   .op-compact .p-button { padding: 0.2rem; }
   .op-compact .p-button.p-button-icon-only { height: 1.7rem!important; width: 1.7rem; }
   .op-compact .p-input-icon-left > i:first-of-type { position: relative; left: 1.5rem; }
