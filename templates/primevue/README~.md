@@ -6,6 +6,7 @@ A sample app to demonstrate the use of the following combination of tech. (as a 
 - PostGraphile
 - Vue v3
 - TypeScript
+- Vee-Validate
 - PrimeVue
 - Villus
 - Vite
@@ -18,9 +19,5 @@ Communications with the GraphQL server are supported by Villus (rather than the 
 
 Work in progress:
 
-- Switchboard accordion is useful for testing, but not really production use
 - linking fields/columns not yet covered (e.g. counts of related)
-- Add proper form validation
-- There could be more error checking
-- Subscription (and/or use of observables) is missing
-- CSV import is missing
+- Switchboard accordion can be useful for testing, but maybe not for production

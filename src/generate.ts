@@ -64,12 +64,12 @@ export function stringify(ob: any): string {
  * @returns {string}
  */
 export function convert(ob: string): string {
-  return "{"+ob
+  return (ob.trim().startsWith("{") ? "" : "{")+ob
   .replace(/^\((.*)\)$/g,'$1').replace(/^\"(.*)\"$/g,'$1').replace(/^\{(.*)\}$/g,'$1') // Remove any outer brackets and/or double quotes and/or curly brackets
 	.replace(/:\s*"([^"]*)"/g, function(match, p1) { return ': "' + p1.replace(/:/g, '@colon@') + '"'; })
 	.replace(/:\s*'([^']*)'/g, function(match, p1) { return ': "' + p1.replace(/:/g, '@colon@') + '"'; })
 	.replace(/(['"])?([a-z0-9A-Z_]+)(['"])?\s*:/g, '"$2": ')
-	.replace(/@colon@/g, ':')+"}"
+	.replace(/@colon@/g, ':')+(ob.trim().endsWith("}") ? "" : "}")
 }
 
 /**
@@ -80,8 +80,9 @@ export function toProperCase(txt: string): string {
   return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); }
 
 export function isEntity(entity: any): boolean {
-  return entity.kind == "OBJECT" && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
-  && !entity.name.endsWith("Connection") && !entity.name.endsWith("Edge") && !entity.name.endsWith("Payload") }
+  return entity.kind == "OBJECT"
+    && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
+    && !entity.name.endsWith("Connection") && !entity.name.endsWith("Edge") && !entity.name.endsWith("Payload") }
 
 export function isField(field: any): boolean {
   return field.type && (field.type.kind == "SCALAR" || (field.type["ofType"] && field.type.ofType["kind"] == "SCALAR")) }

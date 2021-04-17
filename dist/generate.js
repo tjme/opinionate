@@ -45,12 +45,12 @@ function stringify(ob) {
 exports.stringify = stringify;
 ;
 function convert(ob) {
-    return "{" + ob
+    return (ob.trim().startsWith("{") ? "" : "{") + ob
         .replace(/^\((.*)\)$/g, '$1').replace(/^\"(.*)\"$/g, '$1').replace(/^\{(.*)\}$/g, '$1')
         .replace(/:\s*"([^"]*)"/g, function (match, p1) { return ': "' + p1.replace(/:/g, '@colon@') + '"'; })
         .replace(/:\s*'([^']*)'/g, function (match, p1) { return ': "' + p1.replace(/:/g, '@colon@') + '"'; })
         .replace(/(['"])?([a-z0-9A-Z_]+)(['"])?\s*:/g, '"$2": ')
-        .replace(/@colon@/g, ':') + "}";
+        .replace(/@colon@/g, ':') + (ob.trim().endsWith("}") ? "" : "}");
 }
 exports.convert = convert;
 function toProperCase(txt) {
@@ -58,7 +58,8 @@ function toProperCase(txt) {
 }
 exports.toProperCase = toProperCase;
 function isEntity(entity) {
-    return entity.kind == "OBJECT" && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
+    return entity.kind == "OBJECT"
+        && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
         && !entity.name.endsWith("Connection") && !entity.name.endsWith("Edge") && !entity.name.endsWith("Payload");
 }
 exports.isEntity = isEntity;
