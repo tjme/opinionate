@@ -20,4 +20,3 @@ Communications with the GraphQL server are supported by Villus (rather than the 
 Work in progress:
 
 - linking fields/columns not yet covered (e.g. counts of related)
-- Switchboard accordion can be useful for testing, but maybe not for production

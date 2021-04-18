@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import * as _pluralize from 'pluralize';
+import * as _pluralize from "pluralize";
 
 /**
  * Simple object check.
@@ -80,7 +80,7 @@ export function toProperCase(txt: string): string {
   return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); }
 
 export function isEntity(entity: any): boolean {
-  return entity.kind == "OBJECT"
+  return entity.kind == "OBJECT" && entity.interfaces.length > 0 // && entity.interfaces[0].name == "Node"
     && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
     && !entity.name.endsWith("Connection") && !entity.name.endsWith("Edge") && !entity.name.endsWith("Payload") }
 

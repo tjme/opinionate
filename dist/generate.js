@@ -58,7 +58,7 @@ function toProperCase(txt) {
 }
 exports.toProperCase = toProperCase;
 function isEntity(entity) {
-    return entity.kind == "OBJECT"
+    return entity.kind == "OBJECT" && entity.interfaces.length > 0
         && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
         && !entity.name.endsWith("Connection") && !entity.name.endsWith("Edge") && !entity.name.endsWith("Payload");
 }

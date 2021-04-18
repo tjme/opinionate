@@ -79,6 +79,7 @@ ${types.filter(t => t.meta.menu && t.meta.menu=="Admin").map(types => `\
   .op-compact .p-paginator-next,
   .op-compact .p-paginator-last,
   .op-compact .p-paginator-current { height: 2rem; min-width: 2rem; }
+  .op-compact .p-datatable-thead > tr > th { white-space: normal!important; font-size: 85%; }
   /* .op-compact .p-dialog-content .p-field { padding-top: 0.3rem; } */
   /* .op-compact .p-dialog-content .p-checkbox { padding-left: 0.3rem; } */
   /* .op-compact .p-dialog-content .p-field textarea { width: 100%; height: 4rem; } */
