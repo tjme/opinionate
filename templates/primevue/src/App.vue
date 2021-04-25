@@ -44,13 +44,11 @@ ${types.filter(t => t.meta.menu && t.meta.menu=="Admin").map(types => `\
   .confirmation-content i { padding-right: 1rem; }
   .confirmation-content span { line-height: 2; vertical-align: top; }
   .p-float-label .p-checkbox + label { left: 1.5rem; }
-  /* .p-datatable { min-width: 550px; } */
   .p-datatable-resizable .p-datatable-thead > tr > th { white-space: inherit; }
-  .p-datatable-resizable .p-datatable-tbody > tr > td { max-width: 20rem; white-space: inherit; }
+  .p-datatable-resizable .p-datatable-tbody > tr > td { max-width: 20rem; white-space: nowrap; }
   .p-accordion .p-accordion-content { padding: 0; }
   .p-menubar li.p-menuitem:hover .p-submenu-list { display: block; } /* fix for submenus in PrimeVue v3.3.5 */
   div.p-field.p-invalid > span.p-float-label > span.p-inputwrapper > input { background-image: linear-gradient(to bottom, #B00020, #B00020), linear-gradient(to bottom, #B00020, #B00020); }
-  /* div.p-field > span.p-float-label > small { color: #B00020; } */
   div.p-field.p-invalid > span.p-float-label > label { color: #B00020; top: 34%; }
 
   @media screen and (min-width: 500px) { /* reduce menubar breakpoint */
@@ -80,25 +78,10 @@ ${types.filter(t => t.meta.menu && t.meta.menu=="Admin").map(types => `\
   .op-compact .p-paginator-last,
   .op-compact .p-paginator-current { height: 2rem; min-width: 2rem; }
   .op-compact .p-datatable-thead > tr > th { white-space: normal!important; font-size: 85%; }
-  /* .op-compact .p-dialog-content .p-field { padding-top: 0.3rem; } */
-  /* .op-compact .p-dialog-content .p-checkbox { padding-left: 0.3rem; } */
-  /* .op-compact .p-dialog-content .p-field textarea { width: 100%; height: 4rem; } */
-  /* .op-compact .p-float-label input:focus ~ label, .op-compact .p-float-label input.p-filled ~ label,
-  .op-compact .p-float-label textarea:focus ~ label, .op-compact .p-float-label textarea.p-filled ~ label,
-  .op-compact .p-float-label .p-inputwrapper-focus ~ label,
-  .op-compact .p-float-label .p-inputwrapper-filled ~ label { top: -.5rem; } */
   .op-compact .p-button { padding: 0.2rem; }
   .op-compact .p-button.p-button-icon-only { height: 1.7rem!important; width: 1.7rem; }
   .op-compact .p-input-icon-left > i:first-of-type { position: relative; left: 1.5rem; }
   .op-compact .p-hidden-accessible { width: 1px; overflow: hidden; }
-  /* .op-compact .button-nogap,
-  .op-compact .p-fileupload { margin-right: 0!important; } */
-  /* .op-compact .p-input-icon-left,
-  .op-compact .p-input-icon-right,
-  .op-compact .p-button,
-  .op-compact .p-buttonset { margin-right: 4px!important; } */
-  /* .op-compact .header-button-group { text-align: right; } */
-  /* #app .header-button-group .p-input-icon-left { flex-shrink: 3; } */
   .op-compact.p-menubar { padding: 0.3rem; }
   .op-compact.p-menubar .p-menuitem-link { padding: 0.3rem; }
 </style>

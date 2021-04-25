@@ -66,7 +66,7 @@ ${!types.meta.templates.includes("list") ? "" : `\
     <template #footer>
       <Button label="`+(types.meta.readonly && types.meta.readonly!="false" ? 'Close' : 'Cancel')+`" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
 `+(types.meta.readonly && types.meta.readonly!="false" ? '' : `\
-      <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" :disabled="meta.valid == 0 || meta.dirty == 0" />
+      <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" :disabled="!meta.valid || !meta.dirty" />
 `)+`    </template>
   </Dialog>
 
@@ -96,22 +96,14 @@ ${!types.meta.templates.includes("list") ? "" : `\
 
 <script lang="ts">
   import { defineComponent, ref } from "vue";
-  import DataTable from "primevue/datatable";
-  import Column from "primevue/column";
-  import InputText from "primevue/inputtext";
-  import InputNumber from "primevue/inputnumber";
-  import Calendar from "primevue/calendar";
-  import Checkbox from "primevue/checkbox";
-  import Textarea from "primevue/textarea";
-  import Button from "primevue/button";
-  import Dialog from "primevue/dialog";
   import { useToast } from "primevue/usetoast";
+  import { FilterMatchMode, FilterOperator } from "primevue/api";
   import { useQuery, useMutation } from "villus";
   import gql from 'graphql-tag';
   import { useField, useForm } from 'vee-validate';
-  // import * as yup from 'yup';
-  // import { toFormValidator } from '@vee-validate/yup';
-  // import * as yup from 'yup';
+  // import * as yup from "yup";
+  // import { toFormValidator } from "@vee-validate/yup";
+  // import * as zod from "zod";
   import { `+types.name+(types.meta.readonly && types.meta.readonly!="false" ? '' : ', '+types.name+'Patch')+` } from '../../models/types';
 
   const `+types.name+`Fields = gql\`fragment `+types.name+`Fields on `+types.name+` {`
@@ -140,17 +132,6 @@ ${!types.meta.templates.includes("list") ? "" : `\
 
   export default defineComponent({
     name: "`+types.name+`",
-    components: {
-      DataTable,
-      Column,
-      InputText,
-      InputNumber,
-      Calendar,
-      Checkbox,
-      Textarea,
-      Button,
-      Dialog,
-    },
     async setup() {
       function formatCurrency(value: string): string | undefined {
         if (value) { const v = +value; return v.toLocaleString("en-GB", {style: "currency", currency: "GBP"}); } };

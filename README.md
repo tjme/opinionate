@@ -14,7 +14,7 @@ Alternatively, Opinionate can be used with other GraphQL server-side technologie
 
 - install [Node.js](https://nodejs.org/en)
 - optionally install [Yarn](https://yarnpkg.com/) (rather than using NPM)
-- install [TypeScript](https://www.typescriptlang.org/) (you may need elevated privileges, e.g. prefix with sudo) `yarn global install typescript`
+- install [TypeScript](https://www.typescriptlang.org/) (you may need elevated privileges, e.g. prefix with sudo) `yarn global add typescript`
 - install [PostgreSQL](https://www.postgresql.org)
 - install PostGraphile globally `sudo yarn global add postgraphile` (or `npm -g i postgraphile`)
 - optionally install a good IDE with TypeScript support, e.g. [VS Code](https://code.visualstudio.com)
@@ -52,6 +52,7 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 ## Example [Vue](https://vuejs.org)/[PrimeVue](https://github.com/primefaces/primevue) front-end, using [Vite](https://github.com/vitejs/vite) and [Villus](https://github.com/logaretm/villus)
 
 - install Vue CLI: `yarn global add @vue/cli`
+- install Vite: `yarn global add vite`
 - initialize: `yarn create @vitejs/app --template vue-ts vue-toh`
 - change to your project directory: `cd vue-toh`
 - you are advised to initialize version control to help track source code changes (e.g. `git init`)

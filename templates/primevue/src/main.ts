@@ -5,6 +5,15 @@ import { config } from '../package.json';
 import { defineRule } from 'vee-validate';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import InputText from "primevue/inputtext";
+import InputNumber from "primevue/inputnumber";
+import Calendar from "primevue/calendar";
+import Checkbox from "primevue/checkbox";
+import Textarea from "primevue/textarea";
+import Button from "primevue/button";
+import Dialog from "primevue/dialog";
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
@@ -24,9 +33,9 @@ const client = createClient({ url });
 
 const routes = [
   // { path: "/", },
-  { path: '/switchboard', component: Switchboard },
+  { path: '/switchboard', component: Switchboard, props: true },
 ${types.map(types => `\
-  { path: '/${types.name.toLowerCase()}', component: ${types.name} },`).join("\n")}
+  { path: '/${types.name.toLowerCase()}', component: ${types.name}, props: true },`).join("\n")}
 ]
 
 const router = createRouter({
@@ -38,5 +47,14 @@ createApp(App)
 .use(router)
 .use(PrimeVue, {ripple: true})
 .use(ToastService)
+.component('DataTable', DataTable)
+.component('Column', Column)
+.component('InputText', InputText)
+.component('InputNumber', InputNumber)
+.component('Calendar', Calendar)
+.component('Checkbox', Checkbox)
+.component('Textarea', Textarea)
+.component('Button', Button)
+.component('Dialog', Dialog)
 .use(client)
 .mount('#app');
