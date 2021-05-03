@@ -68,7 +68,7 @@ function isField(field) {
 }
 exports.isField = isField;
 function getType(field) {
-    return isField(field) && (field.type.name || (field.type.ofType && field.type.ofType.name));
+    return isField(field) && field.type && (field.type.name || (field.type.ofType && field.type.ofType.name));
 }
 exports.getType = getType;
 function isType(field, type) { return (getType(field) === type); }
@@ -78,9 +78,10 @@ function pluralize(word) {
 }
 exports.pluralize = pluralize;
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
-function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, returnOverlay = false) {
-    function mergeMeta(item, overlay) {
-        const es6Meta = "`" + ((defaultMeta && fs.readFileSync(defaultMeta).toString()) ||
+function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, noDequote = false, returnOverlay = false) {
+    const es6MetaIn = defaultMeta && fs.readFileSync(defaultMeta).toString();
+    function mergeMeta(item, overlay, noDequote = false, parent) {
+        let es6Meta = "`" + (es6MetaIn ||
             `
         label: "${toProperCase(item.name)}",
         format: "${['money', 'money!'].includes(getType(item)) ? 'currency' : ['Boolean', 'Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime', 'Datetime!'].includes(getType(item)) ? 'date' : ['Int', 'Int!', 'BigInt', 'BigInt!', 'Float', 'Float!', 'BigFloat', 'BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
@@ -91,7 +92,17 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, over
         readonly: false,
         templates: ["switchboard","list", "crud"]
       `) + "`";
-        item[metaProp] = JSON.parse(convert(eval(es6Meta)));
+        let tempMeta = JSON.parse(convert(eval(es6Meta)));
+        if (!noDequote) {
+            tempMeta = Object.fromEntries(Object.entries(tempMeta).map(([key, val]) => [key,
+                val === "null" ? null :
+                    val === "true" ? true :
+                        val === "false" ? false :
+                            val === "undefined" ? undefined :
+                                val
+            ]));
+        }
+        item[metaProp] = tempMeta;
         if (item.description) {
             const [description, meta] = item.description.split(metaMarker);
             if (meta && !ignoreComments) {
@@ -127,13 +138,12 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, over
         .forEach((t) => {
         if (!allowExisting && t.hasOwnProperty(metaProp))
             throw new Error(`The schema already contains metadata (for table ${t.name})`);
-        mergeMeta(t, overlayIn);
+        mergeMeta(t, overlayIn, noDequote);
         t.fields
-            .filter((f) => isField(f))
             .forEach((f) => {
             if (!allowExisting && f.hasOwnProperty(metaProp))
                 throw new Error(`The schema already contains metadata (for field ${f.name})`);
-            mergeMeta(f, overlayIn && overlayIn.find((oi) => oi.name == t.name).fields);
+            mergeMeta(f, overlayIn && overlayIn.find((oi) => oi.name == t.name).fields, noDequote, t);
         });
     });
     if (schemaOutPath)

@@ -88,7 +88,7 @@ export function isField(field: any): boolean {
   return field.type && (field.type.kind == "SCALAR" || (field.type["ofType"] && field.type.ofType["kind"] == "SCALAR")) }
 
 export function getType(field: any): string {
-  return isField(field) && (field.type.name || (field.type.ofType && field.type.ofType.name)) }
+  return isField(field) && field.type && (field.type.name || (field.type.ofType && field.type.ofType.name)) }
 
 export function isType(field: any, type: string): boolean { return (getType(field) === type) }
 
@@ -111,17 +111,20 @@ const metaProp = "meta", metaMarker = "@meta", separator = "\n";
  * @param cleanDescriptions whether to remove metadata from descriptions/comments
  * @param ignoreComments ignore any existing metadata in base schema comments
  * @param relaxedStructure don't limit to just the structure specified in the default metadata
+ * @param noDequote don't try to remove quotes from values that shouldn't normally be quoted (e.g. null)
  * @param returnOverlay return only the merged overlay, rather than the full merged schema
  */
 export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultMeta?: string,
   schemaOutPath?: string, overlayOutPath?: string, commentsOutPath?: string,
-  allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, returnOverlay = false
+  allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, noDequote = false, returnOverlay = false
 ): any {
-  
-  function mergeMeta(item: any, overlay: any[]) {
+
+  const es6MetaIn = defaultMeta && fs.readFileSync(defaultMeta).toString();
+
+  function mergeMeta(item: any[any], overlay: any[], noDequote: boolean = false, parent?: any) {
     // Define meta to match GraphQL:
     // directive @meta(label: String, readonly: Boolean = false, templates: [String] = ["list", "crud"]) on OBJECT | FIELD_DEFINITION
-    const es6Meta = "`" + ((defaultMeta && fs.readFileSync(defaultMeta).toString()) ||
+    let es6Meta = "`" + (es6MetaIn ||
       `
         label: "${toProperCase(item.name)}",
         format: "${['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime','Datetime!'].includes(getType(item)) ? 'date' : ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
@@ -132,7 +135,24 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
         readonly: false,
         templates: ["switchboard","list", "crud"]
       `) + "`";
-    item[metaProp] = JSON.parse(convert(eval(es6Meta)));
+    // if (!noDequote) {
+    //   es6Meta = es6Meta
+    //     .replace(/: "{(.+)}",/, ': {$1},')
+    //     // .replace(/: "\[(.+)]"/, ': [$1]')
+    // }
+    let tempMeta = JSON.parse(convert(eval(es6Meta)));
+    if (!noDequote) {
+      tempMeta = Object.fromEntries(
+        Object.entries(tempMeta).map(([ key, val ]) => [ key,
+          val === "null" ? null :
+          val === "true" ? true :
+          val === "false" ? false :
+          val === "undefined" ? undefined :
+          val
+        ])
+      );
+    }
+    item[metaProp] = tempMeta;
     if (item.description) {
       const [description, meta] = item.description.split(metaMarker);
       if (meta && !ignoreComments) { item[metaProp] = merge(item[metaProp], relaxedStructure, JSON.parse(convert(meta))); }
@@ -161,12 +181,12 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
   .filter((ft: any) => isEntity(ft))
   .forEach((t: any) => {
     if (!allowExisting && t.hasOwnProperty(metaProp)) throw new Error(`The schema already contains metadata (for table ${t.name})`);
-    mergeMeta(t, overlayIn);
+    mergeMeta(t, overlayIn, noDequote);
     t.fields
-    .filter((f: any) => isField(f))
+    // .filter((f: any) => isField(f))
     .forEach((f: any) => {
       if (!allowExisting && f.hasOwnProperty(metaProp)) throw new Error(`The schema already contains metadata (for field ${f.name})`);
-      mergeMeta(f, overlayIn && overlayIn.find((oi: any) => oi.name == t.name).fields);
+      mergeMeta(f, overlayIn && overlayIn.find((oi: any) => oi.name == t.name).fields, noDequote, t);
     });
   });
   if (schemaOutPath) fs.writeFileSync(schemaOutPath, JSON.stringify(schema, null, 2));

@@ -14,6 +14,8 @@ import Checkbox from "primevue/checkbox";
 import Textarea from "primevue/textarea";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
+import Menubar from "primevue/menubar";
+import Toast from "primevue/toast";
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
@@ -56,5 +58,7 @@ createApp(App)
 .component('Textarea', Textarea)
 .component('Button', Button)
 .component('Dialog', Dialog)
+.component('Menubar', Menubar)
+.component('Toast', Toast)
 .use(client)
 .mount('#app');

@@ -11,7 +11,7 @@ ${!types.meta.templates.includes("list") ? "" : `\
       class="op-compact p-datatable-striped p-datatable-gridlines" >
       <template #header>
         <div class="table-header">
-          <h2 class="p-m-0">`+types.meta.label+` List</h2>
+          <h2 class="p-m-0">{{title}}</h2>
           <div class="header-button-group">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
@@ -26,21 +26,15 @@ ${!types.meta.templates.includes("list") ? "" : `\
       </template>
       <Column :exportable="false" draggable="false">
         <template #body="slotProps">
-          <Button
-            icon="pi pi-`+(types.meta.readonly && types.meta.readonly!="false" ? 'info' : 'pencil')+`"
-            class="p-button-rounded p-button-success p-mr-2"
-            @click="editRecord(slotProps.data)" />
+          <Button icon="pi pi-`+(types.meta.readonly && types.meta.readonly!="false" ? 'info' : 'pencil')+`"
+            class="p-button-rounded p-button-success p-mr-2" @click="editRecord(slotProps.data)" />
 `+(types.meta.readonly && types.meta.readonly!="false" ? "" : `\
-          <Button
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-warning"
-            @click="confirmDeleteRecord(slotProps.data)" />
+          <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="confirmDeleteRecord(slotProps.data)" />
 `)+`        </template>
       </Column>
 `+(types.meta.readonly && types.meta.readonly!="false" ? "" : `\
-      <Column :exportable="false" draggable="false" selectionMode="multiple" headerStyle="width:2rem"></Column>
-`)+(types.fields.filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `\
-      <Column field="`+fields.name+`" header="`+fields.meta.label+`" \
+      <Column :exportable="false" draggable="false" selectionMode="multiple" headerStyle="width:2rem"></Column>`)+(types.fields.filter(f => f.meta.templates.includes("list") && getType(f)!=null).map(fields => `
+      <Column field="`+fields.name+(isField(fields) ? '' : '.totalCount')+`" header="`+fields.meta.label+`" \
 `+(fields.meta.readonly && fields.meta.readonly!="false" ? 'readonly ' : '')
 +(fields.meta.attributes || ":sortable='true'")
 +(fields.meta.align!='left' ? ' headerStyle="text-align:'+fields.meta.align+'" bodyStyle="text-align:'+fields.meta.align+'"' : '')+" >"
@@ -48,10 +42,10 @@ ${!types.meta.templates.includes("list") ? "" : `\
 +(fields.meta.format=='date' ? '<template #body="slotProps">{{formatDate(slotProps.data.'+fields.name+')}}</template>' : '')
 +(fields.meta.format=='datetime' ? '<template #body="slotProps">{{formatDateTime(slotProps.data.'+fields.name+')}}</template>' : '')
 +(fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(slotProps.data.'+fields.name+')}}</template>' : '')
-+"</Column>").join("\n"))
-+`    </DataTable>
++(getType(fields)==false ? '<template #body="slotProps"><a :href=\'"/#/'+fields.meta.link.entity+'?'+fields.meta.link.fields+'="+slotProps.data.'+fields.meta.link.fieldsFrom+'\' v-text="slotProps.data.'+fields.name+'.totalCount" /></template>' : '')
++"</Column>").join(""))+`
+    </DataTable>
   </div>
-
   <Dialog v-model:visible="recordDialog" :style="{ width: '450px' }" header="`+types.meta.label+` Details" :modal="true"
     class="op-compact p-fluid p-input-filled" >`+(types.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `
     <div class="p-field" :class="errors.`+fields.name+' ? \'p-invalid\' : \'\'"><span class="p-float-label"><'
@@ -96,20 +90,20 @@ ${!types.meta.templates.includes("list") ? "" : `\
 
 <script lang="ts">
   import { defineComponent, ref } from "vue";
+  import { useRoute } from "vue-router";
   import { useToast } from "primevue/usetoast";
-  import { FilterMatchMode, FilterOperator } from "primevue/api";
   import { useQuery, useMutation } from "villus";
-  import gql from 'graphql-tag';
-  import { useField, useForm } from 'vee-validate';
+  import gql from "graphql-tag";
+  import { useField, useForm } from "vee-validate";
   // import * as yup from "yup";
   // import { toFormValidator } from "@vee-validate/yup";
   // import * as zod from "zod";
-  import { `+types.name+(types.meta.readonly && types.meta.readonly!="false" ? '' : ', '+types.name+'Patch')+` } from '../../models/types';
+  import { `+types.name+(types.meta.readonly && types.meta.readonly!="false" ? '' : ', '+types.name+'Patch')+` } from "../../models/types";
 
   const `+types.name+`Fields = gql\`fragment `+types.name+`Fields on `+types.name+` {`
 +(types.fields.filter(f => isField(f))[0].name == "nodeId" ? "" : "nodeId:"+types.fields.filter(f => isField(f))[0].name+",")
-+(types.fields.filter(f => isField(f)).map(fields => fields.name))+` }\`;
-  const ReadAll = gql\`query readAll{all`+pluralize(types.name)+`
++(types.fields.filter(f => getType(f)!=null).map(fields => fields.name+(isField(fields) ? "" : "{totalCount}")))+` }\`;
+  const ReadAll = gql\`query readAll($condition:`+types.name+`Condition) {all`+pluralize(types.name)+` (condition:$condition)
     {nodes{...`+types.name+`Fields } } } $\{ `+types.name+`Fields}\`;
   const Read = gql\`query read($nodeId:ID!){ `+types.name.toLowerCase()+`(nodeId:$nodeId)
     {...`+types.name+`Fields } } $\{ `+types.name+`Fields}\`;
@@ -127,8 +121,8 @@ ${!types.meta.templates.includes("list") ? "" : `\
   const Delete = gql\`mutation delete($nodeId:ID!)
     {delete`+types.name+`(input:{nodeId:$nodeId})
     { `+types.name.toLowerCase()+`{...`+types.name+`Fields } } } $\{ `+types.name+`Fields}\`;
-  type recType = { `+types.fields.filter(f => isField(f)).map(fields => fields.name+'?: '+
-    (["text","date","datetime"].includes(fields.meta.format) ? "string" : fields.meta.format)).join(", ")+` }
+  type recType = { `+types.fields.filter(f => getType(f)!=null).map(fields => fields.name+'?: '+
+    (!isField(fields) ? "{ totalCount?: number }" : ["text","date","datetime"].includes(fields.meta.format) ? "string" : fields.meta.format)).join(", ")+` }
 
   export default defineComponent({
     name: "`+types.name+`",
@@ -139,6 +133,11 @@ ${!types.meta.templates.includes("list") ? "" : `\
         if (value) { const v = new Date(value); return v.toLocaleString("en-GB", {year: "numeric", month: "short", day: "numeric"}); } };
       function formatDateTime(value: string): string | undefined {
         if (value) { const v = new Date(value); return v.toLocaleString("en-GB", {year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit"}); } };
+      const route = useRoute();
+      const query = Object.entries(route.query).map(([key, val]) => [key, val && [`+types.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
+         '"'+f.name+'"').join()+`].includes(key) ? +val : val]);
+      const where = query.map(([key, val]) => key+" is "+val).join(", and ");
+      const title = ref("`+pluralize(types.meta.label)+`"+(where && ", where "+where));
       const validationSchema = {`+types.fields.filter(f => isField(f) && !["string","text","boolean"].includes(f.meta.format)).map(fields => `
         `+fields.name+': "'+(fields.meta.required ? "required|" : "")+fields.meta.format+'"').join(",")+`
       };
@@ -155,12 +154,14 @@ ${!types.meta.templates.includes("list") ? "" : `\
       const { data: cRecs, execute: cEx, error: cErrors } = useMutation(Create); // Must be defined before first await
       const { data: uRecs, execute: uEx, error: uErrors } = useMutation(Update); // Must be defined before first await
       const { data: dRecs, execute: dEx, error: dErrors } = useMutation(Delete); // Must be defined before first await
-      const { data: raRecs, error: raErrors } = await useQuery({query: ReadAll});
+      const { data: raRecs, error: raErrors } = await useQuery({query: ReadAll, variables:{condition:Object.fromEntries(query)}});
       raErrors.value && console.log("ReadAll Errors:"+JSON.stringify(raErrors.value.response.body.errors));
       const records = ref( raRecs.value.all`+pluralize(types.name)+`.nodes.map(r => {
-        `+types.fields.filter(f => isField(f)).map(f =>
-        ['number','currency'].includes(f.meta.format) ? 'r.'+f.name+' = r.'+f.name+' && +r.'+f.name+`;
-        ` : '').join('')+` return r }));
+        `+types.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
+         'r.'+f.name+' = r.'+f.name+' && +r.'+f.name+`;
+        `).join('')+types.fields.filter(f => !isField(f) && getType(f)!=null).map(f =>
+         'r.'+f.name+'.totalCount = r.'+f.name+'.totalCount && +r.'+f.name+`.totalCount;
+        `).join('')+` return r }));
 
       function recordName(record: `+types.name+`): string {
         const rn=`+types.fields.filter(f => isField(f)).map(fields => `
@@ -270,6 +271,7 @@ ${!types.meta.templates.includes("list") ? "" : `\
         formatCurrency,
         formatDate,
         formatDateTime,
+        title,
         recordName,
         openNew,
         hideDialog,

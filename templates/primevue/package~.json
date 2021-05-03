@@ -11,6 +11,16 @@
       "path": "/graphql"
     }
   },
+  "codegen": {
+    "schema": "models/schema.json",
+    "generates": {
+      "models/types.d.ts": {
+        "plugins": [
+          "typescript"
+        ]
+      }
+    }
+  },
   "scripts": {
     "gen-json": "postgraphile -c postgres://test:testpass@/toh -s public -X --export-schema-json models/schema.json",
     "gen-gql": "postgraphile -c postgres://test:testpass@/toh -s public -X --export-schema-graphql models/schema.gql",

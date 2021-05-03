@@ -23,16 +23,12 @@ ${types.filter(t => t.meta.menu && t.meta.menu=="Admin").map(types => `\
 
 <script lang="ts">
   import { defineComponent } from "vue";
-  import Menubar from "primevue/menubar";
   import SuspenseWithError from "./components/SuspenseWithError.vue";
-  import Toast from "primevue/toast";
 
   export default defineComponent({
     name: "App",
     components: {
-      Menubar,
       SuspenseWithError,
-      Toast,
     }
   })
 </script>
@@ -46,6 +42,7 @@ ${types.filter(t => t.meta.menu && t.meta.menu=="Admin").map(types => `\
   .p-float-label .p-checkbox + label { left: 1.5rem; }
   .p-datatable-resizable .p-datatable-thead > tr > th { white-space: inherit; }
   .p-datatable-resizable .p-datatable-tbody > tr > td { max-width: 20rem; white-space: nowrap; }
+  .p-datatable-resizable .p-datatable-tbody > tr > td a {display: table; height:100%; width:100%;}
   .p-accordion .p-accordion-content { padding: 0; }
   .p-menubar li.p-menuitem:hover .p-submenu-list { display: block; } /* fix for submenus in PrimeVue v3.3.5 */
   div.p-field.p-invalid > span.p-float-label > span.p-inputwrapper > input { background-image: linear-gradient(to bottom, #B00020, #B00020), linear-gradient(to bottom, #B00020, #B00020); }
@@ -60,14 +57,14 @@ ${types.filter(t => t.meta.menu && t.meta.menu=="Admin").map(types => `\
   }
 
   /* Make more compact/dense */
-  .op-compact .p-mr-2 { margin: 0 0.2rem!important; }
-  .op-compact .p-m-0 { margin: 0 0.2rem; }
+  .op-compact .p-mr-2 { margin: 0 0.1rem!important; }
+  .op-compact .p-m-0 { margin: 0 0.1rem; }
   .op-compact .p-datatable-header,
   .op-compact .p-datatable-thead > tr > th,
   .op-compact .p-datatable-tbody > tr > td,
   .op-compact .p-paginator,
   .op-compact .p-toolbar,
-  .op-compact .header-button-group .p-inputtext { padding: 0.2rem 0.4rem; }
+  .op-compact .header-button-group .p-inputtext { padding: 0.1rem 0.2rem; }
   .op-compact .header-button-group .p-input-icon-left > .p-inputtext { padding-left: 2rem; }
   .op-compact .p-paginator .p-dropdown { height: 2rem; }
   .op-compact .p-paginator .p-dropdown-label { padding-top: 0.4rem; }
