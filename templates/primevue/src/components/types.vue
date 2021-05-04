@@ -1,7 +1,7 @@
-${!types.meta.templates.includes("list") ? "" : `\
+${!entity.meta.templates.includes("list") ? "" : `\
 <template>
   <div class="card">
-    <DataTable `+(types.meta.attributes
+    <DataTable `+(entity.meta.attributes
       || ":autoLayout='true' :resizableColumns='true' columnResizeMode='expand' breakpoint='400px'")+`
       ref="dtMaster" :value="records" v-model:selection="selectedRecords"
       dataKey="nodeId" :filters="filters" :paginator="true"
@@ -17,7 +17,7 @@ ${!types.meta.templates.includes("list") ? "" : `\
               <i class="pi pi-search" />
               <InputText v-model="filters['global'].value" placeholder="Filter..." style="width:8rem" />
             </span>
-`+(types.meta.readonly && types.meta.readonly!="false" ? "" : `\
+`+(entity.meta.readonly && entity.meta.readonly!="false" ? "" : `\
             <Button label="New" icon="pi pi-plus" class="p-button-success p-mr-2" @click="openNew" />
             <Button label="Delete" icon="pi pi-trash" class="p-button-danger p-mr-2" @click="confirmDeleteSelected" :disabled="!selectedRecords || !selectedRecords.length" />
 `)+`            <Button label="Export" icon="pi pi-upload" class="p-button-help p-mr-2" @click="dtMaster.exportCSV()" />
@@ -26,28 +26,29 @@ ${!types.meta.templates.includes("list") ? "" : `\
       </template>
       <Column :exportable="false" draggable="false">
         <template #body="slotProps">
-          <Button icon="pi pi-`+(types.meta.readonly && types.meta.readonly!="false" ? 'info' : 'pencil')+`"
+          <Button icon="pi pi-`+(entity.meta.readonly && entity.meta.readonly!="false" ? 'info' : 'pencil')+`"
             class="p-button-rounded p-button-success p-mr-2" @click="editRecord(slotProps.data)" />
-`+(types.meta.readonly && types.meta.readonly!="false" ? "" : `\
+`+(entity.meta.readonly && entity.meta.readonly!="false" ? "" : `\
           <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="confirmDeleteRecord(slotProps.data)" />
 `)+`        </template>
       </Column>
-`+(types.meta.readonly && types.meta.readonly!="false" ? "" : `\
-      <Column :exportable="false" draggable="false" selectionMode="multiple" headerStyle="width:2rem"></Column>`)+(types.fields.filter(f => f.meta.templates.includes("list") && getType(f)!=null).map(fields => `
+`+(entity.meta.readonly && entity.meta.readonly!="false" ? "" : `\
+      <Column :exportable="false" draggable="false" selectionMode="multiple" headerStyle="width:2rem"></Column>`)+(entity.fields.filter(f => f.meta.templates.includes("list") && getType(f)!=null).map(fields => `
       <Column field="`+fields.name+(isField(fields) ? '' : '.totalCount')+`" header="`+fields.meta.label+`" \
 `+(fields.meta.readonly && fields.meta.readonly!="false" ? 'readonly ' : '')
 +(fields.meta.attributes || ":sortable='true'")
 +(fields.meta.align!='left' ? ' headerStyle="text-align:'+fields.meta.align+'" bodyStyle="text-align:'+fields.meta.align+'"' : '')+" >"
-+(fields.meta.format=='boolean' ? '<template #body="slotProps"><Checkbox name="'+fields.name+'" v-model="slotProps.data.'+fields.name+'" :binary="true" :disabled="true" /></template>' : '')
-+(fields.meta.format=='date' ? '<template #body="slotProps">{{formatDate(slotProps.data.'+fields.name+')}}</template>' : '')
-+(fields.meta.format=='datetime' ? '<template #body="slotProps">{{formatDateTime(slotProps.data.'+fields.name+')}}</template>' : '')
-+(fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(slotProps.data.'+fields.name+')}}</template>' : '')
-+(getType(fields)==false ? '<template #body="slotProps"><a :href=\'"/#/'+fields.meta.link.entity+'?'+fields.meta.link.fields+'="+slotProps.data.'+fields.meta.link.fieldsFrom+'\' v-text="slotProps.data.'+fields.name+'.totalCount" /></template>' : '')
++((fields.meta.link ? '<template #body="slotProps"><a :href=\'"/#/'+fields.meta.link.entity+'?'+(fields.meta.link.fields || types.find(e => e.name.toLowerCase()==fields.meta.link.entity).meta.primaryKey)+'="+slotProps.data.'+fields.meta.link.fieldsFrom+'\' v-text="slotProps.data.'+fields.name+(getType(fields)==false ? '.totalCount' : '')+'" >' : '')
++(fields.meta.format=='boolean' ? '<template #body="slotProps"><Checkbox name="'+fields.name+'" v-model="slotProps.data.'+fields.name+'" :binary="true" :disabled="true" /></template>' :
+fields.meta.format=='date' ? '<template #body="slotProps">{{formatDate(slotProps.data.'+fields.name+')}}</template>' :
+fields.meta.format=='datetime' ? '<template #body="slotProps">{{formatDateTime(slotProps.data.'+fields.name+')}}</template>' :
+fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(slotProps.data.'+fields.name+')}}</template>' : '')
++(fields.meta.link ? '</a></template>' : ''))
 +"</Column>").join(""))+`
     </DataTable>
   </div>
-  <Dialog v-model:visible="recordDialog" :style="{ width: '450px' }" header="`+types.meta.label+` Details" :modal="true"
-    class="op-compact p-fluid p-input-filled" >`+(types.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `
+  <Dialog v-model:visible="recordDialog" :style="{ width: '450px' }" header="`+entity.meta.label+` Details" :modal="true"
+    class="op-compact p-fluid p-input-filled" >`+(entity.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `
     <div class="p-field" :class="errors.`+fields.name+' ? \'p-invalid\' : \'\'"><span class="p-float-label"><'
 +(fields.meta.format=='text' ? 'Textarea :autoResize="true"'
 : fields.meta.format=='boolean' ? 'Checkbox :binary="true"'
@@ -56,10 +57,10 @@ ${!types.meta.templates.includes("list") ? "" : `\
 : fields.meta.format=='currency' ? 'InputNumber mode="currency" currency="GBP"'
 : fields.meta.format=='number' ? 'InputNumber :useGrouping=false'
 : 'InputText')+' id="'+fields.name+'" v-model="'+fields.name+'V"'
-+(!(fields.meta.readonly && fields.meta.readonly!="false") && !(types.meta.readonly && types.meta.readonly!="false") ? '' : ' readonly disabled')+' /><label for="'+fields.name+'">'+fields.meta.label+'</label><small class="p-error">{{errors.'+fields.name+'}}</small></span></div>').join(""))+`
++(!(fields.meta.readonly && fields.meta.readonly!="false") && !(entity.meta.readonly && entity.meta.readonly!="false") ? '' : ' readonly disabled')+' /><label for="'+fields.name+'">'+fields.meta.label+'</label><small class="p-error">{{errors.'+fields.name+'}}</small></span></div>').join(""))+`
     <template #footer>
-      <Button label="`+(types.meta.readonly && types.meta.readonly!="false" ? 'Close' : 'Cancel')+`" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
-`+(types.meta.readonly && types.meta.readonly!="false" ? '' : `\
+      <Button label="`+(entity.meta.readonly && entity.meta.readonly!="false" ? 'Close' : 'Cancel')+`" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
+`+(entity.meta.readonly && entity.meta.readonly!="false" ? '' : `\
       <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveRecord" :disabled="!meta.valid || !meta.dirty" />
 `)+`    </template>
   </Dialog>
@@ -98,34 +99,34 @@ ${!types.meta.templates.includes("list") ? "" : `\
   // import * as yup from "yup";
   // import { toFormValidator } from "@vee-validate/yup";
   // import * as zod from "zod";
-  import { `+types.name+(types.meta.readonly && types.meta.readonly!="false" ? '' : ', '+types.name+'Patch')+` } from "../../models/types";
+  import { `+entity.name+(entity.meta.readonly && entity.meta.readonly!="false" ? '' : ', '+entity.name+'Patch')+` } from "../../models/types";
 
-  const `+types.name+`Fields = gql\`fragment `+types.name+`Fields on `+types.name+` {`
-+(types.fields.filter(f => isField(f))[0].name == "nodeId" ? "" : "nodeId:"+types.fields.filter(f => isField(f))[0].name+",")
-+(types.fields.filter(f => getType(f)!=null).map(fields => fields.name+(isField(fields) ? "" : "{totalCount}")))+` }\`;
-  const ReadAll = gql\`query readAll($condition:`+types.name+`Condition) {all`+pluralize(types.name)+` (condition:$condition)
-    {nodes{...`+types.name+`Fields } } } $\{ `+types.name+`Fields}\`;
-  const Read = gql\`query read($nodeId:ID!){ `+types.name.toLowerCase()+`(nodeId:$nodeId)
-    {...`+types.name+`Fields } } $\{ `+types.name+`Fields}\`;
-  const Create = gql\`mutation create(`+types.fields
+  const `+entity.name+`Fields = gql\`fragment `+entity.name+`Fields on `+entity.name+` {`
++(entity.fields.filter(f => isField(f))[0].name == "nodeId" ? "" : "nodeId:"+entity.fields.filter(f => isField(f))[0].name+",")
++(entity.fields.filter(f => getType(f)!=null).map(fields => fields.name+(isField(fields) ? "" : "{totalCount}")))+` }\`;
+  const ReadAll = gql\`query readAll($condition:`+entity.name+`Condition) {all`+pluralize(entity.name)+` (condition:$condition)
+    {nodes{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
+  const Read = gql\`query read($nodeId:ID!){ `+entity.name.toLowerCase()+`(nodeId:$nodeId)
+    {...`+entity.name+`Fields } } $\{ `+entity.name+`Fields}\`;
+  const Create = gql\`mutation create(`+entity.fields
     .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => '$'+fields.name+':'+getType(fields)+(fields.type.kind=="NON_NULL" ? "!" : ""))+`)
-    {create`+types.name+`(input:{`+types.name.toLowerCase()+`:{ `+types.fields
+    {create`+entity.name+`(input:{`+entity.name.toLowerCase()+`:{ `+entity.fields
         .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => fields.name+':\$'+fields.name)+` } })
-    { `+types.name.toLowerCase()+`{...`+types.name+`Fields } } } $\{ `+types.name+`Fields}\`;
-  const Update = gql\`mutation update(`+types.fields
+    { `+entity.name.toLowerCase()+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
+  const Update = gql\`mutation update(`+entity.fields
     .filter(f => isField(f) && (f.name=="nodeId" || f.meta.templates.includes("crud"))).map(fields => '$'+fields.name+':'+getType(fields)+(fields.name=="nodeId" ? "!" : ""))+`)
-    {update`+types.name+`(input:{nodeId:$nodeId,
-    `+types.name.toLowerCase()+`Patch:{ `+types.fields
+    {update`+entity.name+`(input:{nodeId:$nodeId,
+    `+entity.name.toLowerCase()+`Patch:{ `+entity.fields
       .filter(f => isField(f) && f.name!=="nodeId" && f.meta.templates.includes("crud")).map(fields => fields.name+':\$'+fields.name)+` } })
-    { `+types.name.toLowerCase()+`{...`+types.name+`Fields } } } $\{ `+types.name+`Fields}\`;
+    { `+entity.name.toLowerCase()+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Delete = gql\`mutation delete($nodeId:ID!)
-    {delete`+types.name+`(input:{nodeId:$nodeId})
-    { `+types.name.toLowerCase()+`{...`+types.name+`Fields } } } $\{ `+types.name+`Fields}\`;
-  type recType = { `+types.fields.filter(f => getType(f)!=null).map(fields => fields.name+'?: '+
+    {delete`+entity.name+`(input:{nodeId:$nodeId})
+    { `+entity.name.toLowerCase()+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
+  type recType = { `+entity.fields.filter(f => getType(f)!=null).map(fields => fields.name+'?: '+
     (!isField(fields) ? "{ totalCount?: number }" : ["text","date","datetime"].includes(fields.meta.format) ? "string" : fields.meta.format)).join(", ")+` }
 
   export default defineComponent({
-    name: "`+types.name+`",
+    name: "`+entity.name+`",
     async setup() {
       function formatCurrency(value: string): string | undefined {
         if (value) { const v = +value; return v.toLocaleString("en-GB", {style: "currency", currency: "GBP"}); } };
@@ -134,15 +135,15 @@ ${!types.meta.templates.includes("list") ? "" : `\
       function formatDateTime(value: string): string | undefined {
         if (value) { const v = new Date(value); return v.toLocaleString("en-GB", {year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit"}); } };
       const route = useRoute();
-      const query = Object.entries(route.query).map(([key, val]) => [key, val && [`+types.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
+      const query = Object.entries(route.query).map(([key, val]) => [key, val && [`+entity.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
          '"'+f.name+'"').join()+`].includes(key) ? +val : val]);
       const where = query.map(([key, val]) => key+" is "+val).join(", and ");
-      const title = ref("`+pluralize(types.meta.label)+`"+(where && ", where "+where));
-      const validationSchema = {`+types.fields.filter(f => isField(f) && !["string","text","boolean"].includes(f.meta.format)).map(fields => `
+      const title = ref("`+pluralize(entity.meta.label)+`"+(where && ", where "+where));
+      const validationSchema = {`+entity.fields.filter(f => isField(f) && !["string","text","boolean"].includes(f.meta.format)).map(fields => `
         `+fields.name+': "'+(fields.meta.required ? "required|" : "")+fields.meta.format+'"').join(",")+`
       };
       const { values: recordV, errors, meta, resetForm, setValues } = useForm<recType>({ validationSchema });
-`+types.fields.filter(f => isField(f)).map(fields => '      const { value: '+fields.name+'V } = useField("'+fields.name+'");').join("\n")+`
+`+entity.fields.filter(f => isField(f)).map(fields => '      const { value: '+fields.name+'V } = useField("'+fields.name+'");').join("\n")+`
       const filters = ref({'global': {value: null}});
       const toast = useToast();
       const dtMaster = ref(null);
@@ -156,15 +157,15 @@ ${!types.meta.templates.includes("list") ? "" : `\
       const { data: dRecs, execute: dEx, error: dErrors } = useMutation(Delete); // Must be defined before first await
       const { data: raRecs, error: raErrors } = await useQuery({query: ReadAll, variables:{condition:Object.fromEntries(query)}});
       raErrors.value && console.log("ReadAll Errors:"+JSON.stringify(raErrors.value.response.body.errors));
-      const records = ref( raRecs.value.all`+pluralize(types.name)+`.nodes.map(r => {
-        `+types.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
+      const records = ref( raRecs.value.all`+pluralize(entity.name)+`.nodes.map(r => {
+        `+entity.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
          'r.'+f.name+' = r.'+f.name+' && +r.'+f.name+`;
-        `).join('')+types.fields.filter(f => !isField(f) && getType(f)!=null).map(f =>
+        `).join('')+entity.fields.filter(f => !isField(f) && getType(f)!=null).map(f =>
          'r.'+f.name+'.totalCount = r.'+f.name+'.totalCount && +r.'+f.name+`.totalCount;
         `).join('')+` return r }));
 
-      function recordName(record: `+types.name+`): string {
-        const rn=`+types.fields.filter(f => isField(f)).map(fields => `
+      function recordName(record: `+entity.name+`): string {
+        const rn=`+entity.fields.filter(f => isField(f)).map(fields => `
           (record.`+fields.name+` ? "`+fields.meta.label+`: "+`+(
             fields.meta.format=="date" ? "formatDate" : 
             fields.meta.format=="datetime" ? "formatDateTime" : 
@@ -197,7 +198,7 @@ ${!types.meta.templates.includes("list") ? "" : `\
           console.log("Update Pre:"+JSON.stringify(recordV));
           await uEx( recordV );
           uErrors.value && console.log("Update Errors:"+JSON.stringify(uErrors.value.response.body.errors));
-          if (nodeIdV.value) records.value[findIndexById(nodeIdV.value as unknown as string)] = uRecs.value.update`+types.name+`.`+types.name.toLowerCase()+`;
+          if (nodeIdV.value) records.value[findIndexById(nodeIdV.value as unknown as string)] = uRecs.value.update`+entity.name+`.`+entity.name.toLowerCase()+`;
           toast.add({
             severity: "success",
             summary: "Successful",
@@ -208,7 +209,7 @@ ${!types.meta.templates.includes("list") ? "" : `\
           console.log("Create Pre:"+JSON.stringify(recordV));
           await cEx( recordV );
           cErrors.value && console.log("Create Errors:"+JSON.stringify(cErrors.value.response.body.errors));
-          records.value.push(cRecs.value.create`+types.name+`.`+types.name.toLowerCase()+`);
+          records.value.push(cRecs.value.create`+entity.name+`.`+entity.name.toLowerCase()+`);
           toast.add({
             severity: "success",
             summary: "Successful",
@@ -219,8 +220,8 @@ ${!types.meta.templates.includes("list") ? "" : `\
         recordDialog.value = false;
         resetForm();
       };
-      function editRecord(rec: `+types.name+`) {
-        setValues({`+types.fields.filter(f => isField(f)).map(fields => `
+      function editRecord(rec: `+entity.name+`) {
+        setValues({`+entity.fields.filter(f => isField(f)).map(fields => `
           `+fields.name+": "+(
             fields.meta.format=="date" ? "formatDate" : 
             fields.meta.format=="datetime" ? "formatDateTime" : 
@@ -228,8 +229,8 @@ ${!types.meta.templates.includes("list") ? "" : `\
         });
         recordDialog.value = true;
       };
-      function confirmDeleteRecord(rec: `+types.name+`) {
-        setValues({`+types.fields.filter(f => isField(f)).map(fields => `
+      function confirmDeleteRecord(rec: `+entity.name+`) {
+        setValues({`+entity.fields.filter(f => isField(f)).map(fields => `
           `+fields.name+(
             fields.meta.format=="date" ? ": formatDate(rec."+fields.name+")" : 
             fields.meta.format=="datetime" ? ": formatDateTime(rec."+fields.name+")" : 
@@ -243,7 +244,7 @@ ${!types.meta.templates.includes("list") ? "" : `\
         console.log("Delete Pre:"+JSON.stringify(recordV));
         await dEx( recordV );
         dErrors.value && console.log("Delete Errors:"+JSON.stringify(dErrors.value.response.body.errors));
-        records.value = records.value.filter((val: `+types.name+`) => val.nodeId !== dRecs.value.delete`+types.name+`.`+types.name.toLowerCase()+`.nodeId);
+        records.value = records.value.filter((val: `+entity.name+`) => val.nodeId !== dRecs.value.delete`+entity.name+`.`+entity.name.toLowerCase()+`.nodeId);
         resetForm();
         toast.add({
           severity: "success",
@@ -256,8 +257,8 @@ ${!types.meta.templates.includes("list") ? "" : `\
         deleteRecordsDialog.value = true;
       };
       function deleteSelectedRecords() {
-        selectedRecords.value.forEach(async (rec: `+types.name+`) => await dEx( rec ));
-        records.value = records.value.filter((val: `+types.name+`) => !selectedRecords.value.includes(val));
+        selectedRecords.value.forEach(async (rec: `+entity.name+`) => await dEx( rec ));
+        records.value = records.value.filter((val: `+entity.name+`) => !selectedRecords.value.includes(val));
         deleteRecordsDialog.value = false;
         selectedRecords.value = null;
         toast.add({
@@ -292,7 +293,7 @@ ${!types.meta.templates.includes("list") ? "" : `\
         recordV,
         validationSchema,
         errors,
-        meta,`+types.fields.filter(f => isField(f)).map(fields => `
+        meta,`+entity.fields.filter(f => isField(f)).map(fields => `
         `+fields.name+'V').join()+`
       }
     }

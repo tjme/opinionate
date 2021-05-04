@@ -182,8 +182,8 @@ function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMe
             else {
                 const templateContent = "`" + fs.readFileSync(templateDir + "/" + targetName) + "`";
                 if (targetName.includes("types")) {
-                    types.map((types) => {
-                        fs.writeFileSync(targetDir + "/" + targetName.replace("types", types.name).toLowerCase(), eval(templateContent));
+                    types.map((entity) => {
+                        fs.writeFileSync(targetDir + "/" + targetName.replace("types", entity.name).toLowerCase(), eval(templateContent));
                     });
                 }
                 else

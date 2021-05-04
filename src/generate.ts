@@ -227,8 +227,8 @@ export function generate(templateDir: string, targetDir: string, schemaInPath: s
       } else {
         const templateContent = "`" + fs.readFileSync(templateDir + "/" + targetName) + "`";
         if (targetName.includes("types")) {
-          types.map((types: any) => {
-            fs.writeFileSync(targetDir + "/" + targetName.replace("types", types.name).toLowerCase(), eval(templateContent));
+          types.map((entity: any) => {
+            fs.writeFileSync(targetDir + "/" + targetName.replace("types", entity.name).toLowerCase(), eval(templateContent));
           })
         } else fs.writeFileSync(targetDir + "/" + targetName, eval(templateContent));
       }
