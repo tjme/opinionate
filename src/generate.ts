@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import * as _pluralize from "pluralize";
+import { plural as _plural } from "pluralize";
 
 /**
  * Simple object check.
@@ -91,9 +91,6 @@ export function getType(field: any): string {
   return isField(field) && field.type && (field.type.name || (field.type.ofType && field.type.ofType.name)) }
 
 export function isType(field: any, type: string): boolean { return (getType(field) === type) }
-
-export function pluralize(word: string) {
-  return _pluralize.plural(word) }
 
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 
@@ -216,8 +213,10 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
  */
 export function generate(templateDir: string, targetDir: string, schemaInPath: string, overlayInPath?: string, defaultMeta?: string): void {
 
-  const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta);
-  const types = schema.data.__schema.types.filter((f: any) => isEntity(f));
+  function plural(word: string): string { return _plural(word) }
+  
+    const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta);
+  const entities = schema.data.__schema.types.filter((f: any) => isEntity(f));
 
   function genCore(templateDir: string, targetDir: string) {
     fs.readdirSync(templateDir).forEach((targetName: string) => {
@@ -226,9 +225,9 @@ export function generate(templateDir: string, targetDir: string, schemaInPath: s
         genCore(templateDir + "/" + targetName, targetDir + "/" + targetName);
       } else {
         const templateContent = "`" + fs.readFileSync(templateDir + "/" + targetName) + "`";
-        if (targetName.includes("types")) {
-          types.map((entity: any) => {
-            fs.writeFileSync(targetDir + "/" + targetName.replace("types", entity.name).toLowerCase(), eval(templateContent));
+        if (targetName.includes("_ENTITIES_")) {
+          entities.map((entity: any) => {
+            fs.writeFileSync(targetDir + "/" + targetName.replace("_ENTITIES_", entity.name).toLowerCase(), eval(templateContent));
           })
         } else fs.writeFileSync(targetDir + "/" + targetName, eval(templateContent));
       }

@@ -6,7 +6,7 @@ ${!entity.meta.templates.includes("list") ? "" : `\
       ref="dtMaster" :value="records" v-model:selection="selectedRecords"
       dataKey="nodeId" :filters="filters" :paginator="true"
       paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-      :rowsPerPageOptions="[5, 10, 20, 40]" :rows="20"
+      :rowsPerPageOptions="[8, 16, 32, 64]" :rows="16"
       currentPageReportTemplate="{first} to {last} (of {totalRecords})"
       class="op-compact p-datatable-striped p-datatable-gridlines" >
       <template #header>
@@ -38,7 +38,7 @@ ${!entity.meta.templates.includes("list") ? "" : `\
 `+(fields.meta.readonly && fields.meta.readonly!="false" ? 'readonly ' : '')
 +(fields.meta.attributes || ":sortable='true'")
 +(fields.meta.align!='left' ? ' headerStyle="text-align:'+fields.meta.align+'" bodyStyle="text-align:'+fields.meta.align+'"' : '')+" >"
-+((fields.meta.link ? '<template #body="slotProps"><a :href=\'"/#/'+fields.meta.link.entity+'?'+(fields.meta.link.fields || types.find(e => e.name.toLowerCase()==fields.meta.link.entity).meta.primaryKey)+'="+slotProps.data.'+fields.meta.link.fieldsFrom+'\' v-text="slotProps.data.'+fields.name+(getType(fields)==false ? '.totalCount' : '')+'" >' : '')
++((fields.meta.link ? '<template #body="slotProps"><a :href=\'"/#/'+fields.meta.link.entity+'?'+(fields.meta.link.fields || entities.find(e => e.name.toLowerCase()==fields.meta.link.entity).meta.primaryKey)+'="+slotProps.data.'+fields.meta.link.fieldsFrom+'\' v-text="slotProps.data.'+fields.name+(getType(fields)==false ? '.totalCount' : '')+'" >' : '')
 +(fields.meta.format=='boolean' ? '<template #body="slotProps"><Checkbox name="'+fields.name+'" v-model="slotProps.data.'+fields.name+'" :binary="true" :disabled="true" /></template>' :
 fields.meta.format=='date' ? '<template #body="slotProps">{{formatDate(slotProps.data.'+fields.name+')}}</template>' :
 fields.meta.format=='datetime' ? '<template #body="slotProps">{{formatDateTime(slotProps.data.'+fields.name+')}}</template>' :
@@ -90,6 +90,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
 </template>
 
 <script lang="ts">
+  import { formatCurrency, formatDate, formatDateTime } from "../utility";
   import { defineComponent, ref } from "vue";
   import { useRoute } from "vue-router";
   import { useToast } from "primevue/usetoast";
@@ -104,46 +105,40 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   const `+entity.name+`Fields = gql\`fragment `+entity.name+`Fields on `+entity.name+` {`
 +(entity.fields.filter(f => isField(f))[0].name == "nodeId" ? "" : "nodeId:"+entity.fields.filter(f => isField(f))[0].name+",")
 +(entity.fields.filter(f => getType(f)!=null).map(fields => fields.name+(isField(fields) ? "" : "{totalCount}")))+` }\`;
-  const ReadAll = gql\`query readAll($condition:`+entity.name+`Condition) {all`+pluralize(entity.name)+` (condition:$condition)
+  const ReadAll = gql\`query readAll($condition:`+entity.name+`Condition) {all`+plural(entity.name)+` (condition:$condition)
     {nodes{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Read = gql\`query read($nodeId:ID!){ `+entity.name.toLowerCase()+`(nodeId:$nodeId)
     {...`+entity.name+`Fields } } $\{ `+entity.name+`Fields}\`;
   const Create = gql\`mutation create(`+entity.fields
-    .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => '$'+fields.name+':'+getType(fields)+(fields.type.kind=="NON_NULL" ? "!" : ""))+`)
+    .filter(f => isField(f) && f.meta.templates.includes("crud")).map(field => '$'+field.name+':'+getType(field)+(field.type.kind=="NON_NULL" ? "!" : ""))+`)
     {create`+entity.name+`(input:{`+entity.name.toLowerCase()+`:{ `+entity.fields
-        .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => fields.name+':\$'+fields.name)+` } })
+        .filter(f => isField(f) && f.meta.templates.includes("crud")).map(field => field.name+':\$'+field.name)+` } })
     { `+entity.name.toLowerCase()+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Update = gql\`mutation update(`+entity.fields
-    .filter(f => isField(f) && (f.name=="nodeId" || f.meta.templates.includes("crud"))).map(fields => '$'+fields.name+':'+getType(fields)+(fields.name=="nodeId" ? "!" : ""))+`)
+    .filter(f => isField(f) && (f.name=="nodeId" || f.meta.templates.includes("crud"))).map(field => '$'+field.name+':'+getType(field)+(field.name=="nodeId" ? "!" : ""))+`)
     {update`+entity.name+`(input:{nodeId:$nodeId,
     `+entity.name.toLowerCase()+`Patch:{ `+entity.fields
-      .filter(f => isField(f) && f.name!=="nodeId" && f.meta.templates.includes("crud")).map(fields => fields.name+':\$'+fields.name)+` } })
+      .filter(f => isField(f) && f.name!=="nodeId" && f.meta.templates.includes("crud")).map(field => field.name+':\$'+field.name)+` } })
     { `+entity.name.toLowerCase()+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Delete = gql\`mutation delete($nodeId:ID!)
     {delete`+entity.name+`(input:{nodeId:$nodeId})
     { `+entity.name.toLowerCase()+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
-  type recType = { `+entity.fields.filter(f => getType(f)!=null).map(fields => fields.name+'?: '+
-    (!isField(fields) ? "{ totalCount?: number }" : ["text","date","datetime"].includes(fields.meta.format) ? "string" : fields.meta.format)).join(", ")+` }
+  type recType = { `+entity.fields.filter(f => getType(f)!=null).map(field => field.name+'?: '+
+    (!isField(field) ? "{ totalCount?: number }" : ["text","date","datetime"].includes(field.meta.format) ? "string" : field.meta.format)).join(", ")+` }
 
   export default defineComponent({
     name: "`+entity.name+`",
     async setup() {
-      function formatCurrency(value: string): string | undefined {
-        if (value) { const v = +value; return v.toLocaleString("en-GB", {style: "currency", currency: "GBP"}); } };
-      function formatDate(value: string): string | undefined {
-        if (value) { const v = new Date(value); return v.toLocaleString("en-GB", {year: "numeric", month: "short", day: "numeric"}); } };
-      function formatDateTime(value: string): string | undefined {
-        if (value) { const v = new Date(value); return v.toLocaleString("en-GB", {year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit"}); } };
       const route = useRoute();
       const query = Object.entries(route.query).map(([key, val]) => [key, val && [`+entity.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
          '"'+f.name+'"').join()+`].includes(key) ? +val : val]);
       const where = query.map(([key, val]) => key+" is "+val).join(", and ");
-      const title = ref("`+pluralize(entity.meta.label)+`"+(where && ", where "+where));
-      const validationSchema = {`+entity.fields.filter(f => isField(f) && !["string","text","boolean"].includes(f.meta.format)).map(fields => `
-        `+fields.name+': "'+(fields.meta.required ? "required|" : "")+fields.meta.format+'"').join(",")+`
+      const title = ref("`+plural(entity.meta.label)+`"+(where && ", where "+where));
+      const validationSchema = {`+entity.fields.filter(f => isField(f) && !["string","text","boolean"].includes(f.meta.format)).map(field => `
+        `+field.name+': "'+(field.meta.required ? "required|" : "")+field.meta.format+'"').join(",")+`
       };
       const { values: recordV, errors, meta, resetForm, setValues } = useForm<recType>({ validationSchema });
-`+entity.fields.filter(f => isField(f)).map(fields => '      const { value: '+fields.name+'V } = useField("'+fields.name+'");').join("\n")+`
+`+entity.fields.filter(f => isField(f)).map(field => '      const { value: '+field.name+'V } = useField("'+field.name+'");').join("\n")+`
       const filters = ref({'global': {value: null}});
       const toast = useToast();
       const dtMaster = ref(null);
@@ -157,7 +152,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
       const { data: dRecs, execute: dEx, error: dErrors } = useMutation(Delete); // Must be defined before first await
       const { data: raRecs, error: raErrors } = await useQuery({query: ReadAll, variables:{condition:Object.fromEntries(query)}});
       raErrors.value && console.log("ReadAll Errors:"+JSON.stringify(raErrors.value.response.body.errors));
-      const records = ref( raRecs.value.all`+pluralize(entity.name)+`.nodes.map(r => {
+      const records = ref( raRecs.value.all`+plural(entity.name)+`.nodes.map(r => {
         `+entity.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
          'r.'+f.name+' = r.'+f.name+' && +r.'+f.name+`;
         `).join('')+entity.fields.filter(f => !isField(f) && getType(f)!=null).map(f =>
@@ -165,11 +160,11 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
         `).join('')+` return r }));
 
       function recordName(record: `+entity.name+`): string {
-        const rn=`+entity.fields.filter(f => isField(f)).map(fields => `
-          (record.`+fields.name+` ? "`+fields.meta.label+`: "+`+(
-            fields.meta.format=="date" ? "formatDate" : 
-            fields.meta.format=="datetime" ? "formatDateTime" : 
-            "")+"(record."+fields.name+`)+"  " : "")`).join("+")+`;
+        const rn=`+entity.fields.filter(f => isField(f)).map(field => `
+          (record.`+field.name+` ? "`+field.meta.label+`: "+`+(
+            field.meta.format=="date" ? "formatDate" : 
+            field.meta.format=="datetime" ? "formatDateTime" : 
+            "")+"(record."+field.name+`)+"  " : "")`).join("+")+`;
         return rn;
       };
       function openNew() {
@@ -221,21 +216,21 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
         resetForm();
       };
       function editRecord(rec: `+entity.name+`) {
-        setValues({`+entity.fields.filter(f => isField(f)).map(fields => `
-          `+fields.name+": "+(
-            fields.meta.format=="date" ? "formatDate" : 
-            fields.meta.format=="datetime" ? "formatDateTime" : 
-            "")+"(rec."+fields.name+")").join()+`
+        setValues({`+entity.fields.filter(f => isField(f)).map(field => `
+          `+field.name+": "+(
+            field.meta.format=="date" ? "formatDate" : 
+            field.meta.format=="datetime" ? "formatDateTime" : 
+            "")+"(rec."+field.name+")").join()+`
         });
         recordDialog.value = true;
       };
       function confirmDeleteRecord(rec: `+entity.name+`) {
-        setValues({`+entity.fields.filter(f => isField(f)).map(fields => `
-          `+fields.name+(
-            fields.meta.format=="date" ? ": formatDate(rec."+fields.name+")" : 
-            fields.meta.format=="datetime" ? ": formatDateTime(rec."+fields.name+")" : 
-            fields.meta.format=="currency" ? ": formatCurrency(rec."+fields.name+")" : 
-            ": rec."+fields.name)).join()+`
+        setValues({`+entity.fields.filter(f => isField(f)).map(field => `
+          `+field.name+(
+            field.meta.format=="date" ? ": formatDate(rec."+field.name+")" : 
+            field.meta.format=="datetime" ? ": formatDateTime(rec."+field.name+")" : 
+            field.meta.format=="currency" ? ": formatCurrency(rec."+field.name+")" : 
+            ": rec."+field.name)).join()+`
         });
         deleteRecordDialog.value = true;
       };
@@ -293,8 +288,8 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
         recordV,
         validationSchema,
         errors,
-        meta,`+entity.fields.filter(f => isField(f)).map(fields => `
-        `+fields.name+'V').join()+`
+        meta,`+entity.fields.filter(f => isField(f)).map(field => `
+        `+field.name+'V').join()+`
       }
     }
   });

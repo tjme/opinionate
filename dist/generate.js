@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generate = exports.metaMerge = exports.pluralize = exports.isType = exports.getType = exports.isField = exports.isEntity = exports.toProperCase = exports.convert = exports.stringify = exports.merge = exports.get = exports.isObject = void 0;
+exports.generate = exports.metaMerge = exports.isType = exports.getType = exports.isField = exports.isEntity = exports.toProperCase = exports.convert = exports.stringify = exports.merge = exports.get = exports.isObject = void 0;
 const fs = require("fs");
-const _pluralize = require("pluralize");
+const pluralize_1 = require("pluralize");
 function isObject(item) {
     return (item && typeof item === 'object' && !Array.isArray(item));
 }
@@ -73,10 +73,6 @@ function getType(field) {
 exports.getType = getType;
 function isType(field, type) { return (getType(field) === type); }
 exports.isType = isType;
-function pluralize(word) {
-    return _pluralize.plural(word);
-}
-exports.pluralize = pluralize;
 const metaProp = "meta", metaMarker = "@meta", separator = "\n";
 function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, noDequote = false, returnOverlay = false) {
     const es6MetaIn = defaultMeta && fs.readFileSync(defaultMeta).toString();
@@ -165,8 +161,9 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, over
 }
 exports.metaMerge = metaMerge;
 function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMeta) {
+    function plural(word) { return pluralize_1.plural(word); }
     const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta);
-    const types = schema.data.__schema.types.filter((f) => isEntity(f));
+    const entities = schema.data.__schema.types.filter((f) => isEntity(f));
     function genCore(templateDir, targetDir) {
         fs.readdirSync(templateDir).forEach((targetName) => {
             if (fs.statSync(templateDir + "/" + targetName).isDirectory()) {
@@ -181,9 +178,9 @@ function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMe
             }
             else {
                 const templateContent = "`" + fs.readFileSync(templateDir + "/" + targetName) + "`";
-                if (targetName.includes("types")) {
-                    types.map((entity) => {
-                        fs.writeFileSync(targetDir + "/" + targetName.replace("types", entity.name).toLowerCase(), eval(templateContent));
+                if (targetName.includes("_ENTITIES_")) {
+                    entities.map((entity) => {
+                        fs.writeFileSync(targetDir + "/" + targetName.replace("_ENTITIES_", entity.name).toLowerCase(), eval(templateContent));
                     });
                 }
                 else

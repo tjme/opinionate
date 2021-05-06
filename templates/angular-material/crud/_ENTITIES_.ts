@@ -1,4 +1,4 @@
-${!types.meta.templates.includes("crud") ? "" : `
+${!entity.meta.templates.includes("crud") ? "" : `
 import { Component, OnInit, Input, ViewChild, HostListener } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatButton  } from '@angular/material/button';
@@ -15,35 +15,35 @@ import { map } from 'rxjs/operators';
 import { GraphQLService } from '../graphql.service';
 import gql from 'graphql-tag';
 import { ComponentCanDeactivate } from '../pending-changes.guard';
-import { ${types.name}, ${types.name}Patch } from '../../../../models/types';
+import { ${entity.name}, ${entity.name}Patch } from '../../../../models/types';
 
-const ${types.name}Fields = gql\`fragment ${types.name}Fields on ${types.name} { nodeId,${types.fields
+const ${entity.name}Fields = gql\`fragment ${entity.name}Fields on ${entity.name} { nodeId,${entity.fields
   .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `${fields.name}`)} }\`;
-const Read = gql\`query read($nodeId:ID!){ ${types.name.toLowerCase()}(nodeId:$nodeId)
-  {...${types.name}Fields } } $\{ ${types.name}Fields}\`;
-const Create = gql\`mutation create(${types.fields
+const Read = gql\`query read($nodeId:ID!){ ${entity.name.toLowerCase()}(nodeId:$nodeId)
+  {...${entity.name}Fields } } $\{ ${entity.name}Fields}\`;
+const Create = gql\`mutation create(${entity.fields
   .filter(f => isField(f) && f.meta.templates.includes("crud") && f.meta.templates.includes("crud")).map(fields => `$${fields.name}:${getType(fields)}${!fields.hasOwnProperty("isRequired") ? "!" : ""}`)})
-  {create${types.name}(input:{
-    ${types.name.toLowerCase()}:{ ${types.fields
+  {create${entity.name}(input:{
+    ${entity.name.toLowerCase()}:{ ${entity.fields
       .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `${fields.name}:\$${fields.name}`)} } })
-  { ${types.name.toLowerCase()}{...${types.name}Fields } } } $\{ ${types.name}Fields}\`;
-const Update = gql\`mutation update($nodeId:ID!,${types.fields
+  { ${entity.name.toLowerCase()}{...${entity.name}Fields } } } $\{ ${entity.name}Fields}\`;
+const Update = gql\`mutation update($nodeId:ID!,${entity.fields
   .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `$${fields.name}:${getType(fields)}`)})
-  {update${types.name}(input:{nodeId:$nodeId,
-  ${types.name.toLowerCase()}Patch:{ ${types.fields
+  {update${entity.name}(input:{nodeId:$nodeId,
+  ${entity.name.toLowerCase()}Patch:{ ${entity.fields
     .filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `${fields.name}:\$${fields.name}`)} } })
-  { ${types.name.toLowerCase()}{...${types.name}Fields } } } $\{ ${types.name}Fields}\`;
+  { ${entity.name.toLowerCase()}{...${entity.name}Fields } } } $\{ ${entity.name}Fields}\`;
 const Delete = gql\`mutation delete($nodeId:ID!)
-  {delete${types.name}(input:{nodeId:$nodeId})
-  { ${types.name.toLowerCase()}{...${types.name}Fields } } } $\{ ${types.name}Fields}\`;
+  {delete${entity.name}(input:{nodeId:$nodeId})
+  { ${entity.name.toLowerCase()}{...${entity.name}Fields } } } $\{ ${entity.name}Fields}\`;
 
 @Component({
-  selector: 'app-${types.name.toLowerCase()}',
-  templateUrl: './${types.name.toLowerCase()}.html',
+  selector: 'app-${entity.name.toLowerCase()}',
+  templateUrl: './${entity.name.toLowerCase()}.html',
   styleUrls: ['./crud.css']
 })
-export class ${types.name}Component implements OnInit, ComponentCanDeactivate  {
-  @Input() ${types.name.toLowerCase()} = {} as ${types.name};
+export class ${entity.name}Component implements OnInit, ComponentCanDeactivate  {
+  @Input() ${entity.name.toLowerCase()} = {} as ${entity.name};
   @ViewChild('crudForm') crudForm: FormGroup;
   private allowDeactivate: boolean;
 
@@ -56,9 +56,9 @@ export class ${types.name}Component implements OnInit, ComponentCanDeactivate  {
   ngOnInit(): void {
     this.allowDeactivate = false;
     if (this.route.snapshot.paramMap.get('id') !== null) {
-      this.gqlSv.query<{ ${types.name.toLowerCase()}: ${types.name} }>
+      this.gqlSv.query<{ ${entity.name.toLowerCase()}: ${entity.name} }>
         (Read, {'nodeId': this.route.snapshot.paramMap.get('id')}).pipe(
-        map((_) => _.${types.name.toLowerCase()})).subscribe(_ => this.${types.name.toLowerCase()} = _); }
+        map((_) => _.${entity.name.toLowerCase()})).subscribe(_ => this.${entity.name.toLowerCase()} = _); }
   }
 
   @HostListener('window:beforeunload')
@@ -74,13 +74,13 @@ export class ${types.name}Component implements OnInit, ComponentCanDeactivate  {
   save(): void {
     this.allowDeactivate = true;
     if (this.route.snapshot.paramMap.get('id') !== null) {
-      this.gqlSv.mutate<{update${types.name}: { ${types.name.toLowerCase()}: ${types.name} } }>
-        (Update, this.${types.name.toLowerCase()}, 'update').pipe(
-        map((_) => _.update${types.name}.${types.name.toLowerCase()})).subscribe(() => this.back());
+      this.gqlSv.mutate<{update${entity.name}: { ${entity.name.toLowerCase()}: ${entity.name} } }>
+        (Update, this.${entity.name.toLowerCase()}, 'update').pipe(
+        map((_) => _.update${entity.name}.${entity.name.toLowerCase()})).subscribe(() => this.back());
     } else {
-      const result = this.gqlSv.mutate<{create${types.name}: { ${types.name.toLowerCase()}: ${types.name} } }>
-        (Create, this.${types.name.toLowerCase()}, 'create').pipe(
-        map((_) => _.create${types.name}.${types.name.toLowerCase()})).subscribe(() => this.back());
+      const result = this.gqlSv.mutate<{create${entity.name}: { ${entity.name.toLowerCase()}: ${entity.name} } }>
+        (Create, this.${entity.name.toLowerCase()}, 'create').pipe(
+        map((_) => _.create${entity.name}.${entity.name.toLowerCase()})).subscribe(() => this.back());
     }
   }
 
@@ -88,9 +88,9 @@ export class ${types.name}Component implements OnInit, ComponentCanDeactivate  {
     this.allowDeactivate = true;
     if (this.route.snapshot.paramMap.get('id') !== null) {
       if (confirm('Are you sure you want to delete this record?')) {
-        this.gqlSv.mutate<{delete${types.name}: { ${types.name.toLowerCase()}: ${types.name} } }>
-          (Delete, this.${types.name.toLowerCase()}, 'delete').pipe(
-          map((_) => _.delete${types.name}.${types.name.toLowerCase()})).subscribe(() => this.back());
+        this.gqlSv.mutate<{delete${entity.name}: { ${entity.name.toLowerCase()}: ${entity.name} } }>
+          (Delete, this.${entity.name.toLowerCase()}, 'delete').pipe(
+          map((_) => _.delete${entity.name}.${entity.name.toLowerCase()})).subscribe(() => this.back());
       }
     }
   }

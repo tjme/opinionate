@@ -137,15 +137,15 @@ The quoting around all existing ES6 template strings (and any substitutions with
 
 Then add the substitutions required for the code generation.
 
-Use `${types.name}` for the entity/table name.
+For example, use `${entities}` for the array of entities/tables.
 
-Similarly, in templates with filenames containing "types", use `${types.name}` for the entity/table name.
-Loop through fields with ``// The fields of entity ${types.name} are: ${types.fields.filter(f => isField(f)).map(fields => `${fields.name}`).join("\n")}``.
-You can place a guard function at the beginning of a template when metadata should determine existence, e.g: ``${!types.meta.templates.includes("list") ? "" : ` `` (and add `` `} `` at the end).
+Similarly, in templates with filenames containing "\_ENTITIES\_", use `${entity.name}` for the entity/table name.
+To generate a list of fields, use: ``// The fields of entity ${entity.name} are: ${entity.fields.filter(f => isField(f)).map(field => `${field.name}`).join("\n")}``.
+You can place a guard function at the beginning of such a template, when metadata should determine existence, e.g: ``${!entity.meta.templates.includes("list") ? "" : ` `` (and add `` `} `` at the end).
 Escape all embedded backquotes (especially the gql tagged strings) with backslash, e.g:
 
 ```js
-const Fields = gql\`fragment theFields on ${types.name} { nodeId,${types.fields.map(fields => `${fields.name}`)} }\`;
+const Fields = gql\`fragment theFields on ${entity.name} { nodeId,${entity.fields.map(field => `${field.name}`)} }\`;
 ```
 
 ## Motivation

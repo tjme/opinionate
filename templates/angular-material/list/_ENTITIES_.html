@@ -1,0 +1,24 @@
+${!entity.meta.templates.includes("list") ? "" : `<h2>${entity.meta.label} List</h2>
+
+<div class="form-container">
+  <a class="actions" color="primary" aria-label="Add a new record" matTooltip="Add a new record" matTooltipPosition="above" routerLink="/${entity.name.toLowerCase()}/"><mat-icon>add</mat-icon>Add</a>
+</div>
+
+<mat-table #${entity.name}Table [dataSource]="dataSource" matSort>
+  ${entity.fields.filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `  <ng-container matColumnDef="${fields.name}">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>${fields.meta.label}</mat-header-cell>
+    <mat-cell *matCellDef="let ${entity.name.toLowerCase()}">
+    ${isType(fields, "Boolean") ? `<mat-checkbox [disabled]="true" [ngModel]="${entity.name.toLowerCase()}.${fields.name}"></mat-checkbox>` : `{{${entity.name.toLowerCase()}.${fields.name}}}`}
+    </mat-cell>
+  </ng-container>
+`).join("\n")}
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="goto(row.nodeId)"></mat-row>
+</mat-table>
+
+<mat-paginator #paginator
+  [pageSize]="10"
+  [pageSizeOptions]="[5, 10, 20, 40, 80]"
+  [showFirstLastButtons]="true">
+</mat-paginator>`}

@@ -1,4 +1,4 @@
-${!types.meta.templates.includes("list") ? "" : `
+${!entity.meta.templates.includes("list") ? "" : `
 import { Component, OnInit, AfterViewInit, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButton  } from '@angular/material/button';
@@ -15,27 +15,27 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GraphQLService } from '../graphql.service';
 import gql from 'graphql-tag';
-import { ${types.name}, ${types.name}Patch } from '../../../../models/types';
+import { ${entity.name}, ${entity.name}Patch } from '../../../../models/types';
 
-const ${types.name}Fields = gql\`fragment ${types.name}Fields on ${types.name} { nodeId,${types.fields
+const ${entity.name}Fields = gql\`fragment ${entity.name}Fields on ${entity.name} { nodeId,${entity.fields
   .filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `${fields.name}`)} }\`;
-const ReadAll = gql\`query readAll{all${pluralize(types.name)}
-  {nodes{...${types.name}Fields } } } $\{ ${types.name}Fields}\`;
+const ReadAll = gql\`query readAll{all${plural(entity.name)}
+  {nodes{...${entity.name}Fields } } } $\{ ${entity.name}Fields}\`;
 // const Delete = gql\`mutation delete($nodeId:ID!)
-//   {delete${types.name}(input:{nodeId:$nodeId})
-//   { ${types.name.toLowerCase()}{...${types.name}Fields } } } $\{ ${types.name}Fields}\`;
+//   {delete${entity.name}(input:{nodeId:$nodeId})
+//   { ${entity.name.toLowerCase()}{...${entity.name}Fields } } } $\{ ${entity.name}Fields}\`;
 
 @Component({
-  selector: 'app-${types.name.toLowerCase()}-list',
-  templateUrl: './${types.name.toLowerCase()}.html',
+  selector: 'app-${entity.name.toLowerCase()}-list',
+  templateUrl: './${entity.name.toLowerCase()}.html',
   styleUrls: ['./list.css']
 })
-export class ${types.name}ListComponent implements OnInit, AfterViewInit {
-  displayedColumns = [${types.fields
+export class ${entity.name}ListComponent implements OnInit, AfterViewInit {
+  displayedColumns = [${entity.fields
     .filter(f => isField(f) && f.meta.templates.includes("list")).map(fields => `"${fields.name}"`)}];
-  dataSource = new MatTableDataSource<${types.name}>();
+  dataSource = new MatTableDataSource<${entity.name}>();
   dialogResult: any;
-  // @ViewChild('${types.name}Table') ${types.name}Table: MatTable<any>;
+  // @ViewChild('${entity.name}Table') ${entity.name}Table: MatTable<any>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -56,20 +56,20 @@ export class ${types.name}ListComponent implements OnInit, AfterViewInit {
   }
 
   readAll(): void {
-    this.gqlSv.query<{all${pluralize(types.name)}: {nodes: ${types.name}[]}}>(ReadAll).pipe(
-      map((_) => _.all${pluralize(types.name)}.nodes)).subscribe(_ => this.dataSource.data = _);
+    this.gqlSv.query<{all${plural(entity.name)}: {nodes: ${entity.name}[]}}>(ReadAll).pipe(
+      map((_) => _.all${plural(entity.name)}.nodes)).subscribe(_ => this.dataSource.data = _);
   }
 
   goto(row: string): void {
-    this.router.navigate(['/${types.name.toLowerCase()}/' + row]);
+    this.router.navigate(['/${entity.name.toLowerCase()}/' + row]);
   }
 
-  // delete(${types.name.toLowerCase()}: ${types.name}): void {
+  // delete(${entity.name.toLowerCase()}: ${entity.name}): void {
   //   if (confirm('Are you sure you want to delete this record?')) {
-  //     this.gqlSv.mutate<{delete${types.name}: { ${types.name.toLowerCase()}: ${types.name} }}>
-  //       (Delete, ${types.name.toLowerCase()}, 'delete').pipe(
-  //       map((_) => _.delete${types.name}.${types.name.toLowerCase()})).subscribe();
-  //     this.dataSource.data = this.dataSource.data.filter(_ => _.nodeId !== ${types.name.toLowerCase()}.nodeId);
+  //     this.gqlSv.mutate<{delete${entity.name}: { ${entity.name.toLowerCase()}: ${entity.name} }}>
+  //       (Delete, ${entity.name.toLowerCase()}, 'delete').pipe(
+  //       map((_) => _.delete${entity.name}.${entity.name.toLowerCase()})).subscribe();
+  //     this.dataSource.data = this.dataSource.data.filter(_ => _.nodeId !== ${entity.name.toLowerCase()}.nodeId);
   //   }
   // }
 }`}

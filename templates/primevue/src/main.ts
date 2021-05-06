@@ -21,8 +21,8 @@ import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
 import App from './App.vue';
 import Switchboard from './Switchboard.vue';
-${types.map(types => `\
-import ${types.name} from "./components/${types.name.toLowerCase()}.vue";`).join("\n")}
+${entities.map(entity => `\
+import ${entity.name} from "./components/${entity.name.toLowerCase()}.vue";`).join("\n")}
 
 defineRule("required", value => { if (!value || !value.length) { return "This field is required"; } return true; });
 defineRule("number", value => { if (value && value.length && isNaN(value)) { return "This field must be a valid number"; } return true; });
@@ -36,13 +36,13 @@ const client = createClient({ url });
 const routes = [
   // { path: "/", },
   { path: '/switchboard', component: Switchboard, props: true },
-${types.map(types => `\
-  { path: '/${types.name.toLowerCase()}', component: ${types.name}, props: true },`).join("\n")}
+${entities.map(entity => `\
+  { path: '/${entity.name.toLowerCase()}', component: ${entity.name}, props: true },`).join("\n")}
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes, // short for 'routes: routes'
+  routes,
 })
   
 createApp(App)

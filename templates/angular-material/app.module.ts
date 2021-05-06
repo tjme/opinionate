@@ -22,9 +22,9 @@ import { PendingChangesGuard } from './pending-changes.guard';
 import { AppComponent } from './app.component';
 import { GraphQLService } from './graphql.service';
 import { DashboardComponent } from './dashboard/dashboard.component';
-${types.map(types => `
-${!types.meta.templates.includes("crud") ? "" : `import { ${types.name}Component } from './crud/${types.name.toLowerCase()}';`}
-${!types.meta.templates.includes("list") ? "" : `import { ${types.name}ListComponent } from './list/${types.name.toLowerCase()}';`}`).join("\n")}
+${entities.map(entity => `
+${!entity.meta.templates.includes("crud") ? "" : `import { ${entity.name}Component } from './crud/${entity.name.toLowerCase()}';`}
+${!entity.meta.templates.includes("list") ? "" : `import { ${entity.name}ListComponent } from './list/${entity.name.toLowerCase()}';`}`).join("\n")}
 
 @NgModule({
   imports: [
@@ -51,9 +51,9 @@ ${!types.meta.templates.includes("list") ? "" : `import { ${types.name}ListCompo
   declarations: [
     AppComponent,
     DashboardComponent,
-${types.map(types => `
-${!types.meta.templates.includes("crud") ? "" : `    ${types.name}Component,`}
-${!types.meta.templates.includes("list") ? "" : `    ${types.name}ListComponent,`}`).join("\n")}
+${entities.map(entity => `
+${!entity.meta.templates.includes("crud") ? "" : `    ${entity.name}Component,`}
+${!entity.meta.templates.includes("list") ? "" : `    ${entity.name}ListComponent,`}`).join("\n")}
   ],
   providers: [
     GraphQLService,

@@ -4,10 +4,10 @@
       <Toast position="top-right" />
       <Menubar class="op-compact" :model="[
         {icon: 'pi pi-align-left', label: 'Entities', items:[
-${types.filter(t => !t.meta.menu || t.meta.menu=="Entities").map(entity => `\
+${entities.filter(entity => !entity.meta.menu || entity.meta.menu=="Entities").map(entity => `\
           {icon: 'pi pi-table', label: '${entity.meta.label}', to: '/${entity.name.toLowerCase()}'}`).join(',\n')} ] },
         {icon: 'pi pi-align-left', label: 'Admin', items:[
-${types.filter(t => t.meta.menu && t.meta.menu=="Admin").map(entity => `\
+${entities.filter(entity => entity.meta.menu && entity.meta.menu=="Admin").map(entity => `\
           {icon: 'pi pi-table', label: '${entity.meta.label}', to: '/${entity.name.toLowerCase()}'}`).join(',\n')} ] }
         ]" />
       <router-view></router-view>
