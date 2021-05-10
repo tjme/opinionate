@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.generate = exports.metaMerge = exports.isType = exports.getType = exports.isField = exports.isEntity = exports.toProperCase = exports.convert = exports.stringify = exports.merge = exports.get = exports.isObject = void 0;
 const fs = require("fs");
 const pluralize_1 = require("pluralize");
+const metaProp = "meta", metaMarker = "@meta", separator = "\n", entityFilename = "_ENTITIES_";
 function isObject(item) {
     return (item && typeof item === 'object' && !Array.isArray(item));
 }
@@ -73,21 +74,24 @@ function getType(field) {
 exports.getType = getType;
 function isType(field, type) { return (getType(field) === type); }
 exports.isType = isType;
-const metaProp = "meta", metaMarker = "@meta", separator = "\n";
-function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, noDequote = false, returnOverlay = false) {
+function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, noDequote = false, noRemoveNull = false, returnOverlay = false) {
+    function plural(word) { return pluralize_1.plural(word); }
+    function singular(word) { return pluralize_1.singular(word); }
     const es6MetaIn = defaultMeta && fs.readFileSync(defaultMeta).toString();
     function mergeMeta(item, overlay, noDequote = false, parent) {
         let es6Meta = "`" + (es6MetaIn ||
-            `
-        label: "${toProperCase(item.name)}",
-        format: "${['money', 'money!'].includes(getType(item)) ? 'currency' : ['Boolean', 'Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime', 'Datetime!'].includes(getType(item)) ? 'date' : ['Int', 'Int!', 'BigInt', 'BigInt!', 'Float', 'Float!', 'BigFloat', 'BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
-        required: ${getType(item) && '!' == getType(item).slice(-1) ? true : false},
-        validation: null,
-        align: "${['money', 'money!', 'Datetime', 'Datetime!', 'Int', 'Int!', 'BigInt', 'BigInt!', 'Float', 'FLoat!', 'BigFloat', 'BigFLoat!'].includes(getType(item)) ? 'right' : 'left'}",
-        attributes: null,
-        readonly: false,
-        templates: ["switchboard","list", "crud"]
-      `) + "`";
+            "label: \"${toProperCase(item.name)}\"," +
+                "menu: \"${!isEntity(item) ? 'null' : 'Entities'}\"," +
+                "primaryKey: \"${isEntity(item) ? item.fields[1].name : 'null'}\"," +
+                "format: \"${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime','Datetime!'].includes(getType(item)) ? 'date' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}\"," +
+                "validation: \"${isEntity(item) ? 'null' : (item.type && item.type.kind=='NON_NULL' ? 'required|' : '')+(getType(item) && ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : '')}\"," +
+                "align: \"${isEntity(item) ? 'null' : !isField(item) || ['money','money!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : ['Boolean','Boolean!'].includes(getType(item)) ? 'center' : 'left'}\"," +
+                "attributes: null," +
+                "readonly: \"${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || ['nodeId'].includes(item.name)}\"," +
+                "linkEntity: \"${isEntity(item) ? 'null' : getType(item)==false ? singular(item.name.toLowerCase().split('by')[0]) : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)) ? 'null' : parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)).name.toLowerCase().split('by')[0]}\"," +
+                "linkFields: \"${isEntity(item) ? 'null' : getType(item)==false ? item.name.toLowerCase().split('by')[1] : 'null'}\"," +
+                "linkFieldsFrom: \"${isEntity(item) ? 'null' : getType(item)==false ? parent.fields[1].name : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)) ? 'null' : parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)).name.toLowerCase().split('by')[1]}\"," +
+                "templates: [\"switchboard\",\"list\", \"crud\"]") + "`";
         let tempMeta = JSON.parse(convert(eval(es6Meta)));
         if (!noDequote) {
             tempMeta = Object.fromEntries(Object.entries(tempMeta).map(([key, val]) => [key,
@@ -97,6 +101,8 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, over
                             val === "undefined" ? undefined :
                                 val
             ]));
+            if (!noRemoveNull)
+                tempMeta = Object.fromEntries(Object.entries(tempMeta).filter(([key, val]) => val !== null));
         }
         item[metaProp] = tempMeta;
         if (item.description) {
@@ -162,6 +168,7 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, over
 exports.metaMerge = metaMerge;
 function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMeta) {
     function plural(word) { return pluralize_1.plural(word); }
+    function singular(word) { return pluralize_1.singular(word); }
     const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta);
     const entities = schema.data.__schema.types.filter((f) => isEntity(f));
     function genCore(templateDir, targetDir) {
@@ -178,9 +185,9 @@ function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMe
             }
             else {
                 const templateContent = "`" + fs.readFileSync(templateDir + "/" + targetName) + "`";
-                if (targetName.includes("_ENTITIES_")) {
+                if (targetName.includes(entityFilename)) {
                     entities.map((entity) => {
-                        fs.writeFileSync(targetDir + "/" + targetName.replace("_ENTITIES_", entity.name).toLowerCase(), eval(templateContent));
+                        fs.writeFileSync(targetDir + "/" + targetName.replace(entityFilename, entity.name).toLowerCase(), eval(templateContent));
                     });
                 }
                 else

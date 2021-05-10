@@ -42,11 +42,12 @@ ${entities.filter(entity => entity.meta.menu && entity.meta.menu=="Admin").map(e
   .p-float-label .p-checkbox + label { left: 1.5rem; }
   .p-datatable-resizable .p-datatable-thead > tr > th { white-space: inherit; }
   .p-datatable-resizable .p-datatable-tbody > tr > td { max-width: 20rem; white-space: nowrap; }
-  .p-datatable-resizable .p-datatable-tbody > tr > td a {display: table; height:100%; width:100%;}
+  .p-datatable-resizable .p-datatable-tbody > tr > td a {display: table; height: 100%; width: 100%;}
   .p-accordion .p-accordion-content { padding: 0; }
   .p-menubar li.p-menuitem:hover .p-submenu-list { display: block; } /* fix for submenus in PrimeVue v3.3.5 */
   div.p-field.p-invalid > span.p-float-label > span.p-inputwrapper > input { background-image: linear-gradient(to bottom, #B00020, #B00020), linear-gradient(to bottom, #B00020, #B00020); }
   div.p-field.p-invalid > span.p-float-label > label { color: #B00020; top: 34%; }
+  div.p-dialog.p-component {  width: 95%; max-width: 800px; }
 
   @media screen and (min-width: 500px) { /* reduce menubar breakpoint */
     .p-menubar .p-menubar-button { display: none; }

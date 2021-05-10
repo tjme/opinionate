@@ -1,5 +1,7 @@
 import * as fs from "fs";
-import { plural as _plural } from "pluralize";
+import { plural as _plural, singular as _singular } from "pluralize";
+
+const metaProp = "meta", metaMarker = "@meta", separator = "\n", entityFilename = "_ENTITIES_";
 
 /**
  * Simple object check.
@@ -92,8 +94,6 @@ export function getType(field: any): string {
 
 export function isType(field: any, type: string): boolean { return (getType(field) === type) }
 
-const metaProp = "meta", metaMarker = "@meta", separator = "\n";
-
 /**
  * Facilities to merge and/or convert schema metadata, from and to various sources and file formats
  * @param schemaInPath base schema JSON filename to load from (which may already contain some metadata)
@@ -109,34 +109,36 @@ const metaProp = "meta", metaMarker = "@meta", separator = "\n";
  * @param ignoreComments ignore any existing metadata in base schema comments
  * @param relaxedStructure don't limit to just the structure specified in the default metadata
  * @param noDequote don't try to remove quotes from values that shouldn't normally be quoted (e.g. null)
+ * @param noRemoveNull don't remove null metadata entries
  * @param returnOverlay return only the merged overlay, rather than the full merged schema
  */
 export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultMeta?: string,
   schemaOutPath?: string, overlayOutPath?: string, commentsOutPath?: string,
-  allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, noDequote = false, returnOverlay = false
+  allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false,
+  noDequote = false, noRemoveNull = false, returnOverlay = false
 ): any {
 
+  function plural(word: string): string { return _plural(word) }
+  function singular(word: string): string { return _singular(word) }
   const es6MetaIn = defaultMeta && fs.readFileSync(defaultMeta).toString();
 
   function mergeMeta(item: any[any], overlay: any[], noDequote: boolean = false, parent?: any) {
     // Define meta to match GraphQL:
     // directive @meta(label: String, readonly: Boolean = false, templates: [String] = ["list", "crud"]) on OBJECT | FIELD_DEFINITION
     let es6Meta = "`" + (es6MetaIn ||
-      `
-        label: "${toProperCase(item.name)}",
-        format: "${['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime','Datetime!'].includes(getType(item)) ? 'date' : ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
-        required: ${getType(item) && '!'==getType(item).slice(-1) ? true : false},
-        validation: null,
-        align: "${['money','money!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : 'left'}",
-        attributes: null,
-        readonly: false,
-        templates: ["switchboard","list", "crud"]
-      `) + "`";
-    // if (!noDequote) {
-    //   es6Meta = es6Meta
-    //     .replace(/: "{(.+)}",/, ': {$1},')
-    //     // .replace(/: "\[(.+)]"/, ': [$1]')
-    // }
+        "label: \"${toProperCase(item.name)}\","+
+        "menu: \"${!isEntity(item) ? 'null' : 'Entities'}\","+
+        "primaryKey: \"${isEntity(item) ? item.fields[1].name : 'null'}\","+
+        "format: \"${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime','Datetime!'].includes(getType(item)) ? 'date' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}\","+
+        "validation: \"${isEntity(item) ? 'null' : (item.type && item.type.kind=='NON_NULL' ? 'required|' : '')+(getType(item) && ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : '')}\","+
+        "align: \"${isEntity(item) ? 'null' : !isField(item) || ['money','money!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : ['Boolean','Boolean!'].includes(getType(item)) ? 'center' : 'left'}\","+
+        "attributes: null,"+
+        "readonly: \"${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || ['nodeId'].includes(item.name)}\","+
+        "linkEntity: \"${isEntity(item) ? 'null' : getType(item)==false ? singular(item.name.toLowerCase().split('by')[0]) : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)) ? 'null' : parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)).name.toLowerCase().split('by')[0]}\","+
+        "linkFields: \"${isEntity(item) ? 'null' : getType(item)==false ? item.name.toLowerCase().split('by')[1] : 'null'}\","+
+        "linkFieldsFrom: \"${isEntity(item) ? 'null' : getType(item)==false ? parent.fields[1].name : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)) ? 'null' : parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)).name.toLowerCase().split('by')[1]}\","+
+        "templates: [\"switchboard\",\"list\", \"crud\"]"
+      ) + "`";
     let tempMeta = JSON.parse(convert(eval(es6Meta)));
     if (!noDequote) {
       tempMeta = Object.fromEntries(
@@ -148,6 +150,7 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
           val
         ])
       );
+      if (!noRemoveNull) tempMeta = Object.fromEntries(Object.entries(tempMeta).filter(([ key, val ]) => val !== null));
     }
     item[metaProp] = tempMeta;
     if (item.description) {
@@ -214,8 +217,8 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
 export function generate(templateDir: string, targetDir: string, schemaInPath: string, overlayInPath?: string, defaultMeta?: string): void {
 
   function plural(word: string): string { return _plural(word) }
-  
-    const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta);
+  function singular(word: string): string { return _singular(word) }
+  const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta);
   const entities = schema.data.__schema.types.filter((f: any) => isEntity(f));
 
   function genCore(templateDir: string, targetDir: string) {
@@ -225,9 +228,9 @@ export function generate(templateDir: string, targetDir: string, schemaInPath: s
         genCore(templateDir + "/" + targetName, targetDir + "/" + targetName);
       } else {
         const templateContent = "`" + fs.readFileSync(templateDir + "/" + targetName) + "`";
-        if (targetName.includes("_ENTITIES_")) {
+        if (targetName.includes(entityFilename)) {
           entities.map((entity: any) => {
-            fs.writeFileSync(targetDir + "/" + targetName.replace("_ENTITIES_", entity.name).toLowerCase(), eval(templateContent));
+            fs.writeFileSync(targetDir + "/" + targetName.replace(entityFilename, entity.name).toLowerCase(), eval(templateContent));
           })
         } else fs.writeFileSync(targetDir + "/" + targetName, eval(templateContent));
       }

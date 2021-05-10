@@ -38,16 +38,16 @@ ${!entity.meta.templates.includes("list") ? "" : `\
 `+(fields.meta.readonly && fields.meta.readonly!="false" ? 'readonly ' : '')
 +(fields.meta.attributes || ":sortable='true'")
 +(fields.meta.align!='left' ? ' headerStyle="text-align:'+fields.meta.align+'" bodyStyle="text-align:'+fields.meta.align+'"' : '')+" >"
-+((fields.meta.link ? '<template #body="slotProps"><a :href=\'"/#/'+fields.meta.link.entity+'?'+(fields.meta.link.fields || entities.find(e => e.name.toLowerCase()==fields.meta.link.entity).meta.primaryKey)+'="+slotProps.data.'+fields.meta.link.fieldsFrom+'\' v-text="slotProps.data.'+fields.name+(getType(fields)==false ? '.totalCount' : '')+'" >' : '')
++((fields.meta.linkEntity ? '<template #body="slotProps"><a :href=\'"/#/'+fields.meta.linkEntity+'?'+(fields.meta.linkFields || entities.find(e => e.name.toLowerCase()==fields.meta.linkEntity).meta.primaryKey)+'="+slotProps.data.'+fields.meta.linkFieldsFrom+'\' v-text="slotProps.data.'+fields.name+(getType(fields)==false ? '.totalCount' : '')+'" >' : '')
 +(fields.meta.format=='boolean' ? '<template #body="slotProps"><Checkbox name="'+fields.name+'" v-model="slotProps.data.'+fields.name+'" :binary="true" :disabled="true" /></template>' :
 fields.meta.format=='date' ? '<template #body="slotProps">{{formatDate(slotProps.data.'+fields.name+')}}</template>' :
 fields.meta.format=='datetime' ? '<template #body="slotProps">{{formatDateTime(slotProps.data.'+fields.name+')}}</template>' :
 fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(slotProps.data.'+fields.name+')}}</template>' : '')
-+(fields.meta.link ? '</a></template>' : ''))
++(fields.meta.linkEntity ? '</a></template>' : ''))
 +"</Column>").join(""))+`
     </DataTable>
   </div>
-  <Dialog v-model:visible="recordDialog" :style="{ width: '450px' }" header="`+entity.meta.label+` Details" :modal="true"
+  <Dialog v-model:visible="recordDialog" header="`+entity.meta.label+` Details" :modal="true"
     class="op-compact p-fluid p-input-filled" >`+(entity.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `
     <div class="p-field" :class="errors.`+fields.name+' ? \'p-invalid\' : \'\'"><span class="p-float-label"><'
 +(fields.meta.format=='text' ? 'Textarea :autoResize="true"'
@@ -65,7 +65,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
 `)+`    </template>
   </Dialog>
 
-  <Dialog v-model:visible="deleteRecordDialog" :style="{ width: '450px' }" header="Confirm" :modal="true" >
+  <Dialog v-model:visible="deleteRecordDialog" header="Confirm" :modal="true" >
     <div class="confirmation-content">
       <i class="pi pi-exclamation-triangle p-mr-3" style="font-size: 2rem" />
       <span>Are you sure you want to delete?
@@ -77,7 +77,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
     </template>
   </Dialog>
 
-  <Dialog v-model:visible="deleteRecordsDialog" :style="{ width: '450px' }" header="Confirm" :modal="true" >
+  <Dialog v-model:visible="deleteRecordsDialog" header="Confirm" :modal="true" >
     <div class="confirmation-content">
       <i class="pi pi-exclamation-triangle p-mr-3" style="font-size: 2rem" />
       <span>Are you sure you want to delete the selected records?</span>

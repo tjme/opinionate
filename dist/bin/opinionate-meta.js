@@ -21,12 +21,13 @@ class AppMetaMerge {
             .option("-c, --clean-descriptions", "Remove metadata from the descriptions")
             .option("-i, --ignore-comments", "Do not extract metadata from any comments in the base schema")
             .option("-r, --relaxed-structure", "don't limit to just the structure specified in the default metadata")
-            .option("-n, --no-dequote", "don't try to remove quotes from values that shouldn't normally be quoted (e.g. null)")
+            .option("-q, --no-dequote", "don't try to remove quotes from values that shouldn't normally be quoted (e.g. null)")
+            .option("-n, --no-remove-null", "don't remove null metadata entries")
             .option("-z, --return-overlay", "return only the merged overlay, rather than the full merged schema")
             .parse(process.argv);
         if (typeof this.program.schema !== 'string')
             throw new Error(`No schema file supplied`);
-        generate_1.metaMerge(this.program.schema, this.program.overlay, this.program.defaultMeta, this.program.schemaOut, this.program.overlayOut, this.program.commentsOut, this.program.allowExisting, this.program.cleanDescriptions, this.program.ignoreComments, this.program.relaxedStructure);
+        generate_1.metaMerge(this.program.schema, this.program.overlay, this.program.defaultMeta, this.program.schemaOut, this.program.overlayOut, this.program.commentsOut, this.program.allowExisting, this.program.cleanDescriptions, this.program.ignoreComments, this.program.relaxedStructure, this.program.noDequote, this.program.noRemoveNull, this.program.returnOverlay);
         process.exit();
     }
 }
