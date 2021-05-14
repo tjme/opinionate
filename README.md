@@ -125,9 +125,9 @@ The `opinionate meta` sub-command can be used in a number of ways to help manage
 
 You can generate an overlay file with default metadata using `opinionate meta --overlay-out models/overlayOut.json`, similarly you can generate a SQL script to create table and field comments containing metadata using `opinionate meta --comments-out models/comments.pgsql`. These assume there is a `models/schema.json` file describing the GraphQL schema (as produced by PostGraphile), otherwise you should use the `--schema` option to specify an alternative location.
 
-You can define your own metadata structure (e.g. to extend the metadata available to the code generating templates), and this can include code to specify default values. This can simplify the templates, and has the added benefit of allowing some of those settings to be further customized (e.g. in the overlay file) before the final code is generated. Remember though, to add the metadata parameter to both commands, e.g. `opinionate meta --default-meta models/customMeta` and `opinionate gen --default-meta models/customMeta`. Note that the metadata file is NOT in standard JSON format.
+You can define your own metadata structure (e.g. to extend the metadata available to the code generating templates), and this can include code to specify default values. This can simplify the templates, and has the added benefit of allowing some of those settings to be further customized (e.g. in the overlay file) before the final code is generated. Remember though, if you want to read the default metadata from an alternate location (rather than as config in your package.json file), add the metadata file parameter to both commands, e.g. `opinionate meta --default-meta models/customMeta` and `opinionate gen --default-meta models/customMeta`.
 
-Note that you can use `opinionate meta -h` for more help, especially on defaults and options for the locations of files to read and write.
+Note that you can use `opinionate meta -h` for more help.
 
 ## Writing your own Opinionate (ES6) template(s)
 

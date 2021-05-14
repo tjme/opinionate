@@ -8,7 +8,7 @@ const metaProp = "meta", metaMarker = "@meta", separator = "\n", entityFilename 
  * @param item
  * @returns {boolean}
  */
-export function isObject(item: any): boolean {
+function isObject(item: any): boolean {
   return (item && typeof item === 'object' && !Array.isArray(item));
 }
 
@@ -17,7 +17,7 @@ export function isObject(item: any): boolean {
  * @param obj the object from which to safely get the value
  * @param key the key of the property/path required
  */
-export function get(obj: any, key: string) {
+function get(obj: any, key: string) {
   return key.split(".").reduce(function(o, x) {
     return (typeof o == "undefined" || o === null) ? o : o[x];
   }, obj);
@@ -30,7 +30,7 @@ export function get(obj: any, key: string) {
  * @param ...sources additional object(s) to be merged in
  * @returns {object} the merger of all input objects
  */
-export function merge(target: any, relaxed = false, ...sources: any[]): any {
+function merge(target: any, relaxed = false, ...sources: any[]): any {
   if (!sources.length) return target;
   const source = sources.shift();
 
@@ -53,7 +53,7 @@ export function merge(target: any, relaxed = false, ...sources: any[]): any {
  * @param ob object to stringify
  * @returns {string} a "relaxed" string representation of an object
  */
-export function stringify(ob: any): string {
+function stringify(ob: any): string {
   if(typeof ob !== "object" || Array.isArray(ob)){ return JSON.stringify(ob); }
   let props = Object
     .keys(ob)
@@ -65,7 +65,7 @@ export function stringify(ob: any): string {
  * @param ob the object to convert to strict JSON
  * @returns {string}
  */
-export function convert(ob: string): string {
+function convert(ob: string): string {
   return (ob.trim().startsWith("{") ? "" : "{")+ob
   .replace(/^\((.*)\)$/g,'$1').replace(/^\"(.*)\"$/g,'$1').replace(/^\{(.*)\}$/g,'$1') // Remove any outer brackets and/or double quotes and/or curly brackets
 	.replace(/:\s*"([^"]*)"/g, function(match, p1) { return ': "' + p1.replace(/:/g, '@colon@') + '"'; })
@@ -78,29 +78,30 @@ export function convert(ob: string): string {
  * 
  * @param txt the string to convert to Proper case (initial capital, followed by all lower case)
  */
-export function toProperCase(txt: string): string {
+function toProperCase(txt: string): string {
   return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); }
 
-export function isEntity(entity: any): boolean {
+function isEntity(entity: any): boolean {
   return entity.kind == "OBJECT" && entity.interfaces.length > 0 // && entity.interfaces[0].name == "Node"
     && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
     && !entity.name.endsWith("Connection") && !entity.name.endsWith("Edge") && !entity.name.endsWith("Payload") }
 
-export function isField(field: any): boolean {
+function isField(field: any): boolean {
   return field.type && (field.type.kind == "SCALAR" || (field.type["ofType"] && field.type.ofType["kind"] == "SCALAR")) }
 
-export function getType(field: any): string {
+function getType(field: any): string {
   return isField(field) && field.type && (field.type.name || (field.type.ofType && field.type.ofType.name)) }
 
-export function isType(field: any, type: string): boolean { return (getType(field) === type) }
+function isType(field: any, type: string): boolean { return (getType(field) === type) }
 
 /**
  * Facilities to merge and/or convert schema metadata, from and to various sources and file formats
  * @param schemaInPath base schema JSON filename to load from (which may already contain some metadata)
  * @param overlayInPath then merge in any schema.data.__schema.types metadata from overlay JSON file (containing metadata and type IDs)
- * Write merged results to any of the following output files:
  * @param defaultMeta an ES6 template file defining the default metadata (used for each type, in the absence of any other sources)
+ * @param defaultMetaKey default metadata key within the above
  * then also merge in any metadata from its entity and field descriptions (originally from PostgreSQL table and field comments)
+ * Write merged results to any of the following output files:
  * @param schemaOutPath to updated schema JSON file (which can subsequently be used as new base schema)
  * @param overlayOutPath for schema.data.__schema.types, to JSON file with just metadata (and identifying type IDs)
  * @param commentsOutPath SQL script to add (or replace) table and field comments, including metadata
@@ -108,39 +109,26 @@ export function isType(field: any, type: string): boolean { return (getType(fiel
  * @param cleanDescriptions whether to remove metadata from descriptions/comments
  * @param ignoreComments ignore any existing metadata in base schema comments
  * @param relaxedStructure don't limit to just the structure specified in the default metadata
- * @param noDequote don't try to remove quotes from values that shouldn't normally be quoted (e.g. null)
- * @param noRemoveNull don't remove null metadata entries
+ * @param dontEval don't try to evaluate the metadata structure as an ES6 template
+ * @param dontDequote don't try to remove quotes from values that shouldn't normally be quoted (e.g. null)
+ * @param dontRemoveNull don't remove null metadata entries
  * @param returnOverlay return only the merged overlay, rather than the full merged schema
  */
-export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultMeta?: string,
+export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultMeta: string = "./package.json", defaultMetaKey: string = "config.defaultMeta",
   schemaOutPath?: string, overlayOutPath?: string, commentsOutPath?: string,
   allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false,
-  noDequote = false, noRemoveNull = false, returnOverlay = false
+  dontEval = false, dontDequote = false, dontRemoveNull = false, returnOverlay = false
 ): any {
 
   function plural(word: string): string { return _plural(word) }
   function singular(word: string): string { return _singular(word) }
-  const es6MetaIn = defaultMeta && fs.readFileSync(defaultMeta).toString();
+  const es6MetaIn = JSON.stringify(get(JSON.parse(fs.readFileSync(defaultMeta).toString()), defaultMetaKey));
 
-  function mergeMeta(item: any[any], overlay: any[], noDequote: boolean = false, parent?: any) {
-    // Define meta to match GraphQL:
-    // directive @meta(label: String, readonly: Boolean = false, templates: [String] = ["list", "crud"]) on OBJECT | FIELD_DEFINITION
-    let es6Meta = "`" + (es6MetaIn ||
-        "label: \"${toProperCase(item.name)}\","+
-        "menu: \"${!isEntity(item) ? 'null' : 'Entities'}\","+
-        "primaryKey: \"${isEntity(item) ? item.fields[1].name : 'null'}\","+
-        "format: \"${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime','Datetime!'].includes(getType(item)) ? 'date' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}\","+
-        "validation: \"${isEntity(item) ? 'null' : (item.type && item.type.kind=='NON_NULL' ? 'required|' : '')+(getType(item) && ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : '')}\","+
-        "align: \"${isEntity(item) ? 'null' : !isField(item) || ['money','money!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : ['Boolean','Boolean!'].includes(getType(item)) ? 'center' : 'left'}\","+
-        "attributes: null,"+
-        "readonly: \"${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || ['nodeId'].includes(item.name)}\","+
-        "linkEntity: \"${isEntity(item) ? 'null' : getType(item)==false ? singular(item.name.toLowerCase().split('by')[0]) : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)) ? 'null' : parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)).name.toLowerCase().split('by')[0]}\","+
-        "linkFields: \"${isEntity(item) ? 'null' : getType(item)==false ? item.name.toLowerCase().split('by')[1] : 'null'}\","+
-        "linkFieldsFrom: \"${isEntity(item) ? 'null' : getType(item)==false ? parent.fields[1].name : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)) ? 'null' : parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)).name.toLowerCase().split('by')[1]}\","+
-        "templates: [\"switchboard\",\"list\", \"crud\"]"
-      ) + "`";
-    let tempMeta = JSON.parse(convert(eval(es6Meta)));
-    if (!noDequote) {
+  function mergeMeta(item: any[any], overlay: any[], parent?: any) {
+    let es6Meta = dontEval ? es6MetaIn : eval("`"+es6MetaIn+"`");
+    if (relaxedStructure) es6Meta = convert(es6Meta);
+    let tempMeta = JSON.parse(es6Meta);
+    if (!dontDequote) {
       tempMeta = Object.fromEntries(
         Object.entries(tempMeta).map(([ key, val ]) => [ key,
           val === "null" ? null :
@@ -150,8 +138,8 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
           val
         ])
       );
-      if (!noRemoveNull) tempMeta = Object.fromEntries(Object.entries(tempMeta).filter(([ key, val ]) => val !== null));
     }
+    if (!dontRemoveNull) tempMeta = Object.fromEntries(Object.entries(tempMeta).filter(([ key, val ]) => val !== null));
     item[metaProp] = tempMeta;
     if (item.description) {
       const [description, meta] = item.description.split(metaMarker);
@@ -181,12 +169,12 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
   .filter((ft: any) => isEntity(ft))
   .forEach((t: any) => {
     if (!allowExisting && t.hasOwnProperty(metaProp)) throw new Error(`The schema already contains metadata (for table ${t.name})`);
-    mergeMeta(t, overlayIn, noDequote);
+    mergeMeta(t, overlayIn);
     t.fields
     // .filter((f: any) => isField(f))
     .forEach((f: any) => {
       if (!allowExisting && f.hasOwnProperty(metaProp)) throw new Error(`The schema already contains metadata (for field ${f.name})`);
-      mergeMeta(f, overlayIn && overlayIn.find((oi: any) => oi.name == t.name).fields, noDequote, t);
+      mergeMeta(f, overlayIn && overlayIn.find((oi: any) => oi.name == t.name).fields, t);
     });
   });
   if (schemaOutPath) fs.writeFileSync(schemaOutPath, JSON.stringify(schema, null, 2));
@@ -212,13 +200,17 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
  * @param schemaInPath base schema JSON filename to load from (which may already contain some metadata)
  * @param overlayInPath then merge in any schema.data.__schema.types metadata from overlay JSON file (containing metadata and type IDs)
  * @param defaultMeta an ES6 template file defining the default metadata (used for each type, in the absence of any other sources)
+ * @param defaultMetaKey default metadata key within the above
  * then also merge in any metadata from its entity and field descriptions (originally from PostgreSQL table and field comments)
+ * @param evalExcludeFiles a regex to match any filenames to be excluded from eval
  */
-export function generate(templateDir: string, targetDir: string, schemaInPath: string, overlayInPath?: string, defaultMeta?: string): void {
+export function generate(templateDir: string, targetDir: string, schemaInPath: string,
+  overlayInPath?: string, defaultMeta: string = "./package.json", defaultMetaKey: string = "config.defaultMeta",
+  evalExcludeFiles: RegExp = /package.*\.json/): void {
 
   function plural(word: string): string { return _plural(word) }
   function singular(word: string): string { return _singular(word) }
-  const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta);
+  const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta, defaultMetaKey);
   const entities = schema.data.__schema.types.filter((f: any) => isEntity(f));
 
   function genCore(templateDir: string, targetDir: string) {
@@ -232,7 +224,7 @@ export function generate(templateDir: string, targetDir: string, schemaInPath: s
           entities.map((entity: any) => {
             fs.writeFileSync(targetDir + "/" + targetName.replace(entityFilename, entity.name).toLowerCase(), eval(templateContent));
           })
-        } else fs.writeFileSync(targetDir + "/" + targetName, eval(templateContent));
+        } else fs.writeFileSync(targetDir + "/" + targetName, evalExcludeFiles.test(targetName) ? templateContent : eval(templateContent));
       }
     });
   }

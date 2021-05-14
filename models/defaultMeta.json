@@ -1,11 +1,14 @@
-label: "${toProperCase(item.name).replace('ref',' Ref').replace('updated','  Updated').replace('date',' Date').replace('type',' Type').replace('id',' ID')}",
-menu: null,
-format: "${['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime','Datetime!'].includes(getType(item)) ? 'date' : ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
-required: ${getType(item) && '!'==getType(item).slice(-1) ? true : false},
-validation: null,
-align: "${['money','money!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : 'left'}",
-attributes: null,
-readonly: ${(isEntity(item) && item.fields[0].name!=='nodeId') || (['nodeId','created','lastupdated','by'].includes(item.name) && isField(item))},
-templates: [ "switchboard"
-${item.name=='nodeId' ? '' : ', "list"'}
-${item.name=='nodeId' ? '' : ', "crud"'} ]
+{
+  "label": "${toProperCase(item.name)}",
+  "menu": "${!isEntity(item) ? 'null' : 'Entities'}",
+  "primaryKey": "${isEntity(item) ? item.fields[1].name : 'null'}",
+  "format": "${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime','Datetime!'].includes(getType(item)) ? 'date' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
+  "validation": "${isEntity(item) ? 'null' : (item.type && item.type.kind=='NON_NULL' ? 'required|' : '')+(getType(item) && ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : '')}",
+  "align": "${isEntity(item) ? 'null' : !isField(item) || ['money','money!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : ['Boolean','Boolean!'].includes(getType(item)) ? 'center' : 'left'}",
+  "attributes": null,
+  "readonly": "${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || ['nodeId'].includes(item.name)}",
+  "linkEntity": "${isEntity(item) ? 'null' : getType(item)==false ? singular(item.name.toLowerCase().split('by')[0]) : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)) ? 'null' : parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)).name.toLowerCase().split('by')[0]}",
+  "linkFields": "${isEntity(item) ? 'null' : getType(item)==false ? item.name.toLowerCase().split('by')[1] : 'null'}",
+  "linkFieldsFrom": "${isEntity(item) ? 'null' : getType(item)==false ? parent.fields[1].name : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)) ? 'null' : parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)).name.toLowerCase().split('by')[1]}",
+  "templates": [ "switchboard${item.name=='nodeId' ? '' : '\", \"list'}${item.name=='nodeId' ? '' : '\", \"crud'}" ]
+}

@@ -1,19 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generate = exports.metaMerge = exports.isType = exports.getType = exports.isField = exports.isEntity = exports.toProperCase = exports.convert = exports.stringify = exports.merge = exports.get = exports.isObject = void 0;
+exports.generate = exports.metaMerge = void 0;
 const fs = require("fs");
 const pluralize_1 = require("pluralize");
 const metaProp = "meta", metaMarker = "@meta", separator = "\n", entityFilename = "_ENTITIES_";
 function isObject(item) {
     return (item && typeof item === 'object' && !Array.isArray(item));
 }
-exports.isObject = isObject;
 function get(obj, key) {
     return key.split(".").reduce(function (o, x) {
         return (typeof o == "undefined" || o === null) ? o : o[x];
     }, obj);
 }
-exports.get = get;
 function merge(target, relaxed = false, ...sources) {
     if (!sources.length)
         return target;
@@ -33,7 +31,6 @@ function merge(target, relaxed = false, ...sources) {
     }
     return merge(target, relaxed, ...sources);
 }
-exports.merge = merge;
 function stringify(ob) {
     if (typeof ob !== "object" || Array.isArray(ob)) {
         return JSON.stringify(ob);
@@ -43,7 +40,6 @@ function stringify(ob) {
         .map(key => `${key}:${stringify(ob[key])}`);
     return `${props}`;
 }
-exports.stringify = stringify;
 ;
 function convert(ob) {
     return (ob.trim().startsWith("{") ? "" : "{") + ob
@@ -53,47 +49,31 @@ function convert(ob) {
         .replace(/(['"])?([a-z0-9A-Z_]+)(['"])?\s*:/g, '"$2": ')
         .replace(/@colon@/g, ':') + (ob.trim().endsWith("}") ? "" : "}");
 }
-exports.convert = convert;
 function toProperCase(txt) {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 }
-exports.toProperCase = toProperCase;
 function isEntity(entity) {
     return entity.kind == "OBJECT" && entity.interfaces.length > 0
         && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
         && !entity.name.endsWith("Connection") && !entity.name.endsWith("Edge") && !entity.name.endsWith("Payload");
 }
-exports.isEntity = isEntity;
 function isField(field) {
     return field.type && (field.type.kind == "SCALAR" || (field.type["ofType"] && field.type.ofType["kind"] == "SCALAR"));
 }
-exports.isField = isField;
 function getType(field) {
     return isField(field) && field.type && (field.type.name || (field.type.ofType && field.type.ofType.name));
 }
-exports.getType = getType;
 function isType(field, type) { return (getType(field) === type); }
-exports.isType = isType;
-function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, noDequote = false, noRemoveNull = false, returnOverlay = false) {
+function metaMerge(schemaInPath, overlayInPath, defaultMeta = "./package.json", defaultMetaKey = "config.defaultMeta", schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, dontEval = false, dontDequote = false, dontRemoveNull = false, returnOverlay = false) {
     function plural(word) { return pluralize_1.plural(word); }
     function singular(word) { return pluralize_1.singular(word); }
-    const es6MetaIn = defaultMeta && fs.readFileSync(defaultMeta).toString();
-    function mergeMeta(item, overlay, noDequote = false, parent) {
-        let es6Meta = "`" + (es6MetaIn ||
-            "label: \"${toProperCase(item.name)}\"," +
-                "menu: \"${!isEntity(item) ? 'null' : 'Entities'}\"," +
-                "primaryKey: \"${isEntity(item) ? item.fields[1].name : 'null'}\"," +
-                "format: \"${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Datetime','Datetime!'].includes(getType(item)) ? 'date' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}\"," +
-                "validation: \"${isEntity(item) ? 'null' : (item.type && item.type.kind=='NON_NULL' ? 'required|' : '')+(getType(item) && ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : '')}\"," +
-                "align: \"${isEntity(item) ? 'null' : !isField(item) || ['money','money!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : ['Boolean','Boolean!'].includes(getType(item)) ? 'center' : 'left'}\"," +
-                "attributes: null," +
-                "readonly: \"${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || ['nodeId'].includes(item.name)}\"," +
-                "linkEntity: \"${isEntity(item) ? 'null' : getType(item)==false ? singular(item.name.toLowerCase().split('by')[0]) : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)) ? 'null' : parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)).name.toLowerCase().split('by')[0]}\"," +
-                "linkFields: \"${isEntity(item) ? 'null' : getType(item)==false ? item.name.toLowerCase().split('by')[1] : 'null'}\"," +
-                "linkFieldsFrom: \"${isEntity(item) ? 'null' : getType(item)==false ? parent.fields[1].name : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)) ? 'null' : parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name)).name.toLowerCase().split('by')[1]}\"," +
-                "templates: [\"switchboard\",\"list\", \"crud\"]") + "`";
-        let tempMeta = JSON.parse(convert(eval(es6Meta)));
-        if (!noDequote) {
+    const es6MetaIn = JSON.stringify(get(JSON.parse(fs.readFileSync(defaultMeta).toString()), defaultMetaKey));
+    function mergeMeta(item, overlay, parent) {
+        let es6Meta = dontEval ? es6MetaIn : eval("`" + es6MetaIn + "`");
+        if (relaxedStructure)
+            es6Meta = convert(es6Meta);
+        let tempMeta = JSON.parse(es6Meta);
+        if (!dontDequote) {
             tempMeta = Object.fromEntries(Object.entries(tempMeta).map(([key, val]) => [key,
                 val === "null" ? null :
                     val === "true" ? true :
@@ -101,9 +81,9 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, over
                             val === "undefined" ? undefined :
                                 val
             ]));
-            if (!noRemoveNull)
-                tempMeta = Object.fromEntries(Object.entries(tempMeta).filter(([key, val]) => val !== null));
         }
+        if (!dontRemoveNull)
+            tempMeta = Object.fromEntries(Object.entries(tempMeta).filter(([key, val]) => val !== null));
         item[metaProp] = tempMeta;
         if (item.description) {
             const [description, meta] = item.description.split(metaMarker);
@@ -140,12 +120,12 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, over
         .forEach((t) => {
         if (!allowExisting && t.hasOwnProperty(metaProp))
             throw new Error(`The schema already contains metadata (for table ${t.name})`);
-        mergeMeta(t, overlayIn, noDequote);
+        mergeMeta(t, overlayIn);
         t.fields
             .forEach((f) => {
             if (!allowExisting && f.hasOwnProperty(metaProp))
                 throw new Error(`The schema already contains metadata (for field ${f.name})`);
-            mergeMeta(f, overlayIn && overlayIn.find((oi) => oi.name == t.name).fields, noDequote, t);
+            mergeMeta(f, overlayIn && overlayIn.find((oi) => oi.name == t.name).fields, t);
         });
     });
     if (schemaOutPath)
@@ -166,10 +146,10 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta, schemaOutPath, over
     return schema;
 }
 exports.metaMerge = metaMerge;
-function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMeta) {
+function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMeta = "./package.json", defaultMetaKey = "config.defaultMeta", evalExcludeFiles = /package.*\.json/) {
     function plural(word) { return pluralize_1.plural(word); }
     function singular(word) { return pluralize_1.singular(word); }
-    const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta);
+    const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta, defaultMetaKey);
     const entities = schema.data.__schema.types.filter((f) => isEntity(f));
     function genCore(templateDir, targetDir) {
         fs.readdirSync(templateDir).forEach((targetName) => {
@@ -191,7 +171,7 @@ function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMe
                     });
                 }
                 else
-                    fs.writeFileSync(targetDir + "/" + targetName, eval(templateContent));
+                    fs.writeFileSync(targetDir + "/" + targetName, evalExcludeFiles.test(targetName) ? templateContent : eval(templateContent));
             }
         });
     }

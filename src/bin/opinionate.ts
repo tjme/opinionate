@@ -1,7 +1,5 @@
 import * as commander from 'commander';
-
 export class App {
-
     private program: commander.CommanderStatic;
     private package: any;
 
@@ -9,16 +7,16 @@ export class App {
         this.program = commander;
         this.package = require('../../package.json');
     }
-
     public initialize() {
         this.program
             .version(this.package.version)
             .command('meta [options]', 'merge and/or convert schema metadata, from and to various sources and file formats')
             .command('gen [options]', 'generate front-end components from schema intraspection and/or metadata', {isDefault: true})
+            .option("-b, --debug", "output extra debugging")
             .parse(process.argv);
+            const options = this.program.opts();
+            if (options.debug) console.log(options);
     }
-
 }
-
 let app = new App();
 app.initialize();
