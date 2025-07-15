@@ -8,7 +8,7 @@ Or rather, [PostGraphile](https://github.com/graphile/postgraphile) is used to a
 
 This version of Opinionate includes built-in templates that generate functional front-ends using the latest frameworks and technologies. The generated code is [TypeScript](https://www.typescriptlang.org) (and HTML templates) and is fully human-readable, enabling ongoing development and hand crafting. Alternatively, you can refine or customize the templates to better suit your needs, or you can create your own (which could target other technologies, such as React, see below).
 
-Alternatively, Opinionate can be used with other GraphQL server-side technologies, to automatically generate just the front-end/client.
+Of course Opinionate can be used with other GraphQL server-side technologies, to automatically generate just the front-end/client.
 
 ## Prerequisites
 
@@ -117,7 +117,7 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 
 ## Writing metadata
 
-You can guide and improve the code gneration performed by the template, by adding metadata. For example (when using the built-in template), you can specify more user-friendly labels for individual tables and fields, and whether they should appear on List or CRUD pages.
+You can guide and improve the code generation performed by the template, by adding metadata. For example (when using the built-in template), you can specify more user-friendly labels for individual tables and fields, and whether they should appear on List or CRUD pages.
 
 The `opinionate meta` sub-command can be used in a number of ways to help manage the metadata. You can provide the metadata as a (JSON) overlay file, or in the PostgreSQL schema, as table and field comments. It can create starter (SQL and/or JSON) files, where you need only fill in the gaps (which is especially useful if you have a large schema).
 
