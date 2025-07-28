@@ -19,4 +19,7 @@ Communications with the GraphQL server are supported by Villus (rather than the 
 
 Work in progress:
 
-- Where link counts for (one to many) related entities are generated, the first field is assumed to be the primary key (and recorded as field.link.fieldsFrom)
+- Where link counts for (one to many) related entities are generated, the first field is assumed to be the primary key (and recorded as field.link.fieldsFrom).
+- A basic switchboard page is created as a starting point, but it may need refinement (e.g. it might not perform well with a large database).
+- You may want to restructure the menubar (in src/App.vue) by reordering and/or splitting into submenus.
+- No homepage is currently automatically generated.
