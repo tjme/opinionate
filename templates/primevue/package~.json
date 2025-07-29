@@ -4,12 +4,6 @@
   "license": "MIT",
 	"author": "Tim Merrison <tim@merrison.co.uk>",
   "config": {
-    "gql_api": {
-      "prefix": "http://",
-      "hostname": "localhost",
-      "port": 5000,
-      "path": "/graphql"
-    },
     "defaultMeta": {
       "label": "${toProperCase(item.name)}",
       "menu": "${!isEntity(item) ? 'null' : 'Entities'}",
@@ -25,25 +19,15 @@
       "templates": [ "switchboard${item.name=='nodeId' ? '' : '\", \"list'}${item.name=='nodeId' ? '' : '\", \"crud'}" ]
     }
   },
-  "codegen": {
-    "schema": "models/schema.json",
-    "generates": {
-      "models/types.d.ts": {
-        "plugins": [
-          "typescript"
-        ]
-      }
-    }
-  },
   "scripts": {
     "preinstall": "npx only-allow pnpm", 
     "gen-json": "postgraphile -c postgres://test:testpass@/toh -s public -X --export-schema-json models/schema.json",
     "gen-gql": "postgraphile -c postgres://test:testpass@/toh -s public -X --export-schema-graphql models/schema.gql",
-    "gen-json-a": "apollo client:download-schema --endpoint=$npm_package_config.gql_api_hostname models/schema.json",
-    "gen-gql-a": "apollo client:download-schema --endpoint=$npm_package_config.gql_api_hostname models/schema.gql",
-    "gen-json-g": "get-graphql-schema $npm_package_config.gql_api_hostname -j > models/schema.json",
-    "gen-gql-g": "get-graphql-schema $npm_package_config.gql_api_hostname > models/schema.gql",
-    "gen-ts": "graphql-codegen --config node_modules/opinionate/codegen.yml",
+    "gen-json-a": "apollo client:download-schema --endpoint=localhost models/schema.json",
+    "gen-gql-a": "apollo client:download-schema --endpoint=localhost models/schema.gql",
+    "gen-json-g": "get-graphql-schema localhost -j > models/schema.json",
+    "gen-gql-g": "get-graphql-schema localhost > models/schema.gql",
+    "gen-ts": "graphql-codegen --config node_modules/opinionate/models/codegen.yml",
     "gen-overlay": "opinionate meta --overlay-out models/overlayOut.json",
     "gen": "opinionate gen --template node_modules/opinionate/templates/primevue -o models/overlayOut.json",
     "backend": "postgraphile -c postgres://test:testpass@/toh --cors --enhance-graphiql -n localhost -p 5000 -q /graphql",
