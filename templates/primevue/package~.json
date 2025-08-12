@@ -1,9 +1,15 @@
 {
-  "name": "primevue-toh",
+  "name": "primevue",
   "version": "0.0.0",
   "license": "MIT",
 	"author": "Tim Merrison <tim@merrison.co.uk>",
   "config": {
+    "gql_api": {
+      "prefix": "http://",
+      "hostname": "localhost",
+      "port": 5000,
+      "path": "/graphql"
+    },
     "defaultMeta": {
       "label": "${toProperCase(item.name)}",
       "menu": "${!isEntity(item) ? 'null' : 'Entities'}",

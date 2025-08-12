@@ -48,7 +48,6 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO test;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 \q
 ```
-- run the GraphQL server (in the background): `pnpm backend &`
 
 ## Example [Vue](https://vuejs.org)/[PrimeVue](https://github.com/primefaces/primevue) front-end, using [Vite](https://github.com/vitejs/vite) and [Villus](https://github.com/logaretm/villus)
 
@@ -60,6 +59,7 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 - rename or remove the default package.json
 - copy or merge the template's [package~.json](https://github.com/tjme/opinionate/blob/master/templates/primevue/package~.json) as your new ./package.json (or selectively copy/paste, especially the following scripts, and codegen configuration, e.g. adjusting the database name 'toh' in the script for 'backend')
 - install dependencies: `pnpm i`
+- run the GraphQL server (in the background): `pnpm backend &`
 - generate JSON schema files: `pnpm gen-json` (alternatively, if not using PostGraphile, use apollo `pnpm gen-json-a` or get-graphql-schema `pnpm gen-json-g`)
 - optionally generate GraphQL schema files: `pnpm gen-gql` (alternatively, ditto the above)
 - create the TypeScript type definitions for the schema: `pnpm gen-ts`
