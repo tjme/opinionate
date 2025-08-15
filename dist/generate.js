@@ -50,7 +50,10 @@ function convert(ob) {
         .replace(/@colon@/g, ':') + (ob.trim().endsWith("}") ? "" : "}");
 }
 function toProperCase(txt) {
-    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase();
+}
+function to1LowerCase(txt) {
+    return txt.charAt(0).toLowerCase() + txt.slice(1);
 }
 function isEntity(entity) {
     return entity.kind == "OBJECT" && entity.interfaces.length > 0

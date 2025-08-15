@@ -79,7 +79,15 @@ function convert(ob: string): string {
  * @param txt the string to convert to Proper case (initial capital, followed by all lower case)
  */
 function toProperCase(txt: string): string {
-  return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(); }
+  return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase(); }
+
+
+/**
+ * 
+ * @param txt the string to convert the first character to lower case (initial lower case, followed by remainder unchanged)
+ */
+function to1LowerCase(txt: string): string {
+    return txt.charAt(0).toLowerCase() + txt.slice(1); }
 
 function isEntity(entity: any): boolean {
   return entity.kind == "OBJECT" && entity.interfaces.length > 0 // && entity.interfaces[0].name == "Node"
