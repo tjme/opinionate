@@ -38,7 +38,7 @@ ${!entity.meta.templates.includes("list") ? "" : `\
 `+(fields.meta.readonly && fields.meta.readonly!="false" ? 'readonly ' : '')
 +(fields.meta.attributes || ":sortable='true'")
 +(fields.meta.align!='left' ? ' headerStyle="text-align:'+fields.meta.align+'" bodyStyle="text-align:'+fields.meta.align+'"' : '')+" >"
-+((fields.meta.linkEntity ? '<template #body="slotProps"><a :href=\'"/#/'+fields.meta.linkEntity+'?'+(fields.meta.linkFields || entities.find(e => e.name.toLowerCase()==fields.meta.linkEntity).meta.primaryKey)+'="+slotProps.data.'+fields.meta.linkFieldsFrom+'\' v-text="slotProps.data.'+fields.name+(getType(fields)==false ? '.totalCount' : '')+'" >' : '')
++((fields.meta.linkEntity ? '<template #body="slotProps"><a :href=\'"/#/'+fields.meta.linkEntity+'?'+(fields.meta.linkFields || entities.find(e => (e.name)==fields.meta.linkEntity).meta.primaryKey)+'="+slotProps.data.'+fields.meta.linkFieldsFrom+'\' v-text="slotProps.data.'+fields.name+(getType(fields)==false ? '.totalCount' : '')+'" >' : '')
 +(fields.meta.format=='boolean' ? '<template #body="slotProps"><Checkbox name="'+fields.name+'" v-model="slotProps.data.'+fields.name+'" :binary="true" :disabled="true" /></template>' :
 fields.meta.format=='date' ? '<template #body="slotProps">{{formatDate(slotProps.data.'+fields.name+')}}</template>' :
 fields.meta.format=='datetime' ? '<template #body="slotProps">{{formatDateTime(slotProps.data.'+fields.name+')}}</template>' :

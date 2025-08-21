@@ -75,19 +75,35 @@ function convert(ob: string): string {
 }
 
 /**
- * 
- * @param txt the string to convert to Proper case (initial capital, followed by all lower case)
+ * Convert to Proper case (initial capital, followed by all lower case)
+ * @param txt the string to convert
  */
 function toProperCase(txt: string): string {
   return txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase(); }
 
+/**
+ * Convert the first character to lower case (initial lower case, followed by remainder unchanged)
+ * @param txt the string to convert
+ */
+function to1LowerCase(txt: any): string {
+  return txt.charAt(0).toLowerCase() + txt.slice(1) }
 
 /**
- * 
- * @param txt the string to convert the first character to lower case (initial lower case, followed by remainder unchanged)
+ * Convert the first character to upper case (initial upper case, followed by remainder unchanged)
+ * @param txt the string to convert
  */
-function to1LowerCase(txt: string): string {
-    return txt.charAt(0).toLowerCase() + txt.slice(1); }
+function to1UpperCase(txt: string): string {
+  return txt.charAt(0).toUpperCase() + txt.slice(1); }
+
+/**
+ * Convert camelCase to proper (case, space separated) words
+ * @param txt the camelCase string to convert
+ */
+function camel2proper(camelCase: string) {
+  return camelCase
+  .replace(/([A-Z])/g, (match) => ` ${match}`)
+  .replace(/^./, (match) => match.toUpperCase())
+  .trim() }
 
 function isEntity(entity: any): boolean {
   return entity.kind == "OBJECT" && entity.interfaces.length > 0 // && entity.interfaces[0].name == "Node"

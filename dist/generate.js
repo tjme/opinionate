@@ -55,6 +55,15 @@ function toProperCase(txt) {
 function to1LowerCase(txt) {
     return txt.charAt(0).toLowerCase() + txt.slice(1);
 }
+function to1UpperCase(txt) {
+    return txt.charAt(0).toUpperCase() + txt.slice(1);
+}
+function camel2proper(camelCase) {
+    return camelCase
+        .replace(/([A-Z])/g, (match) => ` ${match}`)
+        .replace(/^./, (match) => match.toUpperCase())
+        .trim();
+}
 function isEntity(entity) {
     return entity.kind == "OBJECT" && entity.interfaces.length > 0
         && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
