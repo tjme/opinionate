@@ -36,7 +36,7 @@
     "gen-ts": "graphql-codegen --config node_modules/opinionate/models/codegen.yml",
     "gen-overlay": "opinionate meta --overlay-out models/overlayOut.json",
     "gen": "opinionate gen --template node_modules/opinionate/templates/primevue -o models/overlayOut.json",
-    "backend": "postgraphile -c postgres://test:testpass@/toh --cors --enhance-graphiql -n localhost -p 5000 -q /graphql",
+    "backend": "postgraphile -c postgres://test:testpass@/pagila --cors --enhance-graphiql -n localhost -p 5000 -q /graphql",
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
