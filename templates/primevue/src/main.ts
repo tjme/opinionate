@@ -34,8 +34,7 @@ const url = (config.gql_api.prefix || "")+config.gql_api.hostname+(":"+config.gq
 const client = createClient({ url });
 
 const routes = [
-  // { path: "/", },
-  { path: '/switchboard', component: Switchboard, props: true },
+  { path: '/', component: Switchboard, props: true },
 ${entities.map(entity => `\
   { path: '/${entity.name.toLowerCase()}', component: ${entity.name}, props: true },`).join("\n")}
 ]
