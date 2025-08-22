@@ -11,7 +11,7 @@ A sample app to demonstrate the use of the following combination of tech. (as a 
 - Villus
 - Vite
 
-This version supports a fully functional datatable (for a single entity), including pagination, sorting and column sizing (with both left and right-aligned columns).
+This version supports fully functional datatables (for each entity), with clickable references/counts/links to related datatables/entities including pagination, sorting and column sizing (with both left and right-aligned columns).
 
 In addition, full CRUD operations are supported (mostly via a pop-up form dialog).
 
@@ -19,7 +19,6 @@ Communications with the GraphQL server are supported by Villus (rather than the 
 
 Work in progress:
 
-- Where link counts for (one to many) related entities are generated, the first field is assumed to be the primary key (and recorded as field.link.fieldsFrom).
-- A basic switchboard page is created as a starting point, but it may need refinement (e.g. it might not perform well with a large database).
+- Where link counts for (one to many) related entities are generated, the first field is *assumed* to be the primary key (and recorded as field.link.fieldsFrom).
+- A basic homepage/switchboard is created as a *starting point*, but it may need refinement (e.g. it might not perform well with a large database).
 - You may want to restructure the menubar (in src/App.vue) by reordering and/or splitting into submenus.
-- No homepage is currently automatically generated.
