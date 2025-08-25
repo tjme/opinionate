@@ -107,22 +107,20 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
 +(entity.fields.filter(f => getType(f)!=null).map(fields => fields.name+(isField(fields) ? "" : "{totalCount}")))+` }\`;
   const ReadAll = gql\`query readAll($condition:`+entity.name+`Condition) {all`+plural(entity.name)+` (condition:$condition)
     {nodes{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
-  const Read = gql\`query read($nodeId:ID!){ `+entity.name.toLowerCase()+`(nodeId:$nodeId)
-    {...`+entity.name+`Fields } } $\{ `+entity.name+`Fields}\`;
   const Create = gql\`mutation create(`+entity.fields
     .filter(f => isField(f) && f.meta.templates.includes("crud")).map(field => '$'+field.name+':'+getType(field)+(field.type.kind=="NON_NULL" ? "!" : ""))+`)
-    {create`+entity.name+`(input:{`+entity.name.toLowerCase()+`:{ `+entity.fields
+    {create`+entity.name+`(input:{`+to1LowerCase(entity.name)+`:{ `+entity.fields
         .filter(f => isField(f) && f.meta.templates.includes("crud")).map(field => field.name+':\$'+field.name)+` } })
-    { `+entity.name.toLowerCase()+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
+    { `+to1LowerCase(entity.name)+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Update = gql\`mutation update(`+entity.fields
     .filter(f => isField(f) && (f.name=="nodeId" || f.meta.templates.includes("crud"))).map(field => '$'+field.name+':'+getType(field)+(field.name=="nodeId" ? "!" : ""))+`)
     {update`+entity.name+`(input:{nodeId:$nodeId,
-    `+entity.name.toLowerCase()+`Patch:{ `+entity.fields
+    `+to1LowerCase(entity.name)+`Patch:{ `+entity.fields
       .filter(f => isField(f) && f.name!=="nodeId" && f.meta.templates.includes("crud")).map(field => field.name+':\$'+field.name)+` } })
-    { `+entity.name.toLowerCase()+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
+    { `+to1LowerCase(entity.name)+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Delete = gql\`mutation delete($nodeId:ID!)
     {delete`+entity.name+`(input:{nodeId:$nodeId})
-    { `+entity.name.toLowerCase()+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
+    { `+to1LowerCase(entity.name)+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   type recType = { `+entity.fields.filter(f => getType(f)!=null).map(field => field.name+'?: '+
     (!isField(field) ? "{ totalCount?: number }" : ["text","date","datetime"].includes(field.meta.format) ? "string" : field.meta.format)).join(", ")+` }
 
@@ -190,10 +188,10 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
         submitted.value = true;
         for (const property in recordV) { if (recordV[property] == "" && typeof(recordV[property])!="boolean") recordV[property] = null };
         if (nodeIdV.value) { // it's an update:
-          console.log("Update Pre:"+JSON.stringify(recordV));
+//          console.log("Update Pre:"+JSON.stringify(recordV));
           await uEx( recordV );
           uErrors.value && console.log("Update Errors:"+JSON.stringify(uErrors.value.response.body.errors));
-          if (nodeIdV.value) records.value[findIndexById(nodeIdV.value as unknown as string)] = uRecs.value.update`+entity.name+`.`+entity.name.toLowerCase()+`;
+          if (nodeIdV.value) records.value[findIndexById(nodeIdV.value as unknown as string)] = uRecs.value.update`+entity.name+`.`+to1LowerCase(entity.name)+`;
           toast.add({
             severity: "success",
             summary: "Successful",
@@ -201,10 +199,10 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
             life: 3000,
           });
         } else { // it's a create:
-          console.log("Create Pre:"+JSON.stringify(recordV));
+//          console.log("Create Pre:"+JSON.stringify(recordV));
           await cEx( recordV );
           cErrors.value && console.log("Create Errors:"+JSON.stringify(cErrors.value.response.body.errors));
-          records.value.push(cRecs.value.create`+entity.name+`.`+entity.name.toLowerCase()+`);
+          records.value.push(cRecs.value.create`+entity.name+`.`+to1LowerCase(entity.name)+`);
           toast.add({
             severity: "success",
             summary: "Successful",
@@ -236,10 +234,10 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
       };
       async function deleteRecord() {
         deleteRecordDialog.value = false;
-        console.log("Delete Pre:"+JSON.stringify(recordV));
+//        console.log("Delete Pre:"+JSON.stringify(recordV));
         await dEx( recordV );
         dErrors.value && console.log("Delete Errors:"+JSON.stringify(dErrors.value.response.body.errors));
-        records.value = records.value.filter((val: `+entity.name+`) => val.nodeId !== dRecs.value.delete`+entity.name+`.`+entity.name.toLowerCase()+`.nodeId);
+        records.value = records.value.filter((val: `+entity.name+`) => val.nodeId !== dRecs.value.delete`+entity.name+`.`+to1LowerCase(entity.name)+`.nodeId);
         resetForm();
         toast.add({
           severity: "success",
