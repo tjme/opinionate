@@ -44,10 +44,8 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 
 - install Vite: `pnpm -g add vite`
 - make/change to your project directory: `mkdir primevue-pagila && cd primevue-pagila`
-- initialize: `pnpm create vite . --template vue-ts`
 - you are advised to initialize version control to help track source code changes (e.g. `git init`)
-- rename or remove the default package.json
-- copy or merge the template's [package~.json](https://github.com/tjme/opinionate/blob/master/templates/primevue/package~.json) as your new package.json (or selectively copy/paste, especially the following scripts, and codegen configuration, e.g. adjusting the database name 'pagila' in the script, as appropriate)
+- copy the template's [package~.json](https://github.com/tjme/opinionate/blob/master/templates/primevue/package~.json) as your new package.json (making adjustments, e.g. occurencies of the database name 'pagila' in the script, as appropriate)
 - run the GraphQL server if not done earlier, with `pnpm backend &`
 - generate everything: `pnpm gen`, OR do it stage by stage with:
   - create a data sources directory: `mkdir models`
