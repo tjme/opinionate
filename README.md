@@ -55,7 +55,7 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
   - create the TypeScript type definitions for the schema: `pnpm gen-ts`
   - create a configuration/overlay (for later enhancement and customization): `pnpm gen-overlay` (WARNING: this will overwrite any previous version/amendments)
   - to automatically (re)generate fully functional components/pages for each GraphQL node/entity, as well as common items: `pnpm gen-code` (WARNING: this will overwrite any previous versions/amendments)
-- it would be wise at this stage to use `git commit`
+- it would be wise at this stage to use `git add -A && git commit -m "opinionate gen"`
 - run the development server, to deliver your new website: `pnpm dev`
 - or build: `pnpm build` then run a production version: `pnpm preview`
 - See [README~.md](templates/primevue/README~.md) for further details
