@@ -43,10 +43,10 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 ## Example [Vue](https://vuejs.org)/[PrimeVue](https://github.com/primefaces/primevue) front-end, using [Vite](https://github.com/vitejs/vite) and [Villus](https://github.com/logaretm/villus)
 
 - install Vite: `pnpm -g add vite`
-- make/change to your project directory: `mkdir primevue-pagila && cd primevue-pagila`
-- you are advised to initialize version control to help track source code changes (e.g. `git init`)
+- create and change to your project directory: `mkdir primevue-pagila && cd primevue-pagila`
+- you are strongly advised to initialize version control to help track source code changes (e.g. `git init`)
 - copy the template's [package~.json](https://github.com/tjme/opinionate/blob/master/templates/primevue/package~.json) as your new package.json (making adjustments, e.g. occurencies of the database name 'pagila' in the script, as appropriate)
-- run the GraphQL server if not done earlier, with `pnpm backend &`
+- run the GraphQL server (if not done earlier), with `pnpm backend &`
 - generate everything: `pnpm gen`, OR do it stage by stage with:
   - create a data sources directory: `mkdir models`
   - install dependencies: `pnpm install`
@@ -59,8 +59,8 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 - run the development server, to deliver your new website: `pnpm dev`
 - or build: `pnpm build` then run a production version: `pnpm preview`
 - See [README~.md](templates/primevue/README~.md) for further details
-- Go directly to the Actors page at [Actors](http://localhost:5173/#/Actor), and you should see: ![screenshot](doc/Actors_screenshot.png)
-- Go directly to the Actors page at [Films](http://localhost:5173/#/Film), and you should see: ![screenshot](doc/Films_screenshot.png)
+- Go directly to the Actors page at [Actors](http://localhost:5173/#/Actor), and you should see something like: ![screenshot](doc/Actors_screenshot.png)
+- Go to the Films page at [Films](http://localhost:5173/#/Film), and you should see something like: ![screenshot](doc/Films_screenshot.png)
 
 - For further examples, see [PrimeVue](doc/primevue-toh.md) [Vue & Vuetify](doc/vue-vuetify-toh.md) and [Angular](doc/angular-toh.md).
 

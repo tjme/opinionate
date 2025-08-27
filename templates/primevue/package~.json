@@ -15,7 +15,7 @@
       "label": "${camel2proper(item.name)}",
       "menu": "${!isEntity(item) ? 'null' : 'Entities'}",
       "primaryKey": "${isEntity(item) ? item.fields[1].name : 'null'}",
-      "format": "${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Date','Date!','Datetime','Datetime!'].includes(getType(item)) ? 'date' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
+      "format": "${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Date','Date!'].includes(getType(item)) ? 'date' : ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
       "validation": "${isEntity(item) ? 'null' : (item.type && item.type.kind=='NON_NULL' ? 'required|' : '')+(getType(item) && ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : ['Date','Date!'].includes(getType(item)) ? 'date' : '')}",
       "align": "${isEntity(item) ? 'null' : !isField(item) || ['money','money!','Date','Date!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : ['Boolean','Boolean!'].includes(getType(item)) ? 'center' : 'left'}",
       "attributes": null,
