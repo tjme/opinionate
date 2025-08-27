@@ -19,7 +19,7 @@ import Toast from "primevue/toast";
 import 'primevue/resources/primevue.min.css';
 import 'primeicons/primeicons.css';
 import 'primeflex/primeflex.css';
-import 'style.css';
+import './style.css';
 import App from './App.vue';
 import Switchboard from './Switchboard.vue';
 ${entities.map(entity => `\
