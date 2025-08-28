@@ -4,12 +4,14 @@ import { createClient } from 'villus';
 import { config } from '../package.json';
 import { defineRule } from 'vee-validate';
 import PrimeVue from 'primevue/config';
+import Material from '@primevue/themes/material';
 import ToastService from 'primevue/toastservice';
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import FloatLabel from "primevue/floatlabel";
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
-import Calendar from "primevue/calendar";
+import DatePicker from "primevue/datepicker";
 import Checkbox from "primevue/checkbox";
 import Textarea from "primevue/textarea";
 import Button from "primevue/button";
@@ -17,7 +19,6 @@ import Dialog from "primevue/dialog";
 import Menubar from "primevue/menubar";
 import Toast from "primevue/toast";
 import 'primeicons/primeicons.css';
-import 'primeflex/primeflex.css';
 import './style.css';
 import App from './App.vue';
 import Switchboard from './Switchboard.vue';
@@ -46,13 +47,24 @@ const router = createRouter({
   
 createApp(App)
 .use(router)
-.use(PrimeVue, {ripple: true})
+.use(PrimeVue, {
+    ripple: true,
+    theme: {
+        preset: Material,
+        options: {
+            prefix: 'p',
+            darkModeSelector: 'system',
+            cssLayer: false
+        }
+    }
+ })
 .use(ToastService)
 .component('DataTable', DataTable)
 .component('Column', Column)
+.component('FloatLabel', FloatLabel)
 .component('InputText', InputText)
 .component('InputNumber', InputNumber)
-.component('Calendar', Calendar)
+.component('DatePicker', DatePicker)
 .component('Checkbox', Checkbox)
 .component('Textarea', Textarea)
 .component('Button', Button)

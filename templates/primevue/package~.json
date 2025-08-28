@@ -45,9 +45,9 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src"
   },
   "dependencies": {
+    "@primevue/themes": "^4.3.7",
     "graphql": "^16.0.0",
     "graphql-tag": "^2.11.0",
-    "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
     "primevue": "^4.3.7",
     "vee-validate": "^4.2.4",

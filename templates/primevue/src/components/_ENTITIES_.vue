@@ -48,16 +48,16 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
     </DataTable>
   </div>
   <Dialog v-model:visible="recordDialog" header="`+entity.meta.label+` Details" :modal="true"
-    class="op-compact p-fluid p-input-filled" >`+(entity.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `
-    <div class="p-field" :class="errors.`+fields.name+' ? \'p-invalid\' : \'\'"><span class="p-float-label"><'
+    class="op-compact" >`+(entity.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `
+    <div class="p-field" :class="errors.`+fields.name+' ? \'p-invalid\' : \'\'"><FloatLabel variant="in" class="p-float-label"><'
 +(fields.meta.format=='text' ? 'Textarea :autoResize="true"'
 : fields.meta.format=='boolean' ? 'Checkbox :binary="true"'
-: fields.meta.format=='date' ? 'Calendar dateFormat="d M yy"'
-: fields.meta.format=='datetime' ? 'Calendar dateFormat="d M yy" :showTime="true"'
+: fields.meta.format=='date' ? 'DatePicker dateFormat="d M yy"'
+: fields.meta.format=='datetime' ? 'DatePicker dateFormat="d M yy" :showTime="true"'
 : fields.meta.format=='currency' ? 'InputNumber mode="currency" currency="GBP"'
 : fields.meta.format=='number' ? 'InputNumber :useGrouping=false'
-: 'InputText')+' id="'+fields.name+'" v-model="'+fields.name+'V"'
-+(!(fields.meta.readonly && fields.meta.readonly!="false") && !(entity.meta.readonly && entity.meta.readonly!="false") ? '' : ' readonly disabled')+' /><label for="'+fields.name+'">'+fields.meta.label+'</label><small class="p-error">{{errors.'+fields.name+'}}</small></span></div>').join(""))+`
+: 'InputText')+' id="'+fields.name+'" v-model="'+fields.name+'V" variant="filled" fluid'
++(!(fields.meta.readonly && fields.meta.readonly!="false") && !(entity.meta.readonly && entity.meta.readonly!="false") ? '' : ' readonly disabled')+' /><label for="'+fields.name+'">'+fields.meta.label+'</label><small class="p-error">{{errors.'+fields.name+'}}</small></FloatLabel></div>').join(""))+`
     <template #footer>
       <Button label="`+(entity.meta.readonly && entity.meta.readonly!="false" ? 'Close' : 'Cancel')+`" icon="pi pi-times" class="p-button-text" @click="hideDialog" />
 `+(entity.meta.readonly && entity.meta.readonly!="false" ? '' : `\

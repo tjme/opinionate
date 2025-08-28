@@ -1,3 +1,4 @@
+:root { font-family: Roboto, "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; }
 .big-center { text-align: center; margin: 4rem 2rem; font-size: 2rem; }
 .error { color: red; }
 .table-header { display: flex; align-items: center; justify-content: space-between; }
@@ -29,20 +30,22 @@ div.p-dialog.p-component {  width: 95%; max-width: 800px; }
 .op-compact .p-datatable-tbody > tr > td,
 .op-compact .p-paginator,
 .op-compact .p-toolbar,
-.op-compact .header-button-group .p-inputtext { padding: 0.1rem 0.2rem; }
+.op-compact .header-button-group .p-inputtext { padding: 0.2rem; }
 .op-compact .header-button-group .p-input-icon-left > .p-inputtext { padding-left: 2rem; }
-.op-compact .p-paginator .p-dropdown { height: 2rem; }
-.op-compact .p-paginator .p-dropdown-label { padding-top: 0.4rem; }
+.op-compact .p-paginator .p-select { height: 2rem; }
+.op-compact .p-paginator .p-select-label { padding-top: 0.4rem; }
 .op-compact .p-paginator-pages .p-paginator-page,
 .op-compact .p-paginator-first,
 .op-compact .p-paginator-prev,
 .op-compact .p-paginator-next,
 .op-compact .p-paginator-last,
-.op-compact .p-paginator-current { height: 2rem; min-width: 2rem; }
-.op-compact .p-datatable-thead > tr > th { white-space: normal!important; font-size: 85%; }
+.op-compact .p-paginator-current { min-width: 2.5rem; }
+.op-compact .p-datatable-thead > tr > th { white-space: normal!important; font-size: 80%; }
 .op-compact .p-button { padding: 0.2rem; }
 .op-compact .p-button.p-button-icon-only { height: 1.7rem!important; width: 1.7rem; }
 .op-compact .p-input-icon-left > i:first-of-type { position: relative; left: 1.5rem; }
 .op-compact .p-hidden-accessible { width: 1px; overflow: hidden; }
-.op-compact.p-menubar { padding: 0.3rem; }
-.op-compact.p-menubar .p-menuitem-link { padding: 0.3rem; }
+.op-compact .p-menubar-submenu .p-menubar-item { padding: 0.3rem; }
+.op-compact .p-menubar-submenu .p-menuitem-icon { padding-right: 0.3rem; }
+.op-compact .p-menubar-item .p-menuitem-link { text-decoration: none; color: inherit; }
+.op-compact .p-inputwrapper .p-variant-filled { padding-top: 18px; padding-bottom: 4px; }

@@ -1,5 +1,5 @@
 overwrite: true
-schema: "models/schema.gql"
+schema: "models/schema.json"
 generates:
   models/types.d.ts:
     plugins:
