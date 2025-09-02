@@ -47,6 +47,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
 +"</Column>").join(""))+`
     </DataTable>
   </div>
+
   <Dialog v-model:visible="recordDialog" header="`+entity.meta.label+` Details" :modal="true"
     class="op-compact" >`+(entity.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `
     <div class="p-field" :class="errors.`+fields.name+' ? \'p-invalid\' : \'\'"><FloatLabel variant="in" class="p-float-label"><'
@@ -135,7 +136,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
       const validationSchema = {`+entity.fields.filter(f => isField(f) && !["string","text","boolean"].includes(f.meta.format)).map(field => `
         `+field.name+': "'+(field.meta.required ? "required|" : "")+field.meta.format+'"').join(",")+`
       };
-      const { values: recordV, errors, meta, resetForm, setValues } = useForm<recType>({ validationSchema });
+      const { values: recordV, errors, meta, resetForm, setValues, handleSubmit } = useForm<recType>({ validationSchema });
 `+entity.fields.filter(f => isField(f)).map(field => '      const { value: '+field.name+'V } = useField("'+field.name+'");').join("\n")+`
       const filters = ref({'global': {value: null}});
       const toast = useToast();
@@ -184,7 +185,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
         }
         return index;
       };
-      async function saveRecord() {
+      const saveRecord = handleSubmit(async function() {
         submitted.value = true;
         for (const property in recordV) { if (recordV[property] == "" && typeof(recordV[property])!="boolean") recordV[property] = null };
         if (nodeIdV.value) { // it's an update:
@@ -212,7 +213,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
         };
         recordDialog.value = false;
         resetForm();
-      };
+      });
       function editRecord(rec: `+entity.name+`) {
         setValues({`+entity.fields.filter(f => isField(f)).map(field => `
           `+field.name+": "+(
