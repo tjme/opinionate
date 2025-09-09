@@ -3,7 +3,7 @@
 .table-header { display: flex; align-items: center; justify-content: space-between; }
 .confirmation-content i { padding-right: 1rem; }
 .confirmation-content span { line-height: 2; vertical-align: top; }
-.p-error { color: red; }
+.error { color: red; }
 .p-float-label .p-checkbox + label { left: 1.5rem; }
 .p-datatable-resizable .p-datatable-thead > tr > th { white-space: inherit; }
 .p-datatable-resizable .p-datatable-tbody > tr > td { max-width: 20rem; white-space: nowrap; }

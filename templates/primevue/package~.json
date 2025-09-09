@@ -13,12 +13,13 @@
     },
     "defaultMeta": {
       "label": "${camel2proper(item.name)}",
+      "plural": "${isEntity(item) ? plural(item.name) : 'null'}",
       "menu": "${!isEntity(item) ? 'null' : 'Entities'}",
       "primaryKey": "${isEntity(item) ? item.fields[1].name : 'null'}",
       "format": "${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Date','Date!'].includes(getType(item)) ? 'date' : ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
       "validation": "${isEntity(item) ? 'null' : (item.type && item.type.kind=='NON_NULL' ? 'required|' : '')+(getType(item) && ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : ['Date','Date!'].includes(getType(item)) ? 'date' : '')}",
       "align": "${isEntity(item) ? 'null' : !isField(item) || ['money','money!','Date','Date!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : ['Boolean','Boolean!'].includes(getType(item)) ? 'center' : 'left'}",
-      "attributes": null,
+      "default": "${isEntity(item) ? 'null' : ['Boolean','Boolean!'].includes(getType(item)) ? 'false' : ''}",
       "readonly": "${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || ['nodeId'].includes(item.name)}",
       "linkEntity": "${isEntity(item) ? 'null' : getType(item)==false ? to1UpperCase(singular(item.name.split('By')[0])) : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())) ? 'null' : to1UpperCase(parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())).name.toString().split('By')[0])}",
       "linkFields": "${isEntity(item) ? 'null' : getType(item)==false ? to1LowerCase(item.name.split('By')[1]) : 'null'}",
@@ -61,7 +62,7 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/tsconfig": "^0.8.1",
     "opinionate": "github:tjme/opinionate",
-    "typescript": "^5.8.3",
+    "typescript": "^5.9.2",
     "vite": "^7.1.2",
     "vue-tsc": "^3.0.5"
   }

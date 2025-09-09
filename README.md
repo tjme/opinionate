@@ -82,7 +82,7 @@ Note that you can use `opinionate meta -h` for more help.
 
 You can create your own Opinionate template folder tree, and pass it as a parameter, to generate exactly the code you want. Use the existing [templates](templates) as guides, along with the following tips.
 
-The quoting around all existing ES6 template strings (and any substitutions within them) in your code files must be escaped, ie. backticks: `` ` `` must become ``\` ``, and the beginnings of substituions, i.e. `${` must become `$\{`. Also any backslashes (e.g. for escaping) must be doubled-up.
+Warning: if you have any existing ES6 template strings in your code, the quoting around (and any substitutions within) them must first be escaped, i.e. backticks: `` ` `` must become ``\` ``, and the beginnings of substituions, i.e. `${` must become `$\{`. Also any backslashes (e.g. for escaping) must be doubled-up.
 
 Then add the substitutions required for the code generation.
 
@@ -107,7 +107,7 @@ Though modern frameworks such as Vue and Angular, and technologies such as Graph
 
 ![Opinionate UML component diagram](src/Opinionate.png)
 
-Any feedback would be gratefully received!
+Any feedback will be gratefully received!
 
 Thanks,
 tim@merrison.co.uk

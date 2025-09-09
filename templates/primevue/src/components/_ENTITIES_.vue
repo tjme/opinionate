@@ -98,15 +98,12 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   import { useQuery, useMutation } from "villus";
   import gql from "graphql-tag";
   import { useField, useForm } from "vee-validate";
-  // import * as yup from "yup";
-  // import { toFormValidator } from "@vee-validate/yup";
-  // import * as zod from "zod";
   import { `+entity.name+(entity.meta.readonly && entity.meta.readonly!="false" ? '' : ', '+entity.name+'Patch')+` } from "../../models/types";
 
   const `+entity.name+`Fields = gql\`fragment `+entity.name+`Fields on `+entity.name+` {`
 +(entity.fields.filter(f => isField(f))[0].name == "nodeId" ? "" : "nodeId:"+entity.fields.filter(f => isField(f))[0].name+",")
 +(entity.fields.filter(f => getType(f)!=null).map(fields => fields.name+(isField(fields) ? "" : "{totalCount}")))+` }\`;
-  const ReadAll = gql\`query readAll($condition:`+entity.name+`Condition) {all`+plural(entity.name)+` (condition:$condition)
+  const ReadAll = gql\`query readAll($condition:`+entity.name+`Condition) {all`+entity.meta.plural+` (condition:$condition)
     {nodes{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Create = gql\`mutation create(`+entity.fields
     .filter(f => isField(f) && f.meta.templates.includes("crud")).map(field => '$'+field.name+':'+getType(field)+(field.type.kind=="NON_NULL" ? "!" : ""))+`)
@@ -133,9 +130,11 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
          '"'+f.name+'"').join()+`].includes(key) ? +val : val]);
       const where = query.map(([key, val]) => key+" is "+val).join(", and ");
       const title = ref("`+plural(entity.meta.label)+`"+(where && ", where "+where));
-      const validationSchema = {`+entity.fields.filter(f => isField(f) && !["string","text","boolean"].includes(f.meta.format)).map(field => `
+      const validationSchema = {`+entity.fields.filter(f => isField(f) && !f.meta.readonly).map(field => `
         `+field.name+': "'+(field.meta.required ? "required|" : "")+field.meta.format+'"').join(",")+`
       };
+      const initialValues = {`+entity.fields.filter(f => isField(f) && !(f.meta.default==null)).map(field => `
+        `+field.name+': '+field.meta.default)+`};
       const { values: recordV, errors, meta, resetForm, setValues, handleSubmit } = useForm<recType>({ validationSchema });
 `+entity.fields.filter(f => isField(f)).map(field => '      const { value: '+field.name+'V } = useField("'+field.name+'");').join("\n")+`
       const filters = ref({'global': {value: null}});
@@ -150,8 +149,8 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
       const { data: uRecs, execute: uEx, error: uErrors } = useMutation(Update); // Must be defined before first await
       const { data: dRecs, execute: dEx, error: dErrors } = useMutation(Delete); // Must be defined before first await
       const { data: raRecs, error: raErrors } = await useQuery({query: ReadAll, variables:{condition:Object.fromEntries(query)}});
-      raErrors.value && console.log("ReadAll Errors:"+JSON.stringify(raErrors.value.response.body.errors));
-      const records = ref( raRecs.value.all`+plural(entity.name)+`.nodes.map(r => {
+      if (raErrors.value) throw "ReadAll Errors:"+JSON.stringify(raErrors.value.response.body.errors);
+      const records = ref( raRecs.value.all`+entity.meta.plural+`.nodes.map(r => {
         `+entity.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
          'r.'+f.name+' = r.'+f.name+' && +r.'+f.name+`;
         `).join('')+entity.fields.filter(f => !isField(f) && getType(f)!=null).map(f =>
@@ -167,7 +166,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
         return rn;
       };
       function openNew() {
-        resetForm();
+        resetForm({values: initialValues});
         submitted.value = false;
         recordDialog.value = true;
       };
@@ -191,7 +190,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
         if (nodeIdV.value) { // it's an update:
 //          console.log("Update Pre:"+JSON.stringify(recordV));
           await uEx( recordV );
-          uErrors.value && console.log("Update Errors:"+JSON.stringify(uErrors.value.response.body.errors));
+          if (uErrors.value) throw "Update Errors:"+JSON.stringify(uErrors.value.response.body.errors);
           if (nodeIdV.value) records.value[findIndexById(nodeIdV.value as unknown as string)] = uRecs.value.update`+entity.name+`.`+to1LowerCase(entity.name)+`;
           toast.add({
             severity: "success",
@@ -202,7 +201,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
         } else { // it's a create:
 //          console.log("Create Pre:"+JSON.stringify(recordV));
           await cEx( recordV );
-          cErrors.value && console.log("Create Errors:"+JSON.stringify(cErrors.value.response.body.errors));
+          if (cErrors.value) throw "Create Errors:"+JSON.stringify(cErrors.value.response.body.errors);
           records.value.push(cRecs.value.create`+entity.name+`.`+to1LowerCase(entity.name)+`);
           toast.add({
             severity: "success",
@@ -237,7 +236,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
         deleteRecordDialog.value = false;
 //        console.log("Delete Pre:"+JSON.stringify(recordV));
         await dEx( recordV );
-        dErrors.value && console.log("Delete Errors:"+JSON.stringify(dErrors.value.response.body.errors));
+        if (dErrors.value) throw "Delete Errors:"+JSON.stringify(dErrors.value.response.body.errors);
         records.value = records.value.filter((val: `+entity.name+`) => val.nodeId !== dRecs.value.delete`+entity.name+`.`+to1LowerCase(entity.name)+`.nodeId);
         resetForm();
         toast.add({
