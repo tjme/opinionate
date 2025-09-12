@@ -5,6 +5,7 @@
   "primaryKey": "${isEntity(item) ? item.fields[1].name : 'null'}",
   "sType": "${isEntity(item) ? 'null' : getType(item)}",
   "format": "${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Date','Date!'].includes(getType(item)) ? 'date' : ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
+  "maxDP": "${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? '2' : ['Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? '4' : 'null'}",
   "required": "${isEntity(item) ? 'null' : (item.type && item.type.kind=='NON_NULL' ? 'true' : 'false')}",
   "align": "${isEntity(item) ? 'null' : !isField(item) || ['money','money!','Date','Date!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : ['Boolean','Boolean!'].includes(getType(item)) ? 'center' : 'left'}",
   "default": "${isEntity(item) ? 'null' : ['Boolean','Boolean!'].includes(getType(item)) ? 'false' : ''}",
