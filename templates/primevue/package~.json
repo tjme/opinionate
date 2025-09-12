@@ -1,6 +1,6 @@
 {
-  "name": "primevue",
-  "version": "0.0.0",
+  "name": "opinionate-primevue",
+  "version": "0.6.3",
   "type": "module",
   "license": "MIT",
 	"author": "Tim Merrison <tim@merrison.co.uk>",
@@ -16,9 +16,11 @@
       "plural": "${isEntity(item) ? plural(item.name) : 'null'}",
       "menu": "${!isEntity(item) ? 'null' : 'Entities'}",
       "primaryKey": "${isEntity(item) ? item.fields[1].name : 'null'}",
-      "format": "${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Date','Date!'].includes(getType(item)) ? 'date' : ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? 'number' : 'string'}",
-      "validation": "${isEntity(item) ? 'null' : (item.type && item.type.kind=='NON_NULL' ? 'required|' : '')+(getType(item) && ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : ['Date','Date!'].includes(getType(item)) ? 'date' : '')}",
-      "align": "${isEntity(item) ? 'null' : !isField(item) || ['money','money!','Date','Date!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!'].includes(getType(item)) ? 'right' : ['Boolean','Boolean!'].includes(getType(item)) ? 'center' : 'left'}",
+      "sType": "${isEntity(item) ? 'null' : getType(item)}",
+      "format": "${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Date','Date!'].includes(getType(item)) ? 'date' : ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!','Year','Year!'].includes(getType(item)) ? 'number' : 'string'}",
+      "maxDP": "${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? '2' : ['Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? '4' : 'null'}",
+      "required": "${isEntity(item) ? 'null' : (item.type && item.type.kind=='NON_NULL' ? 'true' : 'false')}",
+      "align": "${isEntity(item) ? 'null' : !isField(item) || ['money','money!','Date','Date!','Datetime','Datetime!','Int','Int!','BigInt','BigInt!','Float','FLoat!','BigFloat','BigFLoat!','Year','Year!'].includes(getType(item)) ? 'right' : ['Boolean','Boolean!'].includes(getType(item)) ? 'center' : 'left'}",
       "default": "${isEntity(item) ? 'null' : ['Boolean','Boolean!'].includes(getType(item)) ? 'false' : ''}",
       "readonly": "${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || ['nodeId'].includes(item.name)}",
       "linkEntity": "${isEntity(item) ? 'null' : getType(item)==false ? to1UpperCase(singular(item.name.split('By')[0])) : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())) ? 'null' : to1UpperCase(parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())).name.toString().split('By')[0])}",
@@ -46,15 +48,15 @@
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src"
   },
   "dependencies": {
-    "@primevue/themes": "^4.3.7",
-    "graphql": "^16.0.0",
-    "graphql-tag": "^2.11.0",
+    "@primevue/themes": "^4.3.9",
+    "graphql": "^16.11.0",
+    "graphql-tag": "^2.12.6",
     "primeicons": "^7.0.0",
-    "primevue": "^4.3.7",
-    "vee-validate": "^4.2.4",
+    "primevue": "^4.3.9",
+    "vee-validate": "^4.15.1",
     "villus": "^3.5.2",
-    "vue": "^3.5.18",
-    "vue-router": "^4.5.0"
+    "vue": "^3.5.21",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.7",
@@ -63,7 +65,7 @@
     "@vue/tsconfig": "^0.8.1",
     "opinionate": "github:tjme/opinionate",
     "typescript": "^5.9.2",
-    "vite": "^7.1.2",
-    "vue-tsc": "^3.0.5"
+    "vite": "^7.1.5",
+    "vue-tsc": "^3.0.7"
   }
 }

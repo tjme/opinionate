@@ -55,8 +55,8 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
 : fields.meta.format=='boolean' ? 'Checkbox :binary="true"'
 : fields.meta.format=='date' ? 'DatePicker dateFormat="d M yy"'
 : fields.meta.format=='datetime' ? 'DatePicker dateFormat="d M yy" :showTime="true"'
-: fields.meta.format=='currency' ? 'InputNumber mode="currency" currency="GBP"'
-: fields.meta.format=='number' ? 'InputNumber :useGrouping=false'
+: fields.meta.format=='currency' ? 'InputNumber mode="currency" currency="GBP" :maxFractionDigits="2"'
+: fields.meta.format=='number' ? 'InputNumber :useGrouping=false'+(fields.meta.maxDP ? ' :maxFractionDigits="'+fields.meta.maxDP+'"' : '')
 : 'InputText')+' id="'+fields.name+'" v-model="'+fields.name+'V" variant="filled" fluid'
 +(!(fields.meta.readonly && fields.meta.readonly!="false") && !(entity.meta.readonly && entity.meta.readonly!="false") ? '' : ' readonly disabled')+' /><label for="'+fields.name+'">'+fields.meta.label+'</label></FloatLabel><small class="p-error">{{errors.'+fields.name+'}}</small></div>').join(""))+`
     <template #footer>
@@ -133,7 +133,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
       const validationSchema = {`+entity.fields.filter(f => isField(f) && !f.meta.readonly).map(field => `
         `+field.name+': "'+(field.meta.required ? "required|" : "")+field.meta.format+'"').join(",")+`
       };
-      const initialValues = {`+entity.fields.filter(f => isField(f) && !(f.meta.default==null)).map(field => `
+      const initialValues = {`+entity.fields.filter(f => isField(f) && f.meta.default).map(field => `
         `+field.name+': '+field.meta.default)+`};
       const { values: recordV, errors, meta, resetForm, setValues, handleSubmit } = useForm<recType>({ validationSchema });
 `+entity.fields.filter(f => isField(f)).map(field => '      const { value: '+field.name+'V } = useField("'+field.name+'");').join("\n")+`
