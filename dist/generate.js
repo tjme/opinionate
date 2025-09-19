@@ -70,7 +70,7 @@ function isEntity(entity) {
         && !entity.name.endsWith("Connection") && !entity.name.endsWith("Edge") && !entity.name.endsWith("Payload");
 }
 function isField(field) {
-    return field.type && (field.type.kind == "SCALAR" || (field.type["ofType"] && field.type.ofType["kind"] == "SCALAR"));
+    return field.type && (["SCALAR", "ENUM"].includes(field.type.kind) || (field.type["ofType"] && field.type.ofType["kind"] == "SCALAR"));
 }
 function getType(field) {
     return isField(field) && field.type && (field.type.name || (field.type.ofType && field.type.ofType.name));

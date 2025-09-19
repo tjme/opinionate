@@ -133,7 +133,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
       const validationSchema = {`+entity.fields.filter(f => isField(f) && !f.meta.readonly).map(field => `
         `+field.name+': "'+(field.meta.required ? "required|" : "")+field.meta.format+'"').join(",")+`
       };
-      const initialValues = {`+entity.fields.filter(f => isField(f) && f.meta.default).map(field => `
+      const initialValues = {`+entity.fields.filter(f => isField(f) && f.meta.default!==undefined).map(field => `
         `+field.name+': '+field.meta.default)+`};
       const { values: recordV, errors, meta, resetForm, setValues, handleSubmit } = useForm<recType>({ validationSchema });
 `+entity.fields.filter(f => isField(f)).map(field => '      const { value: '+field.name+'V } = useField("'+field.name+'");').join("\n")+`

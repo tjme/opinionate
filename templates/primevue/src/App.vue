@@ -4,7 +4,10 @@
     {icon: 'pi pi-home', label: '', to: '/'},
     {icon: 'pi pi-align-left', label: 'Entities', items:[
 ${entities.filter(entity => !entity.meta.menu || entity.meta.menu=="Entities").map(entity => `\
-      {icon: 'pi pi-table', label: '${entity.meta.label}', to: '/${entity.name.toLowerCase()}'}`).join(',\n')} ] }
+      {icon: 'pi pi-table', label: '${entity.meta.label}', to: '/${entity.name.toLowerCase()}'}`).join(',\n')} ] },
+//    {icon: 'pi pi-align-left', label: 'Admin', items:[
+//${entities.filter(entity => !entity.meta.menu || entity.meta.menu=="Admin").map(entity => `\
+//      {icon: 'pi pi-table', label: '${entity.meta.label}', to: '/${entity.name.toLowerCase()}'}`).join(',\n')} ] },
     ]">
     <template #item="{ item, props, hasSubmenu }">
       <router-link v-if="item.to" :to="item.to" class="p-menuitem-link">
