@@ -46,6 +46,7 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 - create and change to your project directory: `mkdir primevue-pagila && cd primevue-pagila`
 - you are strongly advised to initialize version control to help track source code changes (e.g. `git init`)
 - copy the template's [package~.json](https://github.com/tjme/opinionate/blob/master/templates/primevue/package~.json) as your new package.json (making adjustments, e.g. occurencies of the database name 'pagila' in the script, as appropriate)
+- Note that you can improve the metadata generated, by editing the defaultMeta in your package.json, e.g. with a more tailored rule (to make id and last updated fields read-only), by changing the line beginning with "readonly" to: `"readonly": "${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || ['nodeId','lastUpdate'].includes(item.name) || (getType(item)=='Int' && item.name.endsWith('Id'))}",`
 - run the GraphQL server (if not done earlier), with `pnpm backend &`
 - generate everything: `pnpm gen`, OR do it stage by stage with:
   - create a data sources directory: `mkdir models`
@@ -55,12 +56,13 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
   - create the TypeScript type definitions for the schema: `pnpm gen-ts`
   - create a configuration/overlay (for later enhancement and customization): `pnpm gen-overlay` (WARNING: this will overwrite any previous version/amendments)
   - to automatically (re)generate fully functional components/pages for each GraphQL node/entity, as well as common items: `pnpm gen-code` (WARNING: this will overwrite any previous versions/amendments)
-- it would be wise at this stage to use `git add -A && git commit -m "opinionate gen"`
+- it would be wise at this stage to use: `git add -A && git commit -m "opinionate gen"`
+- Note what seems to be a quirk of Postgraphile's pluralize function used on entity names results in an upper case instead of lower case "s" at the end of seven instances of names beginning with "PaymentP202220", but they can be easily accomodated by changes in overlayOut.json, e.g. changing `"plural": "PaymentP202201s",` to `"plural": "PaymentP202201S",`, etc.
 - run the development server, to deliver your new website: `pnpm dev`
 - or build: `pnpm build` then run a production version: `pnpm preview`
 - See [README~.md](templates/primevue/README~.md) for further details
 - Go directly to the Actors page at [Actors](http://localhost:5173/#/Actor), and you should see something like: ![screenshot](doc/Actors_screenshot.png)
-- Go to the Films page at [Films](http://localhost:5173/#/Film), and you should see something like: ![screenshot](doc/Films_screenshot.png)
+- Similarly, go to the Films page at [Films](http://localhost:5173/#/Film), and you should see something like: ![screenshot](doc/Films_screenshot.png)
 
 - For further examples, see [PrimeVue](doc/primevue-toh.md) [Vue & Vuetify](doc/vue-vuetify-toh.md) and [Angular](doc/angular-toh.md).
 

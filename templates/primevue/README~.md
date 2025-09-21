@@ -6,7 +6,7 @@ A sample app to demonstrate the use of the following combination of tech. (as a 
 - PostGraphile
 - Vue v3
 - TypeScript
-- Vee-Validate
+- VeeValidate
 - PrimeVue
 - Villus
 - Vite

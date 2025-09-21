@@ -106,15 +106,15 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   const ReadAll = gql\`query readAll($condition:`+entity.name+`Condition) {all`+entity.meta.plural+` (condition:$condition)
     {nodes{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Create = gql\`mutation create(`+entity.fields
-    .filter(f => isField(f) && f.meta.templates.includes("crud")).map(field => '$'+field.name+':'+getType(field)+(field.type.kind=="NON_NULL" ? "!" : ""))+`)
+    .filter(f => isField(f) && f.meta.templates.includes("crud")).map(field => '$'+field.name+':'+getType(field)+(field.meta.required && !field.meta.readonly ? "!" : ""))+`)
     {create`+entity.name+`(input:{`+to1LowerCase(entity.name)+`:{ `+entity.fields
         .filter(f => isField(f) && f.meta.templates.includes("crud")).map(field => field.name+':\$'+field.name)+` } })
     { `+to1LowerCase(entity.name)+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Update = gql\`mutation update(`+entity.fields
-    .filter(f => isField(f) && (f.name=="nodeId" || f.meta.templates.includes("crud"))).map(field => '$'+field.name+':'+getType(field)+(field.name=="nodeId" ? "!" : ""))+`)
+    .filter(f => isField(f) && (f.name=="nodeId" || f.meta.templates.includes("crud") && !f.meta.readonly)).map(field => '$'+field.name+':'+getType(field)+(field.name=="nodeId" ? "!" : ""))+`)
     {update`+entity.name+`(input:{nodeId:$nodeId,
     `+to1LowerCase(entity.name)+`Patch:{ `+entity.fields
-      .filter(f => isField(f) && f.name!=="nodeId" && f.meta.templates.includes("crud")).map(field => field.name+':\$'+field.name)+` } })
+      .filter(f => isField(f) && f.name!=="nodeId" && f.meta.templates.includes("crud") && !f.meta.readonly).map(field => field.name+':\$'+field.name)+` } })
     { `+to1LowerCase(entity.name)+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Delete = gql\`mutation delete($nodeId:ID!)
     {delete`+entity.name+`(input:{nodeId:$nodeId})
@@ -133,7 +133,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
       const validationSchema = {`+entity.fields.filter(f => isField(f) && !f.meta.readonly).map(field => `
         `+field.name+': "'+(field.meta.required ? "required|" : "")+field.meta.format+'"').join(",")+`
       };
-      const initialValues = {`+entity.fields.filter(f => isField(f) && f.meta.default!==undefined).map(field => `
+      const initialValues = {`+entity.fields.filter(f => isField(f) && f.meta.default!==undefined && f.meta.default!=="").map(field => `
         `+field.name+': '+field.meta.default)+`};
       const { values: recordV, errors, meta, resetForm, setValues, handleSubmit } = useForm<recType>({ validationSchema });
 `+entity.fields.filter(f => isField(f)).map(field => '      const { value: '+field.name+'V } = useField("'+field.name+'");').join("\n")+`
