@@ -14,6 +14,7 @@ import InputNumber from "primevue/inputnumber";
 import DatePicker from "primevue/datepicker";
 import Checkbox from "primevue/checkbox";
 import Textarea from "primevue/textarea";
+import Select from 'primevue/select';
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
 import Menubar from "primevue/menubar";
@@ -70,6 +71,7 @@ createApp(App)
 .component('DatePicker', DatePicker)
 .component('Checkbox', Checkbox)
 .component('Textarea', Textarea)
+.component('Select', Select)
 .component('Button', Button)
 .component('Dialog', Dialog)
 .component('Menubar', Menubar)

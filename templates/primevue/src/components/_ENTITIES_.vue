@@ -51,7 +51,8 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   <Dialog v-model:visible="recordDialog" header="`+entity.meta.label+` Details" :modal="true"
     class="op-compact" >`+(entity.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `
     <div class="p-field" :class="errors.`+fields.name+' ? \'p-invalid\' : \'\'"><FloatLabel variant="in" class="p-float-label"><'
-+(fields.meta.format=='text' ? 'Textarea :autoResize="true"'
++(fields.meta.linkFieldsFrom && !fields.meta.linkFields ? 'Select editable autoOptionFocus :options="records'+fields.meta.linkEntity+'" :optionLabel="label'+fields.meta.linkEntity+'" optionValue="'+fields.meta.linkFieldsFrom+'" :useGrouping=false'
+: fields.meta.format=='text' ? 'Textarea :autoResize="true"'
 : fields.meta.format=='boolean' ? 'Checkbox :binary="true"'
 : fields.meta.format=='date' ? 'DatePicker dateFormat="d M yy"'
 : fields.meta.format=='datetime' ? 'DatePicker dateFormat="d M yy" :showTime="true"'
@@ -261,7 +262,15 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
           life: 3000,
         });
       };
+
+`+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(field => '\
+      const { data: raRecs'+field.meta.linkEntity+', error: raErrors'+field.meta.linkEntity+' } = await useQuery({query: gql\`{all'+field.meta.linkEntity+'s {nodes{ '+field.meta.linkFieldsPlus+' }}}\`});\
+      if (raErrors'+field.meta.linkEntity+'.value) throw "ReadAll'+field.meta.linkEntity+' Errors:"+JSON.stringify(raErrors'+field.meta.linkEntity+'.value.response.body.errors);\
+      const records'+field.meta.linkEntity+' = ref( raRecs'+field.meta.linkEntity+'.value.all'+field.meta.linkEntity+'s.nodes );\
+      const label'+field.meta.linkEntity+' = (rec) => '+field.meta.linkFieldsPlusFn+';').join("\n")+`
       return {
+`+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(field => '\
+        records'+field.meta.linkEntity+', label'+field.meta.linkEntity+',').join("\n")+`
         formatCurrency,
         formatDate,
         formatDateTime,
