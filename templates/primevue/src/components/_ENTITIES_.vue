@@ -264,7 +264,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
       };
 
 `+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(field => '\
-      const { data: raRecs'+field.meta.linkEntity+', error: raErrors'+field.meta.linkEntity+' } = await useQuery({query: gql\`{all'+field.meta.linkEntity+'s {nodes{ '+field.meta.linkFieldsPlus+' }}}\`});\
+      const { data: raRecs'+field.meta.linkEntity+', error: raErrors'+field.meta.linkEntity+' } = await useQuery({query: gql\`{all'+plural(field.meta.linkEntity)+' {nodes{ '+field.meta.linkFieldsPlus+' }}}\`});\
       if (raErrors'+field.meta.linkEntity+'.value) throw "ReadAll'+field.meta.linkEntity+' Errors:"+JSON.stringify(raErrors'+field.meta.linkEntity+'.value.response.body.errors);\
       const records'+field.meta.linkEntity+' = ref( raRecs'+field.meta.linkEntity+'.value.all'+field.meta.linkEntity+'s.nodes );\
       const label'+field.meta.linkEntity+' = (rec) => '+field.meta.linkFieldsPlusFn+';').join("\n")+`
