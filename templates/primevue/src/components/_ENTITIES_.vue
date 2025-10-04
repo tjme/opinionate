@@ -263,14 +263,14 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
         });
       };
 
-`+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(field => '\
-      const { data: raRecs'+field.meta.linkEntity+', error: raErrors'+field.meta.linkEntity+' } = await useQuery({query: gql\`{all'+plural(field.meta.linkEntity)+' {nodes{ '+field.meta.linkFieldsPlus+' }}}\`});\
-      if (raErrors'+field.meta.linkEntity+'.value) throw "ReadAll'+field.meta.linkEntity+' Errors:"+JSON.stringify(raErrors'+field.meta.linkEntity+'.value.response.body.errors);\
-      const records'+field.meta.linkEntity+' = ref( raRecs'+field.meta.linkEntity+'.value.all'+field.meta.linkEntity+'s.nodes );\
-      const label'+field.meta.linkEntity+' = (rec) => '+field.meta.linkFieldsPlusFn+';').join("\n")+`
+`+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(f => f.meta).flat().filter((obj, index, self) => index === self.findIndex((o) => o.linkEntity === obj.linkEntity)).map(m => '\
+      const { data: raRecs'+m.linkEntity+', error: raErrors'+m.linkEntity+' } = await useQuery({query: gql\`{all'+plural(m.linkEntity)+' {nodes{ '+m.linkFieldsPlus+' }}}\`});\n\
+      if (raErrors'+m.linkEntity+'.value) throw "ReadAll'+m.linkEntity+' Errors:"+JSON.stringify(raErrors'+m.linkEntity+'.value.response.body.errors);\n\
+      const records'+m.linkEntity+' = ref( raRecs'+m.linkEntity+'.value.all'+m.linkEntity+'s.nodes );\n\
+      const label'+m.linkEntity+' = (rec) => '+m.linkFieldsPlusFn+';\n').join("\n")+`
       return {
-`+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(field => '\
-        records'+field.meta.linkEntity+', label'+field.meta.linkEntity+',').join("\n")+`
+`+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(f => f.meta).flat().filter((obj, index, self) => index === self.findIndex((o) => o.linkEntity === obj.linkEntity)).map(m => '\
+        records'+m.linkEntity+', label'+m.linkEntity+',').join("\n")+`
         formatCurrency,
         formatDate,
         formatDateTime,

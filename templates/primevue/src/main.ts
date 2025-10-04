@@ -48,7 +48,7 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 })
-  
+
 createApp(App)
 .use(router)
 .use(PrimeVue, {
