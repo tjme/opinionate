@@ -26,11 +26,12 @@ import Switchboard from './Switchboard.vue';
 ${entities.map(entity => `\
 import ${entity.name} from "./components/${entity.name.toLowerCase()}.vue";`).join("\n")}
 
-defineRule("required", value => { if (!value || !value.length) { return "This field is required"; } return true; });
+defineRule("required", value => { if (!value) { return "This field is required"; } return true; });
 defineRule("number", value => { if (value && value.length && isNaN(value)) { return "This field must be a valid number"; } return true; });
 defineRule("currency", value => { if (value && value.length && isNaN(value)) { return "This field must be a valid number"; } return true; });
 defineRule("date", value => { if (value && value.length && isNaN(Date.parse(value))) { return "This field must be a valid date"; } return true; });
 defineRule("datetime", value => { if (value && value.length && isNaN(Date.parse(value))) { return "This field must be a valid date and time"; } return true; });
+defineRule("array", value => { if (false) { return "This field must be an array"; } return true; });
 defineRule("string", value => { return true; });
 defineRule("text", value => { return true; });
 defineRule("boolean", value => { return true; });

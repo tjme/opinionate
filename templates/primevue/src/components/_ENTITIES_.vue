@@ -91,15 +91,15 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   </Dialog>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
   import { formatCurrency, formatDate, formatDateTime } from "../utility";
-  import { defineComponent, ref } from "vue";
+  import { ref } from "vue";
   import { useRoute } from "vue-router";
   import { useToast } from "primevue/usetoast";
   import { useQuery, useMutation } from "villus";
   import gql from "graphql-tag";
   import { useField, useForm } from "vee-validate";
-  import { `+entity.name+(entity.meta.readonly && entity.meta.readonly!="false" ? '' : ', '+entity.name+'Patch')+` } from "../../models/types";
+  import type { `+entity.name+(entity.meta.readonly && entity.meta.readonly!="false" ? '' : ', '+entity.name+'Patch')+` } from "../../models/types";
 
   const `+entity.name+`Fields = gql\`fragment `+entity.name+`Fields on `+entity.name+` {`
 +(entity.fields.filter(f => isField(f))[0].name == "nodeId" ? "" : "nodeId:"+entity.fields.filter(f => isField(f))[0].name+",")
@@ -107,12 +107,12 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   const ReadAll = gql\`query readAll($condition:`+entity.name+`Condition) {all`+entity.meta.plural+` (condition:$condition)
     {nodes{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Create = gql\`mutation create(`+entity.fields
-    .filter(f => isField(f) && f.meta.templates.includes("crud")).map(field => '$'+field.name+':'+getType(field)+(field.meta.required && !field.meta.readonly ? "!" : ""))+`)
+    .filter(f => isField(f) && f.name!=="nodeId").map(field => '$'+field.name+':'+(field.meta.array ? '['+getType(field)+']' : getType(field))+(field.meta.required && !field.meta.readonly ? "!" : ""))+`)
     {create`+entity.name+`(input:{`+to1LowerCase(entity.name)+`:{ `+entity.fields
-        .filter(f => isField(f) && f.meta.templates.includes("crud")).map(field => field.name+':\$'+field.name)+` } })
+        .filter(f => isField(f) && f.name!=="nodeId").map(field => field.name+':\$'+field.name)+` } })
     { `+to1LowerCase(entity.name)+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Update = gql\`mutation update(`+entity.fields
-    .filter(f => isField(f) && (f.name=="nodeId" || f.meta.templates.includes("crud") && !f.meta.readonly)).map(field => '$'+field.name+':'+getType(field)+(field.name=="nodeId" ? "!" : ""))+`)
+    .filter(f => isField(f) && (f.name=="nodeId" || f.meta.templates.includes("crud") && !f.meta.readonly)).map(field => '$'+field.name+':'+(field.meta.array ? '['+getType(field)+']' : getType(field))+(field.name=="nodeId" ? "!" : ""))+`)
     {update`+entity.name+`(input:{nodeId:$nodeId,
     `+to1LowerCase(entity.name)+`Patch:{ `+entity.fields
       .filter(f => isField(f) && f.name!=="nodeId" && f.meta.templates.includes("crud") && !f.meta.readonly).map(field => field.name+':\$'+field.name)+` } })
@@ -120,185 +120,148 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   const Delete = gql\`mutation delete($nodeId:ID!)
     {delete`+entity.name+`(input:{nodeId:$nodeId})
     { `+to1LowerCase(entity.name)+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
-  type recType = { `+entity.fields.filter(f => getType(f)!=null).map(field => field.name+'?: '+
-    (!isField(field) ? "{ totalCount?: number }" : ["text","date","datetime"].includes(field.meta.format) ? "string" : field.meta.format)).join(", ")+` }
 
-  export default defineComponent({
-    name: "`+entity.name+`",
-    async setup() {
-      const route = useRoute();
-      const query = Object.entries(route.query).map(([key, val]) => [key, val && [`+entity.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
-         '"'+f.name+'"').join()+`].includes(key) ? +val : val]);
-      const where = query.map(([key, val]) => key+" is "+val).join(", and ");
-      const title = ref("`+plural(entity.meta.label)+`"+(where && ", where "+where));
-      const validationSchema = {`+entity.fields.filter(f => isField(f) && !f.meta.readonly).map(field => `
-        `+field.name+': "'+(field.meta.required ? "required|" : "")+field.meta.format+'"').join(",")+`
-      };
-      const initialValues = {`+entity.fields.filter(f => isField(f) && f.meta.default!==undefined && f.meta.default!=="").map(field => `
-        `+field.name+': '+field.meta.default)+`};
-      const { values: recordV, errors, meta, resetForm, setValues, handleSubmit } = useForm<recType>({ validationSchema });
-`+entity.fields.filter(f => isField(f)).map(field => '      const { value: '+field.name+'V } = useField("'+field.name+'");').join("\n")+`
-      const filters = ref({'global': {value: null}});
-      const toast = useToast();
-      const dtMaster = ref(null);
-      const recordDialog = ref(false);
-      const deleteRecordDialog = ref(false);
-      const deleteRecordsDialog = ref(false);
-      const selectedRecords = ref(null);
-      const submitted = ref(false);
-      const { data: cRecs, execute: cEx, error: cErrors } = useMutation(Create); // Must be defined before first await
-      const { data: uRecs, execute: uEx, error: uErrors } = useMutation(Update); // Must be defined before first await
-      const { data: dRecs, execute: dEx, error: dErrors } = useMutation(Delete); // Must be defined before first await
-      const { data: raRecs, error: raErrors } = await useQuery({query: ReadAll, variables:{condition:Object.fromEntries(query)}});
-      if (raErrors.value) throw "ReadAll Errors:"+JSON.stringify(raErrors.value.response.body.errors);
-      const records = ref( raRecs.value.all`+entity.meta.plural+`.nodes.map(r => {
-        `+entity.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
-         'r.'+f.name+' = r.'+f.name+' && +r.'+f.name+`;
-        `).join('')+entity.fields.filter(f => !isField(f) && getType(f)!=null).map(f =>
-         'r.'+f.name+'.totalCount = r.'+f.name+'.totalCount && +r.'+f.name+`.totalCount;
-        `).join('')+` return r }));
+  const route = useRoute();
+  const query = Object.entries(route.query).map(([key, val]) => [key, val && [`+entity.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
+      '"'+f.name+'"').join()+`].includes(key) ? +val : val]);
+  const where = query.map(([key, val]) => key+" is "+val).join(", and ");
+  const title = ref("`+plural(entity.meta.label)+`"+(where && ", where "+where));
+  const validationSchema = {`+entity.fields.filter(f => isField(f) && f.meta.templates.includes("crud") && !f.meta.readonly).map(field => `
+    `+field.name+': "'+(field.meta.required ? "required|" : "")+field.meta.format+'"').join(",")+`
+  };
+  const initialValues = {`+entity.fields.filter(f => isField(f) && f.meta.default!==undefined && f.meta.default!=="").map(field => `
+    `+field.name+': '+field.meta.default)+`};
+  const { values: recordV, errors, meta, resetForm, setValues, handleSubmit } = useForm({ validationSchema });
+`+entity.fields.filter(f => isField(f) && (f.meta.templates.includes("crud") || f.name=="nodeId")).map(field => '      const { value: '+field.name+'V } = useField("'+field.name+'");').join("\n")+`
+  const filters = ref({'global': {value: null}});
+  const toast = useToast();
+  const dtMaster = ref(null);
+  const recordDialog = ref(false);
+  const deleteRecordDialog = ref(false);
+  const deleteRecordsDialog = ref(false);
+  const selectedRecords = ref(null);
+  const submitted = ref(false);
+  const { data: cRecs, execute: cEx, error: cErrors } = useMutation(Create); // Must be defined before first await
+  const { data: uRecs, execute: uEx, error: uErrors } = useMutation(Update); // Must be defined before first await
+  const { data: dRecs, execute: dEx, error: dErrors } = useMutation(Delete); // Must be defined before first await
+  const { data: raRecs, error: raErrors } = await useQuery({query: ReadAll, variables:{condition:Object.fromEntries(query)}});
+  if (raErrors.value) throw "ReadAll Errors:"+JSON.stringify(raErrors.value.response.body.errors);
+  const records = ref( raRecs.value.all`+entity.meta.plural+`.nodes.map(r => {
+    `+entity.fields.filter(f => isField(f) && ['number','currency'].includes(f.meta.format)).map(f =>
+      'r.'+f.name+' = r.'+f.name+' && +r.'+f.name+`;
+    `).join('')+entity.fields.filter(f => !isField(f) && getType(f)!=null).map(f =>
+      'r.'+f.name+'.totalCount = r.'+f.name+'.totalCount && +r.'+f.name+`.totalCount;
+    `).join('')+` return r }));
 
-      function recordName(record: `+entity.name+`): string {
-        const rn=`+entity.fields.filter(f => isField(f)).map(field => `
-          (record.`+field.name+` ? "`+field.meta.label+`: "+`+(
-            field.meta.format=="date" ? "formatDate" : 
-            field.meta.format=="datetime" ? "formatDateTime" : 
-            "")+"(record."+field.name+`)+"  " : "")`).join("+")+`;
+  function recordName(record: `+entity.name+`Patch): string {
+    const rn=`+entity.fields.filter(f => isField(f)).map(field => `
+      (record.`+field.name+` ? "`+field.meta.label+`: "+`+(
+        field.meta.format=="date" ? "formatDate" : 
+        field.meta.format=="datetime" ? "formatDateTime" : 
+        "")+"(record."+field.name+`)+"  " : "")`).join("+")+`;
         return rn;
-      };
-      function openNew() {
-        resetForm({values: initialValues});
-        submitted.value = false;
-        recordDialog.value = true;
-      };
-      function hideDialog() {
-        recordDialog.value = false;
-        submitted.value = false;
-      };
-      function findIndexById(nodeId: string) {
-        let index = -1;
-        for (let i = 0; i < records.value.length; i++) {
-          if (records.value[i].nodeId === nodeId) {
-            index = i;
-            break;
-          }
-        }
-        return index;
-      };
-      const saveRecord = handleSubmit(async function() {
-        submitted.value = true;
-        for (const property in recordV) { if (recordV[property] == "" && typeof(recordV[property])!="boolean") recordV[property] = null };
-        if (nodeIdV.value) { // it's an update:
-//          console.log("Update Pre:"+JSON.stringify(recordV));
-          await uEx( recordV );
-          if (uErrors.value) throw "Update Errors:"+JSON.stringify(uErrors.value.response.body.errors);
-          if (nodeIdV.value) records.value[findIndexById(nodeIdV.value as unknown as string)] = uRecs.value.update`+entity.name+`.`+to1LowerCase(entity.name)+`;
-          toast.add({
-            severity: "success",
-            summary: "Successful",
-            detail: "Record Updated",
-            life: 3000,
-          });
-        } else { // it's a create:
-//          console.log("Create Pre:"+JSON.stringify(recordV));
-          await cEx( recordV );
-          if (cErrors.value) throw "Create Errors:"+JSON.stringify(cErrors.value.response.body.errors);
-          records.value.push(cRecs.value.create`+entity.name+`.`+to1LowerCase(entity.name)+`);
-          toast.add({
-            severity: "success",
-            summary: "Successful",
-            detail: "Record Created",
-            life: 3000,
-          });
-        };
-        recordDialog.value = false;
-        resetForm();
-      });
-      function editRecord(rec: `+entity.name+`) {
-        setValues({`+entity.fields.filter(f => isField(f)).map(field => `
-          `+field.name+": "+(
-            field.meta.format=="date" ? "formatDate" : 
-            field.meta.format=="datetime" ? "formatDateTime" : 
-            "")+"(rec."+field.name+")").join()+`
-        });
-        recordDialog.value = true;
-      };
-      function confirmDeleteRecord(rec: `+entity.name+`) {
-        setValues({`+entity.fields.filter(f => isField(f)).map(field => `
-          `+field.name+(
-            field.meta.format=="date" ? ": formatDate(rec."+field.name+")" : 
-            field.meta.format=="datetime" ? ": formatDateTime(rec."+field.name+")" : 
-            field.meta.format=="currency" ? ": formatCurrency(rec."+field.name+")" : 
-            ": rec."+field.name)).join()+`
-        });
-        deleteRecordDialog.value = true;
-      };
-      async function deleteRecord() {
-        deleteRecordDialog.value = false;
-//        console.log("Delete Pre:"+JSON.stringify(recordV));
-        await dEx( recordV );
-        if (dErrors.value) throw "Delete Errors:"+JSON.stringify(dErrors.value.response.body.errors);
-        records.value = records.value.filter((val: `+entity.name+`) => val.nodeId !== dRecs.value.delete`+entity.name+`.`+to1LowerCase(entity.name)+`.nodeId);
-        resetForm();
-        toast.add({
-          severity: "success",
-          summary: "Successful",
-          detail: "Record Deleted",
-          life: 3000,
-        });
-      };
-      function confirmDeleteSelected() {
-        deleteRecordsDialog.value = true;
-      };
-      function deleteSelectedRecords() {
-        selectedRecords.value.forEach(async (rec: `+entity.name+`) => await dEx( rec ));
-        records.value = records.value.filter((val: `+entity.name+`) => !selectedRecords.value.includes(val));
-        deleteRecordsDialog.value = false;
-        selectedRecords.value = null;
-        toast.add({
-          severity: "success",
-          summary: "Successful",
-          detail: "Records Deleted",
-          life: 3000,
-        });
-      };
-
-`+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(f => f.meta).flat().filter((obj, index, self) => index === self.findIndex((o) => o.linkEntity === obj.linkEntity)).map(m => '\
-      const { data: raRecs'+m.linkEntity+', error: raErrors'+m.linkEntity+' } = await useQuery({query: gql\`{all'+plural(m.linkEntity)+' {nodes{ '+m.linkFieldsPlus+' }}}\`});\n\
-      if (raErrors'+m.linkEntity+'.value) throw "ReadAll'+m.linkEntity+' Errors:"+JSON.stringify(raErrors'+m.linkEntity+'.value.response.body.errors);\n\
-      const records'+m.linkEntity+' = ref( raRecs'+m.linkEntity+'.value.all'+m.linkEntity+'s.nodes );\n\
-      const label'+m.linkEntity+' = (rec) => '+m.linkFieldsPlusFn+';\n').join("\n")+`
-      return {
-`+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(f => f.meta).flat().filter((obj, index, self) => index === self.findIndex((o) => o.linkEntity === obj.linkEntity)).map(m => '\
-        records'+m.linkEntity+', label'+m.linkEntity+',').join("\n")+`
-        formatCurrency,
-        formatDate,
-        formatDateTime,
-        title,
-        recordName,
-        openNew,
-        hideDialog,
-        saveRecord,
-        editRecord,
-        confirmDeleteRecord,
-        deleteRecord,
-        confirmDeleteSelected,
-        deleteSelectedRecords,
-        filters,
-        dtMaster,
-        recordDialog,
-        deleteRecordDialog,
-        deleteRecordsDialog,
-        selectedRecords,
-        submitted,
-        records,
-        recordV,
-        validationSchema,
-        errors,
-        meta,`+entity.fields.filter(f => isField(f)).map(field => `
-        `+field.name+'V').join()+`
+  };
+  function openNew() {
+    resetForm({values: initialValues}, {force: true});
+    submitted.value = false;
+    recordDialog.value = true;
+  };
+  function hideDialog() {
+    recordDialog.value = false;
+    submitted.value = false;
+  };
+  function findIndexById(nodeId: string) {
+    let index = -1;
+    for (let i = 0; i < records.value.length; i++) {
+      if (records.value[i].nodeId === nodeId) {
+        index = i;
+        break;
       }
     }
+    return index;
+  };
+  const saveRecord = handleSubmit(async function() {
+    submitted.value = true;
+    for (const property in recordV) { if (recordV[property] == "" && typeof(recordV[property])!="boolean") recordV[property] = null };
+    if (nodeIdV.value) { // it's an update:
+//      console.log("Update Pre:"+JSON.stringify(recordV));
+      await uEx( recordV );
+      if (uErrors.value) throw "Update Errors:"+JSON.stringify(uErrors.value.response.body.errors);
+      if (nodeIdV.value) records.value[findIndexById(nodeIdV.value as unknown as string)] = uRecs.value.update`+entity.name+`.`+to1LowerCase(entity.name)+`;
+      toast.add({
+        severity: "success",
+        summary: "Successful",
+        detail: "Record Updated",
+        life: 3000,
+      });
+    } else { // it's a create:
+//      console.log("Create Pre:"+JSON.stringify(recordV));
+      await cEx( { ...recordV, `+entity.fields.filter(f => isField(f) && f.name!=="nodeId" && !f.meta.templates.includes("list")).map(field => field.name+': ""').join(",")+` } );
+      if (cErrors.value) throw "Create Errors:"+JSON.stringify(cErrors.value.response.body.errors);
+      records.value.push(cRecs.value.create`+entity.name+`.`+to1LowerCase(entity.name)+`);
+      toast.add({
+        severity: "success",
+        summary: "Successful",
+        detail: "Record Created",
+        life: 3000,
+      });
+    };
+    recordDialog.value = false;
+    resetForm({}, {force: true});
   });
+  function editRecord(rec: `+entity.name+`) {
+    resetForm({values: {`+entity.fields.filter(f => isField(f)).map(field => `
+      `+field.name+": "+(
+        field.meta.format=="date" ? "formatDate" : 
+        field.meta.format=="datetime" ? "formatDateTime" : 
+        "")+"(rec."+field.name+")").join()+`
+    }}, {force: true});
+    recordDialog.value = true;
+  };
+  function confirmDeleteRecord(rec: `+entity.name+`) {
+    setValues({`+entity.fields.filter(f => isField(f)).map(field => `
+      `+field.name+(
+        field.meta.format=="date" ? ": formatDate(rec."+field.name+")" : 
+        field.meta.format=="datetime" ? ": formatDateTime(rec."+field.name+")" : 
+        field.meta.format=="currency" ? ": formatCurrency(rec."+field.name+")" : 
+        ": rec."+field.name)).join()+`
+    });
+    deleteRecordDialog.value = true;
+  };
+  async function deleteRecord() {
+    deleteRecordDialog.value = false;
+//    console.log("Delete Pre:"+JSON.stringify(recordV));
+    await dEx( recordV );
+    if (dErrors.value) throw "Delete Errors:"+JSON.stringify(dErrors.value.response.body.errors);
+    records.value = records.value.filter((val: `+entity.name+`) => val.nodeId !== dRecs.value.delete`+entity.name+`.`+to1LowerCase(entity.name)+`.nodeId);
+    resetForm({}, {force: true});
+    toast.add({
+      severity: "success",
+      summary: "Successful",
+      detail: "Record Deleted",
+      life: 3000,
+    });
+  };
+  function confirmDeleteSelected() {
+    deleteRecordsDialog.value = true;
+  };
+  function deleteSelectedRecords() {
+    selectedRecords.value.forEach(async (rec: `+entity.name+`) => await dEx( rec ));
+    records.value = records.value.filter((val: `+entity.name+`) => !selectedRecords.value.includes(val));
+    deleteRecordsDialog.value = false;
+    selectedRecords.value = null;
+    toast.add({
+      severity: "success",
+      summary: "Successful",
+      detail: "Records Deleted",
+      life: 3000,
+    });
+  };
+
+`+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(f => f.meta).flat().filter((obj, index, self) => index === self.findIndex((o) => o.linkEntity === obj.linkEntity)).map(m => '\
+  const { data: raRecs'+m.linkEntity+', error: raErrors'+m.linkEntity+' } = await useQuery({query: gql\`{all'+plural(m.linkEntity)+' {nodes{ '+m.linkFieldsPlus+' }}}\`});\n\
+  if (raErrors'+m.linkEntity+'.value) throw "ReadAll'+m.linkEntity+' Errors:"+JSON.stringify(raErrors'+m.linkEntity+'.value.response.body.errors);\n\
+  const records'+m.linkEntity+' = ref( raRecs'+m.linkEntity+'.value.all'+m.linkEntity+'s.nodes );\n\
+  const label'+m.linkEntity+' = (rec) => '+m.linkFieldsPlusFn+';\n').join("\n")+`
 </script>
 `}
