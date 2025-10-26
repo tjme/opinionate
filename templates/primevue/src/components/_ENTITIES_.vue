@@ -191,13 +191,13 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
       await uEx( recordV );
       if (uErrors.value) throw "Update Errors:"+JSON.stringify(uErrors.value.response.body.errors);
       if (nodeIdV.value) records.value[findIndexById(nodeIdV.value as unknown as string)] = uRecs.value.update`+entity.name+`.`+to1LowerCase(entity.name)+`;
-      toast.add({ severity: "success", summary: "Successful", detail: "Records Deleted", life: 3000 });
+      toast.add({ severity: "success", summary: "Successful", detail: "Records Updated", life: 3000 });
     } else { // it's a create:
 //      console.log("Create Pre:"+JSON.stringify(recordV));
       await cEx( { ...recordV, `+entity.fields.filter(f => isField(f) && f.name!=="nodeId" && !f.meta.templates.includes("list")).map(field => field.name+': ""').join(",")+` } );
       if (cErrors.value) throw "Create Errors:"+JSON.stringify(cErrors.value.response.body.errors);
       records.value.push(cRecs.value.create`+entity.name+`.`+to1LowerCase(entity.name)+`);
-      toast.add({ severity: "success", summary: "Successful", detail: "Records Deleted", life: 3000 });
+      toast.add({ severity: "success", summary: "Successful", detail: "Records Created", life: 3000 });
     };
     recordDialog.value = false;
     resetForm({}, {force: true});
