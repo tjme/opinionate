@@ -99,7 +99,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   import { useQuery, useMutation } from "villus";
   import gql from "graphql-tag";
   import { useField, useForm } from "vee-validate";
-  import type { `+entity.name+(entity.meta.readonly && entity.meta.readonly!="false" ? '' : ', '+entity.name+'Patch')+` } from "../../models/types";
+  import type { `+entity.name+` } from "../../models/types";
 
   // GraphQL queries/mutations:
   const `+entity.name+`Fields = gql\`fragment `+entity.name+`Fields on `+entity.name+` {`
@@ -138,7 +138,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   const initialValues = {`+entity.fields.filter(f => isField(f) && f.meta.default!==undefined && f.meta.default!=="").map(field => `
     `+field.name+': '+field.meta.default)+`};
   const { values: recordV, errors, meta, resetForm, setValues, handleSubmit } = useForm<`+entity.name+`>({ validationSchema });
-`+entity.fields.filter(f => isField(f) && (f.meta.templates.includes("crud") || f.name=="nodeId")).map(field => '      const { value: '+field.name+'V } = useField("'+field.name+'");').join("\n")+`
+`+entity.fields.filter(f => isField(f) && (f.meta.templates.includes("crud") || f.name=="nodeId")).map(field => '  const { value: '+field.name+'V } = useField("'+field.name+'");').join("\n")+`
 
   // Table/filter state:
   const filters = ref({'global': {value: null}});
@@ -160,7 +160,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
       f.name+': r.'+f.name+' && +r.'+f.name+`,
     `).join('')+entity.fields.filter(f => !isField(f) && getType(f)!=null).map(f =>
       f.name+': { totalCount: r.'+f.name+'.totalCount && +r.'+f.name+`.totalCount },
-  `).join('')+`})));
+    `).join('')+`})));
 
   // Helpers:
   function recordName(record: `+entity.name+`): string {
