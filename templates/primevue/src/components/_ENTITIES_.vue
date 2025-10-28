@@ -54,8 +54,8 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
 +(fields.meta.linkFieldsFrom && !fields.meta.linkFields ? 'Select editable autoOptionFocus :options="records'+fields.meta.linkEntity+'" :optionLabel="label'+fields.meta.linkEntity+'" optionValue="'+fields.meta.linkFieldsFrom+'" :useGrouping=false'
 : fields.meta.format=='text' ? 'Textarea :autoResize="true"'
 : fields.meta.format=='boolean' ? 'Checkbox :binary="true"'
-: fields.meta.format=='date' ? 'DatePicker dateFormat="d M yy"'
-: fields.meta.format=='datetime' ? 'DatePicker dateFormat="d M yy" :showTime="true"'
+: fields.meta.format=='date' ? 'DatePicker dateFormat="d M yy" showIcon :showOnFocus="false" showButtonBar'
+: fields.meta.format=='datetime' ? 'DatePicker dateFormat="d M yy" showIcon :showOnFocus="false" showButtonBar :showTime="true"'
 : fields.meta.format=='currency' ? 'InputNumber mode="currency" currency="GBP" :maxFractionDigits="2"'
 : fields.meta.format=='number' ? 'InputNumber :useGrouping=false'+(fields.meta.maxDP ? ' :maxFractionDigits="'+fields.meta.maxDP+'"' : '')
 : 'InputText')+' id="'+fields.name+'" v-model="'+fields.name+'V" variant="filled" fluid'

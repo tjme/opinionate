@@ -1,6 +1,6 @@
 {
 	"name": "opinionate",
-	"version": "0.7.0",
+	"version": "0.7.1",
 	"description": "Automated full stack application code generator",
 	"license": "MIT",
 	"repository": {
@@ -25,9 +25,7 @@
 		"vuejs",
 		"vite",
 		"primevue",
-		"vee-validate",
-		"angular",
-		"angular-material"
+		"vee-validate"
 	],
 	"author": "Tim Merrison <tim@merrison.co.uk>",
 	"bugs": {
