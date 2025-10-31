@@ -1,6 +1,6 @@
 {
   "name": "opinionate-primevue",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "type": "module",
   "license": "MIT",
 	"author": "Tim Merrison <tim@merrison.co.uk>",
@@ -32,7 +32,8 @@
       "templates": [
         "switchboard${item.name=='nodeId' ? '' : '\", \"list'}${item.name=='nodeId' || (item.type && item.type.kind=='LIST') ? '' : '\", \"crud'}"
       ]
-    }
+    },
+    "language": null
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm", 
@@ -57,6 +58,7 @@
     "graphql": "^16.11.0",
     "graphql-tag": "^2.12.6",
     "primeicons": "^7.0.0",
+    "primelocale": "^2.2.2",
     "primevue": "^4.4.1",
     "vee-validate": "^4.15.1",
     "villus": "^3.5.2",

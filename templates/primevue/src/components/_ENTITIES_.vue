@@ -51,7 +51,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   <Dialog v-model:visible="recordDialog" header="`+entity.meta.label+` Details" :modal="true"
     class="op-compact" >`+(entity.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `
     <div class="p-field" :class="errors.`+fields.name+' ? \'p-invalid\' : \'\'"><FloatLabel variant="in" class="p-float-label"><'
-+(fields.meta.linkFieldsFrom && !fields.meta.linkFields ? 'Select editable autoOptionFocus :options="records'+fields.meta.linkEntity+'" :optionLabel="label'+fields.meta.linkEntity+'" optionValue="'+fields.meta.linkFieldsFrom+'" :useGrouping=false'
++(fields.meta.linkFieldsFrom && !fields.meta.linkFields ? 'Select editable autoOptionFocus :options="records'+fields.meta.linkEntity+'" :optionLabel="label'+fields.meta.linkEntity+'" optionValue="'+fields.meta.linkFieldsPlus+'" :useGrouping=false'
 : fields.meta.format=='text' ? 'Textarea :autoResize="true"'
 : fields.meta.format=='boolean' ? 'Checkbox :binary="true"'
 : fields.meta.format=='date' ? 'DatePicker dateFormat="d M yy" showIcon :showOnFocus="false" showButtonBar'
@@ -92,7 +92,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
 </template>
 
 <script setup lang="ts">
-  import { formatCurrency, formatDate, formatDateTime } from "../utility";
+  import { formatCurrency, formatDate, formatDateTime } from "../main";
   import { ref } from "vue";
   import { useRoute } from "vue-router";
   import { useToast } from "primevue/usetoast";
