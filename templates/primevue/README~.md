@@ -2,14 +2,14 @@
 
 A sample app to demonstrate the use of the following combination of tech. (as a basis for developing templates for opinionate):
 
-- PostgreSQL
-- PostGraphile
-- Vue v3
-- TypeScript
-- VeeValidate
-- PrimeVue
-- Villus
-- Vite
+- [PostgreSQL](https://www.postgresql.org)
+- [PostGraphile](https://github.com/graphile/postgraphile)
+- [TypeScript](https://www.typescriptlang.org)
+- [Vue (v3+)](https://vuejs.org)
+- [PrimeVue](https://github.com/primefaces/primevue)
+- [Villus](https://github.com/logaretm/villus)
+- [VeeValidate](https://vee-validate.logaretm.com)
+- [Vite](https://github.com/vitejs/vite)
 
 This version supports fully functional datatables (for each entity), with clickable references/counts/links to related datatables/entities including pagination, sorting and column sizing (with both left and right-aligned columns).
 

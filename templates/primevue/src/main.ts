@@ -44,10 +44,10 @@ export const language = config.language || navigator.languages?.[0] || navigator
 export function formatCurrency(value: string): string | undefined {
   if (value) { const v = +value; return v.toLocaleString(language, {style: "currency", currency: "GBP"}); } };
 export function formatDate(value: string): string | undefined {
-  if (value) { const v = new Date(value); return v.toLocaleString(language, {year: "numeric", month: "short", day: "numeric"}); } };
+  if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium"}); } };
 export function formatDateTime(value: string): string | undefined {
   // Formatted partially for acceptability by PrimeVue DatePicker
-  if (value) { const v = new Date(value); return v.toLocaleString(language, {year: "numeric", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit"})?.replace(/, (\\d\\d:\\d\\d)$/," $1"); } };
+  if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium", timeStyle: "short"})?.replace(/, (\d\d:\d\d)$/," $1"); } };
 export const allLanguages = all;
 
 const routes = [

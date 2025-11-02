@@ -181,7 +181,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
     submitted.value = false;
   };
   function findIndexById(nodeId: string) {
-    return records.value.findIndex((r: Film) => r.nodeId === nodeId);
+    return records.value.findIndex((r: `+entity.name+`) => r.nodeId === nodeId);
   };
   const saveRecord = handleSubmit(async function() {
     submitted.value = true;
