@@ -185,7 +185,8 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   };
   const saveRecord = handleSubmit(async function() {
     submitted.value = true;
-    for (const property in recordV) { if (recordV[property] == "" && typeof(recordV[property])!="boolean") recordV[property] = null };
+    let property: keyof typeof recordV;
+    for (property in recordV) { if (recordV[property] == "" && typeof(recordV[property])!="boolean") recordV[property] = null };
     if (nodeIdV.value) { // it's an update:
 //      console.log("Update Pre:"+JSON.stringify(recordV));
       await uEx( recordV );
@@ -242,9 +243,13 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
 
   // Records for Selects:
 `+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(f => f.meta).flat().filter((obj, index, self) => index === self.findIndex((o) => o.linkEntity === obj.linkEntity)).map(m => '\
-  const { data: raRecs'+m.linkEntity+', error: raErrors'+m.linkEntity+' } = await useQuery({query: gql\`{all'+plural(m.linkEntity)+' {nodes{ '+m.linkFieldsPlus+' }}}\`});\n\
+  const { data: raRecs'+m.linkEntity+', error: raErrors'+m.linkEntity+' } = await useQuery({query: gql\`{all'+
+  entities.filter(l => m.linkEntity==l.name)[0].meta.plural
+  +' {nodes{ '+m.linkFieldsPlus+' }}}\`});\n\
   if (raErrors'+m.linkEntity+'.value) throw "ReadAll'+m.linkEntity+' Errors:"+JSON.stringify(raErrors'+m.linkEntity+'.value.response.body.errors);\n\
-  const records'+m.linkEntity+' = ref( raRecs'+m.linkEntity+'.value.all'+m.linkEntity+'s.nodes );\n\
+  const records'+m.linkEntity+' = ref( raRecs'+m.linkEntity+'.value.all'+
+  entities.filter(l => m.linkEntity==l.name)[0].meta.plural
+  +'.nodes );\n\
   const label'+m.linkEntity+' = (rec: any) => '+m.linkFieldsPlusFn+';\n').join("\n")+`
 </script>
 `}

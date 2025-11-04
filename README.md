@@ -47,6 +47,7 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 - you are strongly advised to initialize version control to help track source code changes (e.g. `git init`)
 - copy the template's [package~.json](https://github.com/tjme/opinionate/blob/master/templates/primevue/package~.json) as your new package.json (remove backticks from beginning and end, and making adjustments, e.g. occurencies of the database name 'pagila' in the script, as appropriate)
 - You may be able to improve the metadata generated, by editing the defaultMeta in your package.json, e.g. with a more tailored rule (to make most primary keys and last updated fields read-only), by changing the line beginning with "readonly" to: `"readonly": "${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || ['nodeId','lastUpdate'].includes(item.name) || (item.name.endsWith('Id') && item.name==parent.fields[1].name && !parent.fields[2].name.endsWith('Id'))}",`
+- Likewise, identify specific currency fields by changing the line beginning with "format" by inserting (before `['money`): `['amount','rentalRate','replacementCost'].includes(item.name) ? 'currency' : ` (and likewise for maxDP, but replace '2' for 'currency')
 - run the GraphQL server, with `pnpm backend &`
 - generate everything: `pnpm gen`, OR do it stage by stage with:
   - create a data sources directory: `mkdir models`

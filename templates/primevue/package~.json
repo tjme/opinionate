@@ -1,6 +1,6 @@
 {
   "name": "opinionate-primevue",
-  "version": "0.7.2",
+  "version": "0.7.4",
   "type": "module",
   "license": "MIT",
 	"author": "Tim Merrison <tim@merrison.co.uk>",
@@ -33,7 +33,8 @@
         "switchboard${item.name=='nodeId' ? '' : '\", \"list'}${item.name=='nodeId' || (item.type && item.type.kind=='LIST') ? '' : '\", \"crud'}"
       ]
     },
-    "language": null
+    "language": null,
+    "currency": ""
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm", 
@@ -70,7 +71,7 @@
     "@graphql-codegen/typescript": "^4.1.6",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/tsconfig": "^0.8.1",
-    "opinionate": "github:tjme/opinionate",
+    "opinionate": "github:tjme/opinionate#master",
     "typescript": "^5.9.3",
     "vite": "^7.1.12",
     "vue-tsc": "^3.1.2"

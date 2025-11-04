@@ -41,13 +41,14 @@ const url = (config.gql_api.prefix || "")+config.gql_api.hostname+(":"+config.gq
 const client = createClient({ url });
 
 export const language = config.language || navigator.languages?.[0] || navigator.language || new Intl.DateTimeFormat().resolvedOptions().locale || "en";
+export const currency = config.currency || "";
 export function formatCurrency(value: string): string | undefined {
-  if (value) { const v = +value; return v.toLocaleString(language, {style: "currency", currency: "GBP"}); } };
+  if (value) { const v = +value; return v.toLocaleString(language, {style: "currency", currency: currency}); } };
 export function formatDate(value: string): string | undefined {
   if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium"}); } };
 export function formatDateTime(value: string): string | undefined {
   // Formatted partially for acceptability by PrimeVue DatePicker
-  if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium", timeStyle: "short"})?.replace(/, (\d\d:\d\d)$/," $1"); } };
+  if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium", timeStyle: "short"})?.replace(/, (\\d\\d:\\d\\d)$/," $1"); } };
 export const allLanguages = all;
 
 const routes = [
