@@ -51,7 +51,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   <Dialog v-model:visible="recordDialog" header="`+entity.meta.label+` Details" :modal="true"
     class="op-compact" >`+(entity.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `
     <div class="p-field" :class="errors.`+fields.name+' ? \'p-invalid\' : \'\'"><FloatLabel variant="in" class="p-float-label"><'
-+(fields.meta.linkFieldsFrom && !fields.meta.linkFields ? 'Select editable autoOptionFocus :options="records'+fields.meta.linkEntity+'" :optionLabel="label'+fields.meta.linkEntity+'" optionValue="'+fields.meta.linkFieldsPlus+'" :useGrouping=false'
++(fields.meta.linkFieldsFrom && !fields.meta.linkFields ? 'Select editable autoOptionFocus :options="records'+fields.meta.linkEntity+'" :optionLabel="label'+fields.meta.linkEntity+'" optionValue="'+fields.meta.linkFieldsFrom+'" :useGrouping=false'
 : fields.meta.format=='text' ? 'Textarea :autoResize="true"'
 : fields.meta.format=='boolean' ? 'Checkbox :binary="true"'
 : fields.meta.format=='date' ? 'DatePicker dateFormat="d M yy" showIcon :showOnFocus="false" showButtonBar'
@@ -245,11 +245,11 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
 `+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(f => f.meta).flat().filter((obj, index, self) => index === self.findIndex((o) => o.linkEntity === obj.linkEntity)).map(m => '\
   const { data: raRecs'+m.linkEntity+', error: raErrors'+m.linkEntity+' } = await useQuery({query: gql\`{all'+
   entities.filter(l => m.linkEntity==l.name)[0].meta.plural
-  +' {nodes{ '+m.linkFieldsPlus+' }}}\`});\n\
+  +' {nodes{ '+m.linkFieldsFrom+' }}}\`});\n\
   if (raErrors'+m.linkEntity+'.value) throw "ReadAll'+m.linkEntity+' Errors:"+JSON.stringify(raErrors'+m.linkEntity+'.value.response.body.errors);\n\
   const records'+m.linkEntity+' = ref( raRecs'+m.linkEntity+'.value.all'+
   entities.filter(l => m.linkEntity==l.name)[0].meta.plural
   +'.nodes );\n\
-  const label'+m.linkEntity+' = (rec: any) => '+m.linkFieldsPlusFn+';\n').join("\n")+`
+  const label'+m.linkEntity+' = (rec: any) => rec.'+m.linkFieldsFrom+';\n').join("\n")+`
 </script>
 `}

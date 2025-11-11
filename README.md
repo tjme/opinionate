@@ -12,10 +12,10 @@ Of course, Opinionate can be used with other GraphQL server-side technologies, t
 
 ## Prerequisites
 
-- install [Node.js](https://nodejs.org/en)
+- install [Node.js](https://nodejs.org)
 - install [PostgreSQL](https://www.postgresql.org)
-- install your favoured package manager, e.g. [pnpm](https://pnpm.io/) (alternatively, use npm, yarn, etc)
-- install [TypeScript](https://www.typescriptlang.org/) globally (you may need elevated privileges, e.g. prefix with sudo) `pnpm -g add typescript`
+- install your favoured package manager, e.g. [pnpm](https://pnpm.io) (alternatively, use npm, yarn, etc)
+- install [TypeScript](https://www.typescriptlang.org) globally (you may need elevated privileges, e.g. prefix with sudo) `pnpm -g add typescript`
 - install PostGraphile globally `pnpm -g add postgraphile`
 - optionally, install a good IDE with TypeScript support, e.g. [VS Code](https://code.visualstudio.com)
 

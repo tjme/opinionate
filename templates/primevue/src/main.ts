@@ -41,9 +41,9 @@ const url = (config.gql_api.prefix || "")+config.gql_api.hostname+(":"+config.gq
 const client = createClient({ url });
 
 export const language = config.language || navigator.languages?.[0] || navigator.language || new Intl.DateTimeFormat().resolvedOptions().locale || "en";
-export const currency = config.currency || "";
+export const currency = config.currency;
 export function formatCurrency(value: string): string | undefined {
-  if (value) { const v = +value; return v.toLocaleString(language, {style: "currency", currency: currency}); } };
+  if (value) { const v = +value; return v.toLocaleString(language, !currency ? {} : {style: "currency", currency: currency}); } };
 export function formatDate(value: string): string | undefined {
   if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium"}); } };
 export function formatDateTime(value: string): string | undefined {

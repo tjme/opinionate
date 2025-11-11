@@ -1,6 +1,6 @@
 {
   "name": "opinionate-primevue",
-  "version": "0.7.4",
+  "version": "0.7.5",
   "type": "module",
   "license": "MIT",
 	"author": "Tim Merrison <tim@merrison.co.uk>",
@@ -26,15 +26,13 @@
       "readonly": "${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || (item.type && item.type.kind=='LIST') || ['nodeId'].includes(item.name) || (item.name.endsWith('Id') && item.name==parent.fields[1].name && !parent.fields[2].name.endsWith('Id'))}",
       "linkEntity": "${isEntity(item) ? 'null' : getType(item)==false ? to1UpperCase(singular(item.name.split('By')[0])) : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())) ? 'null' : to1UpperCase(parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())).name.toString().split('By')[0])}",
       "linkFields": "${isEntity(item) ? 'null' : getType(item)==false ? to1LowerCase(item.name.split('By')[1]) : 'null'}",
-      "linkFieldsFrom": "${isEntity(item) ? 'null' : getType(item)==false ? parent.fields[1].name : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())) ? 'null' : to1LowerCase(parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())).name.toString().split('By')[1])}",
-      "linkFieldsPlus": "${isEntity(item) ? 'null' : getType(item)==false ? parent.fields[1].name : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())) ? 'null' : to1LowerCase(parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())).name.toString().split('By')[1])}",
-      "linkFieldsPlusFn": "${isEntity(item) ? 'null' : getType(item)==false ? parent.fields[1].name : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())) ? 'null' : 'rec.'+to1LowerCase(parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())).name.toString().split('By')[1])}",
+      "linkFieldsFrom": "${isEntity(item) ? 'null' : getType(item)==false ? parent.fields[1].name : !isField(item) ? 'null' : !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())) ? 'null' : schema.data.__schema.types.filter(e => isEntity(e) && e.name==to1UpperCase(parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())).name.toString().split('By')[0])).map(e => e.fields[1].name)}",
       "templates": [
         "switchboard${item.name=='nodeId' ? '' : '\", \"list'}${item.name=='nodeId' || (item.type && item.type.kind=='LIST') ? '' : '\", \"crud'}"
       ]
     },
     "language": null,
-    "currency": ""
+    "currency": null
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm", 
@@ -48,7 +46,7 @@
     "gen-overlay": "opinionate meta --overlay-out models/overlayOut.json",
     "gen-code": "opinionate gen --template node_modules/opinionate/templates/primevue -o models/overlayOut.json",
     "gen": "mkdir models && pnpm install && pnpm gen-json && pnpm gen-gql && pnpm gen-ts && pnpm gen-overlay && pnpm gen-code",
-    "backend": "postgraphile -c postgres://test:testpass@/pagila --cors --enhance-graphiql -n localhost -p 5000 -q /graphql",
+    "backend": "postgraphile -c postgres://test:testpass@/pagila -s public --cors --enhance-graphiql -n localhost -p 5000 -q /graphql",
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
