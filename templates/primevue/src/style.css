@@ -6,6 +6,7 @@
 .error { color: red; }
 .p-error { color: red; }
 .p-float-label .p-checkbox + label { left: 1.5rem; }
+.p-datatable-column-title { width: 100%; } /* Allow for alignment of table headings */
 .p-datatable-resizable .p-datatable-thead > tr > th { white-space: inherit; }
 .p-datatable-resizable .p-datatable-tbody > tr > td { max-width: 20rem; white-space: nowrap; }
 .p-datatable-resizable .p-datatable-tbody > tr > td a {display: table; height: 100%; width: 100%;}
