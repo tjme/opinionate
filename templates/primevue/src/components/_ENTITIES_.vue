@@ -52,6 +52,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
     class="op-compact" >`+(entity.fields.filter(f => isField(f) && f.meta.templates.includes("crud")).map(fields => `
     <div class="p-field" :class="errors.`+fields.name+' ? \'p-invalid\' : \'\'"><FloatLabel variant="in" class="p-float-label"><'
 +(fields.meta.linkFieldsFrom && !fields.meta.linkFields ? 'Select editable autoOptionFocus :options="records'+fields.meta.linkEntity+'" :optionLabel="label'+fields.meta.linkEntity+'" optionValue="'+fields.meta.linkFieldsFrom+'" :useGrouping=false'
+: fields.meta.format=='enum' ? 'Select editable autoOptionFocus :options="records'+fields.meta.sType+'" :optionLabel="label'+fields.meta.sType+'" optionValue="name" :useGrouping=false'
 : fields.meta.format=='text' ? 'Textarea :autoResize="true"'
 : fields.meta.format=='boolean' ? 'Checkbox :binary="true"'
 : fields.meta.format=='date' ? 'DatePicker dateFormat="d M yy" showIcon :showOnFocus="false" showButtonBar'
@@ -250,6 +251,12 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   const records'+m.linkEntity+' = ref( raRecs'+m.linkEntity+'.value.all'+
   entities.filter(l => m.linkEntity==l.name)[0].meta.plural
   +'.nodes );\n\
-  const label'+m.linkEntity+' = (rec: any) => rec.'+entities.filter(l => m.linkEntity==l.name)[0].meta.primaryLabel+';\n').join("\n")+`
+  const label'+m.linkEntity+' = (rec: any) => rec.'+entities.filter(l => m.linkEntity==l.name)[0].meta.primaryLabel+';\n').join("\n")+
+  entity.fields.filter(f => isField(f) && f.meta.format=="enum").map(f =>
+  schema.data.__schema.types.filter(l => l.kind=="ENUM" && l.name==f.meta.sType).map(e => `
+  const records`+f.meta.sType+` = ref([
+    `+e.enumValues.map(ev => '{ "name": "'+ev.name+'" }').join(",\n    ")+`
+  ]);
+  const label`+f.meta.sType+` = (rec: any) => rec.name;`).join("\n\n"))+`
 </script>
 `}

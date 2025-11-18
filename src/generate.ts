@@ -235,7 +235,8 @@ export function generate(templateDir: string, targetDir: string, schemaInPath: s
   function plural(word: string): string { return _plural(word) }
   function singular(word: string): string { return _singular(word) }
   const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta, defaultMetaKey);
-  const entities = schema.data.__schema.types.filter((f: any) => isEntity(f));
+  const types = schema.data.__schema.types;
+  const entities = types.filter((f: any) => isEntity(f));
 
   function genCore(templateDir: string, targetDir: string) {
     fs.readdirSync(templateDir).forEach((targetName: string) => {

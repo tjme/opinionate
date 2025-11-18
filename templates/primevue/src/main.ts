@@ -36,6 +36,7 @@ defineRule("array", () => { if (false) { return "This field must be an array"; }
 defineRule("string", () => { return true; });
 defineRule("text", () => { return true; });
 defineRule("boolean", () => { return true; });
+defineRule("enum", () => { return true; });
 
 const url = (config.gql_api.prefix || "")+config.gql_api.hostname+(":"+config.gql_api.port || "")+(config.gql_api.path || "");
 const client = createClient({ url });
