@@ -1,6 +1,6 @@
 <template>
   <Accordion :value="[]" multiple>
-${entities.filter(entity => entity.meta.templates.includes("switchboard")).map(entity => `\
+${entities.filter(entity => entity.meta?.templates?.includes("switchboard")).map(entity => `\
     <AccordionPanel value="${entity.name}"><AccordionHeader>${entity.meta.label}</AccordionHeader><AccordionContent><${entity.name} /></AccordionContent></AccordionPanel>`).join("\n")}
   </Accordion>
 </template>

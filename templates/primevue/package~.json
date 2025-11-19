@@ -1,6 +1,6 @@
 {
   "name": "opinionate-primevue",
-  "version": "0.7.7",
+  "version": "0.7.8",
   "type": "module",
   "license": "MIT",
   "author": "Tim Merrison <tim@merrison.co.uk>",
@@ -32,7 +32,7 @@
       "default": "${isEntity(item) ? 'null' : ['Boolean','Boolean!'].includes(getType(item)) ? 'false' : ''}",
       "linkEntity": "${isEntity(item) ? 'null' : getType(item)==false ? to1UpperCase(singular(item.name.split('By')[0])) : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())) ? 'null' : to1UpperCase(parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())).name.toString().split('By')[0])}",
       "linkFields": "${isEntity(item) ? 'null' : getType(item)==false ? to1LowerCase(item.name.split('By')[1]) : 'null'}",
-      "linkFieldsFrom": "${isEntity(item) ? 'null' : getType(item)==false ? parent.fields[1].name : !isField(item) ? 'null' : !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())) ? 'null' : schema.data.__schema.types.filter(e => isEntity(e) && e.name==to1UpperCase(parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())).name.toString().split('By')[0])).map(e => e.fields[1].name)}"
+      "linkFieldsFrom": "${isEntity(item) ? 'null' : getType(item)==false ? parent.fields[1].name : !isField(item) ? 'null' : !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())) ? 'null' : types.filter(e => isEntity(e) && e.name==to1UpperCase(parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())).name.toString().split('By')[0])).map(e => e.fields[1].name)}"
     },
     "language": null,
     "currency": null

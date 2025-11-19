@@ -1,4 +1,4 @@
-${!entity.meta.templates.includes("list") ? "" : `\
+${!entity.meta?.templates?.includes("list") ? "" : `\
 <template>
   <div class="card">
     <DataTable `+(entity.meta.attributes
@@ -253,7 +253,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   +'.nodes );\n\
   const label'+m.linkEntity+' = (rec: any) => rec.'+entities.filter(l => m.linkEntity==l.name)[0].meta.primaryLabel+';\n').join("\n")+
   entity.fields.filter(f => isField(f) && f.meta.format=="enum").map(f =>
-  schema.data.__schema.types.filter(l => l.kind=="ENUM" && l.name==f.meta.sType).map(e => `
+  types.filter(l => l.kind=="ENUM" && l.name==f.meta.sType).map(e => `
   const records`+f.meta.sType+` = ref([
     `+e.enumValues.map(ev => '{ "name": "'+ev.name+'" }').join(",\n    ")+`
   ]);

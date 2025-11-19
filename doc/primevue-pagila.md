@@ -30,7 +30,8 @@ pnpm backend &
 pnpm gen
 ```
 
-- note what seems to be a quirk of Postgraphile's pluralize function used on entity names results in an upper case instead of lower case "s" at the end of seven instances of names beginning with "PaymentP202220", but they can be easily accomodated by changes in overlayOut.json, e.g. changing `"plural": "PaymentP202201s",` to `"plural": "PaymentP202201S",`, etc
+- note that there is a problem with the rental_by_category materialized view not being populated, so remove it by removing all of the templates listed in overlayOut.json, just above the line `"label": "Rental By Category"`.
+- note also, what seems to be a quirk of Postgraphile's pluralize function used on entity names results in an upper case instead of lower case "s" at the end of seven instances of names beginning with "PaymentP202220", but they can be easily accomodated by changes in overlayOut.json, e.g. changing `"plural": "PaymentP202201s",` to `"plural": "PaymentP202201S",`, etc
 
 - it would be wise at this stage to use: `git add -A && git commit -m "opinionate gen"`
 

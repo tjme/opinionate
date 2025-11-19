@@ -106,7 +106,7 @@ function camel2proper(camelCase: string) {
   .trim() }
 
 function isEntity(entity: any): boolean {
-  return entity.kind == "OBJECT" && entity.interfaces.length > 0 // && entity.interfaces[0].name == "Node"
+  return entity.kind == "OBJECT"
     && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
     && !entity.name.endsWith("Connection") && !entity.name.endsWith("Edge") && !entity.name.endsWith("Payload") }
 
@@ -189,7 +189,8 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
   let schema = JSON.parse(fs.readFileSync(schemaInPath).toString());
   if (!schema.data) schema = { "data": schema }; // adjust for non PostGraphile structures, e.g. MusicBrainz
   const overlayIn = overlayInPath && JSON.parse(fs.readFileSync(overlayInPath).toString());
-  schema.data.__schema.types
+  const types = schema.data.__schema.types;
+  types
   .filter((ft: any) => isEntity(ft))
   .forEach((t: any) => {
     if (!allowExisting && t.hasOwnProperty(metaProp)) throw new Error(`The schema already contains metadata (for table ${t.name})`);
@@ -236,7 +237,7 @@ export function generate(templateDir: string, targetDir: string, schemaInPath: s
   function singular(word: string): string { return _singular(word) }
   const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta, defaultMetaKey);
   const types = schema.data.__schema.types;
-  const entities = types.filter((f: any) => isEntity(f));
+  const entities = types.filter((f: any) => isEntity(f) && f[metaProp] && f[metaProp].templates && f[metaProp].templates.length > 0);
 
   function genCore(templateDir: string, targetDir: string) {
     fs.readdirSync(templateDir).forEach((targetName: string) => {

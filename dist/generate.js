@@ -65,7 +65,7 @@ function camel2proper(camelCase) {
         .trim();
 }
 function isEntity(entity) {
-    return entity.kind == "OBJECT" && entity.interfaces.length > 0
+    return entity.kind == "OBJECT"
         && entity.name !== "Query" && entity.name !== "Mutation" && entity.name !== "PageInfo" && !entity.name.startsWith("__")
         && !entity.name.endsWith("Connection") && !entity.name.endsWith("Edge") && !entity.name.endsWith("Payload");
 }
@@ -127,7 +127,8 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta = "./package.json", 
     if (!schema.data)
         schema = { "data": schema };
     const overlayIn = overlayInPath && JSON.parse(fs.readFileSync(overlayInPath).toString());
-    schema.data.__schema.types
+    const types = schema.data.__schema.types;
+    types
         .filter((ft) => isEntity(ft))
         .forEach((t) => {
         if (!allowExisting && t.hasOwnProperty(metaProp))
@@ -162,7 +163,8 @@ function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMe
     function plural(word) { return pluralize_1.plural(word); }
     function singular(word) { return pluralize_1.singular(word); }
     const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta, defaultMetaKey);
-    const entities = schema.data.__schema.types.filter((f) => isEntity(f));
+    const types = schema.data.__schema.types;
+    const entities = types.filter((f) => isEntity(f) && f[metaProp] && f[metaProp].templates && f[metaProp].templates.length > 0);
     function genCore(templateDir, targetDir) {
         fs.readdirSync(templateDir).forEach((targetName) => {
             if (fs.statSync(templateDir + "/" + targetName).isDirectory()) {

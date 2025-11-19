@@ -56,7 +56,8 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
   - create the TypeScript type definitions for the schema: `pnpm gen-ts`
   - create a configuration/overlay (for later enhancement and customization): `pnpm gen-overlay` (WARNING: this will overwrite any previous version/amendments)
   - to automatically (re)generate fully functional components/pages for each GraphQL node/entity, as well as common items: `pnpm gen-code` (WARNING: this will overwrite any previous versions/amendments)
-- note what seems to be a quirk of Postgraphile's pluralize function used on entity names results in an upper case instead of lower case "s" at the end of seven instances of names beginning with "PaymentP202220", but they can be easily accomodated by changes in overlayOut.json, e.g. changing `"plural": "PaymentP202201s",` to `"plural": "PaymentP202201S",`, etc
+- note that there is a problem with the rental_by_category materialized view not being populated, so remove it by removing all of the templates listed in overlayOut.json, just above the line `"label": "Rental By Category"`.
+- note also, what seems to be a quirk of Postgraphile's pluralize function used on entity names results in an upper case instead of lower case "s" at the end of seven instances of names beginning with "PaymentP202220", but they can be easily accomodated by changes in overlayOut.json, e.g. changing `"plural": "PaymentP202201s",` to `"plural": "PaymentP202201S",`, etc
 - it would be wise at this stage to use: `git add -A && git commit -m "opinionate gen"`
 - run the development server, to deliver your new website: `pnpm dev`
 - or build: `pnpm build` then run a production version: `pnpm preview`
