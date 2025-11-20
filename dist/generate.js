@@ -164,7 +164,7 @@ function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMe
     function singular(word) { return pluralize_1.singular(word); }
     const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta, defaultMetaKey);
     const types = schema.data.__schema.types;
-    const entities = types.filter((f) => isEntity(f) && f[metaProp] && f[metaProp].templates && f[metaProp].templates.length > 0);
+    const entities = types.filter((f) => isEntity(f) && f[metaProp] && f[metaProp].templates && f[metaProp].templates.length > 0 && (f[metaProp].templates[0] !== "" || f[metaProp].templates.length > 1));
     function genCore(templateDir, targetDir) {
         fs.readdirSync(templateDir).forEach((targetName) => {
             if (fs.statSync(templateDir + "/" + targetName).isDirectory()) {

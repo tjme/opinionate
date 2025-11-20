@@ -1,4 +1,4 @@
-# Pagila example [Vue](https://vuejs.org)/[PrimeVue](https://github.com/primefaces/primevue) front-end, using [Vite](https://github.com/vitejs/vite) and [Villus](https://github.com/logaretm/villus)
+# Advanced Pagila example [Vue](https://vuejs.org)/[PrimeVue](https://github.com/primefaces/primevue) front-end, using [Vite](https://github.com/vitejs/vite) and [Villus](https://github.com/logaretm/villus)
 
 The following instructions create a somewhat more comprehensive and sophisticated front-end for the pagila example database (use instead of, or after following the standard instructions in [Opinionate](README.md), and after installing the prerequisites described there). They centre on enhancing the handling of foreign key links (especially to actors, categories, films and languages), by automatically displaying more meaningful select/drop-down lists (e.g. of actors and films, on the Film Actors form). However, more could be done (for example, the same could be done for customers, stores, addresses, etc.); but that is left as as an exercise for the reader!
 
@@ -30,7 +30,7 @@ pnpm backend &
 pnpm gen
 ```
 
-- note that there is a problem with the rental_by_category materialized view not being populated, so remove it by removing all of the templates listed in overlayOut.json, just above the line `"label": "Rental By Category"`.
+- note that there is a problem with the rental_by_category materialized view not being populated, so remove it by removing all of the templates listed in overlayOut.json (now done automatically when you use package-pagila.json).
 - note also, what seems to be a quirk of Postgraphile's pluralize function used on entity names results in an upper case instead of lower case "s" at the end of seven instances of names beginning with "PaymentP202220", but they can be easily accomodated by changes in overlayOut.json, e.g. changing `"plural": "PaymentP202201s",` to `"plural": "PaymentP202201S",`, etc
 
 - it would be wise at this stage to use: `git add -A && git commit -m "opinionate gen"`

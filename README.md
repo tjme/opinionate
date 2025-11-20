@@ -75,7 +75,7 @@ The `opinionate meta` sub-command can be used in a number of ways to help manage
 
 You may want to amend some of the generated metadata, especially where fields are marked as "required". The "defaultMeta" rules automatically mark most "id" fields and the "last update" fields as read-only, so that (although marked as required) they cannot be entered manually, but are instead set automatically to defaults determined by the database. Other fields though (such as the rental duration and rate) also have defaults, but here, you may want to mark them as not "required" (so the database sets them if left blank), or alternatively you could set a corresponding default value for them in the overlay (to be applied by the front-end). Also, the "fulltext" field is not intended to be displayed or manually updated (but is expected by the database when a record is created), so "list" and "crud" should be removed from the "templates" array.
 
-For more details on how to achieve this and more, see [Pagila](doc/primevue-pagila.md).
+For more details on how to achieve this and more, see [Advanced Pagila](doc/primevue-pagila.md).
 
 ### Example usage of the opinionate meta command
 
