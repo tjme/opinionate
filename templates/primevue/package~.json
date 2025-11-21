@@ -1,6 +1,6 @@
 {
   "name": "opinionate-primevue",
-  "version": "0.7.8",
+  "version": "0.7.9",
   "type": "module",
   "license": "MIT",
   "author": "Tim Merrison <tim@merrison.co.uk>",
@@ -13,7 +13,7 @@
     },
     "defaultMeta": {
       "templates": [
-        "switchboard${['nodeId','_id_'].includes(item.name) ? '' : '\", \"list'}${['nodeId','_id_'].includes(item.name) || (item.type && item.type.kind=='LIST') ? '' : '\", \"crud'}"
+        "${['nodeId','_id_'].includes(item.name) ? '' : 'switchboard\", \"list'+(item.type && item.type.kind=='LIST' ? '' : '\", \"crud')}"
       ],
       "label": "${camel2proper(item.name)}",
       "readonly": "${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || (item.type && item.type.kind=='LIST') || ['nodeId'].includes(item.name) || (item.name.endsWith('Id') && item.name==parent.fields[1].name && !parent.fields[2].name.endsWith('Id'))}",
@@ -64,17 +64,17 @@
     "primevue": "^4.4.1",
     "vee-validate": "^4.15.1",
     "villus": "^3.5.2",
-    "vue": "^3.5.22",
+    "vue": "^3.5.24",
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.7",
     "@graphql-codegen/typescript": "^4.1.6",
-    "@vitejs/plugin-vue": "^6.0.1",
+    "@vitejs/plugin-vue": "^6.0.2",
     "@vue/tsconfig": "^0.8.1",
     "opinionate": "github:tjme/opinionate#master",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12",
+    "vite": "^7.2.4",
     "vue-tsc": "^3.1.2"
   }
 }

@@ -237,7 +237,7 @@ export function generate(templateDir: string, targetDir: string, schemaInPath: s
   function singular(word: string): string { return _singular(word) }
   const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta, defaultMetaKey);
   const types = schema.data.__schema.types;
-  const entities = types.filter((f: any) => isEntity(f) && f[metaProp] && f[metaProp].templates && f[metaProp].templates.length > 0 && (f[metaProp].templates[0] !== "" || f[metaProp].templates.length > 1));
+  const entities = types.filter((f: any) => isEntity(f) && f[metaProp] && f[metaProp].templates && (f[metaProp].templates.length > 1 || f[metaProp].templates[0] != ""));
 
   function genCore(templateDir: string, targetDir: string) {
     fs.readdirSync(templateDir).forEach((targetName: string) => {
