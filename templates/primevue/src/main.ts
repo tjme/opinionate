@@ -43,7 +43,7 @@ const client = createClient({ url });
 
 export const language = config.language || navigator.languages?.[0] || navigator.language || new Intl.DateTimeFormat().resolvedOptions().locale || "en";
 export function formatCurrency(value: string): string | undefined {
-  if (value) { const v = +value; return v.toLocaleString(language, !currency ? {} : {style: "currency", currency: currency}); } };
+  if (value) { const v = +value; return v.toLocaleString(language, !config.currency ? {} : {style: "currency", currency: config.currency}); } };
 export function formatDate(value: string): string | undefined {
   if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium"}); } };
 export function formatDateTime(value: string): string | undefined {
@@ -65,16 +65,16 @@ const router = createRouter({
 createApp(App)
 .use(router)
 .use(PrimeVue, {
-    ripple: true,
-    locale: all[language],
-    theme: {
-        preset: Material,
-        options: {
-            prefix: 'p',
-            darkModeSelector: 'system',
-            cssLayer: false
-        }
+  ripple: true,
+  locale: all[config['language'] || 'en'],
+  theme: {
+    preset: Material,
+    options: {
+      prefix: 'p',
+      darkModeSelector: 'system',
+      cssLayer: false
     }
+  }
  })
 .use(ToastService)
 .component('DataTable', DataTable)
