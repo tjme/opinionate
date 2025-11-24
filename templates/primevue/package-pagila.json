@@ -1,6 +1,6 @@
 {
   "name": "opinionate-primevue-pagila",
-  "version": "0.7.9",
+  "version": "0.8.0",
   "type": "module",
   "license": "MIT",
   "author": "Tim Merrison <tim@merrison.co.uk>",
@@ -11,9 +11,12 @@
       "port": 5000,
       "path": "/graphql"
     },
+    "language": null,
+    "currency": null,
+    "defaultPrimaryLabel": "_id_",
     "defaultMeta": {
       "templates": [
-        "${['nodeId','fulltext','_id_','RentalByCategory'].includes(item.name) ? '' : 'switchboard\", \"list'+(item.type && item.type.kind=='LIST' ? '' : '\", \"crud')}"
+        "${[config.defaultPrimaryLabel,'fulltext','RentalByCategory','nodeId'].includes(item.name) ? '' : 'switchboard\", \"list'+(item.type && item.type.kind=='LIST' ? '' : '\", \"crud')}"
       ],
       "label": "${camel2proper(item.name)}",
       "readonly": "${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || (item.type && item.type.kind=='LIST') || ['nodeId','lastUpdate','fulltext'].includes(item.name) || (item.name.endsWith('Id') && item.name==parent.fields[1].name && !parent.fields[2].name.endsWith('Id'))}",
@@ -21,7 +24,7 @@
       "plural": "${!isEntity(item) ? 'null' : plural(item.name)}",
       "menu": "${!isEntity(item) ? 'null' : 'Entities'}",
       "primaryKey": "${!isEntity(item) ? 'null' : item.fields[1].name}",
-      "primaryLabel": "${!isEntity(item) ? 'null' : item.fields.filter(e => e.name=='_id_').map(e => e.name).includes('_id_') ? '_id_' : item.fields[1].name}",
+      "primaryLabel": "${!isEntity(item) ? 'null' : item.fields.filter(e => e.name==config.defaultPrimaryLabel).map(e => e.name).includes(config.defaultPrimaryLabel) ? config.defaultPrimaryLabel : item.fields[1].name}",
 
       "sType": "${isEntity(item) ? 'null' : getType(item)}",
       "format": "${isEntity(item) ? 'null' : item.type.kind=='ENUM' ? 'enum' : ['amount','rentalRate','replacementCost','price','totalSales'].includes(item.name) ? 'currency' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Date','Date!'].includes(getType(item)) ? 'date' : ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!','Year','Year!'].includes(getType(item)) ? 'number' : 'string'}",
@@ -33,9 +36,7 @@
       "linkEntity": "${isEntity(item) ? 'null' : getType(item)==false ? to1UpperCase(singular(item.name.split('By')[0])) : !isField(item) || !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())) ? 'null' : to1UpperCase(parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())).name.toString().split('By')[0])}",
       "linkFields": "${isEntity(item) ? 'null' : getType(item)==false ? to1LowerCase(item.name.split('By')[1]) : 'null'}",
       "linkFieldsFrom": "${isEntity(item) ? 'null' : getType(item)==false ? parent.fields[1].name : !isField(item) ? 'null' : !parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())) ? 'null' : types.filter(e => isEntity(e) && e.name==to1UpperCase(parent.fields.find(link => getType(link)==null && link.name.toLowerCase().endsWith('by'+item.name.toLowerCase())).name.toString().split('By')[0])).map(e => e.fields[1].name)}"
-    },
-    "language": null,
-    "currency": null
+    }
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",

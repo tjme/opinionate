@@ -1,7 +1,6 @@
 import { createApp } from "vue";
 import { createRouter, createWebHashHistory } from "vue-router";
 import { createClient } from "villus";
-import { config } from "../package.json";
 import { defineRule } from "vee-validate";
 import PrimeVue from "primevue/config";
 import Material from "@primevue/themes/material";
@@ -21,6 +20,7 @@ import Dialog from "primevue/dialog";
 import Menubar from "primevue/menubar";
 import Toast from "primevue/toast";
 import "primeicons/primeicons.css";
+import { config } from "../package.json";
 import "./style.css";
 import App from "./App.vue";
 import Switchboard from "./Switchboard.vue";
@@ -42,7 +42,6 @@ const url = (config.gql_api.prefix || "")+config.gql_api.hostname+(":"+config.gq
 const client = createClient({ url });
 
 export const language = config.language || navigator.languages?.[0] || navigator.language || new Intl.DateTimeFormat().resolvedOptions().locale || "en";
-export const currency = config.currency;
 export function formatCurrency(value: string): string | undefined {
   if (value) { const v = +value; return v.toLocaleString(language, !currency ? {} : {style: "currency", currency: currency}); } };
 export function formatDate(value: string): string | undefined {

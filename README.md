@@ -4,11 +4,15 @@ An automated front-end (or full stack) application code generator/scaffolder, th
 
 *Create a working application in minutes: just bring your own PostgreSQL database!*
 
-Or rather, [PostGraphile](https://github.com/graphile/postgraphile) is used to automatically generate a GraphQL API/back-end (derived from your existing database, using introspection). Then the front-end components are generated (similarly) from the GraphQL using ES6 template files, and any additional metadata you can provide (see below).
+Or rather, [PostGraphile](https://github.com/graphile/postgraphile) is used to automatically generate a GraphQL API/back-end (derived automatically from your existing database, using introspection). Then the front-end components are generated (similarly) from the GraphQL using ES6 template files, and any additional metadata you can provide (see below).
 
 This version of Opinionate includes built-in templates that generate functional front-ends using the latest frameworks and technologies. The generated code is [TypeScript](https://www.typescriptlang.org) (and HTML templates) and is fully human-readable, enabling ongoing development and hand crafting. Alternatively, you can refine or customize the templates to better suit your needs, or you can create your own (which could target other technologies, such as React, see below).
 
+The code is generated via an intermediate "metadata" stage (stored as an "overlay" file, which follows the structure of the database), and is somewhat self documenting, and can provide a particularly convenient and declarative way to manually fine-tune you application.
+
 Of course, Opinionate can be used with other GraphQL server-side technologies, to automatically generate just the front-end/client.
+
+Though there are some parallels, Opinionate is not based on AI and unlike "vibe coding", is fully reproducable and deterministic.
 
 ## Prerequisites
 

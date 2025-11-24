@@ -16,9 +16,9 @@ export class AppGen {
       .option("-s, --schema <file>", "JSON file to read (base) schema from", "models/schema.json")
       .option("-o, --overlay <file>", "JSON file to read, defining additions to the schema.data.__schema.types (especially metadata)")
       .option("-d, --default-meta <file>", "ES6 template file defining the metadata structure and default values (used for each type, in the absence of any other sources)")
+      .option("-f, --config-key <key>", "key of the config structure node in the above file")
       .option("-k, --default-meta-key <key>", "key of the metadata structure node in the above file")
       .option("-e, --eval-exclude-files", " a regex to match any filenames to be excluded from eval (e.g. to exclude defaultMeta)")
-      .option("-b, --debug", "output extra debugging")
       .parse(process.argv);
       const options = this.program.opts();
       if (options.debug) console.log(options);
@@ -29,7 +29,9 @@ export class AppGen {
       this.program.schema,
       this.program.overlay,
       this.program.defaultMeta,
-      this.program.defaultMetaKey
+      this.program.configKey,
+      this.program.defaultMetaKey,
+      this.program.evalExcludeFiles
     );
     process.exit();
   }

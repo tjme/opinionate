@@ -14,6 +14,7 @@ export class AppMetaMerge {
       .option("-s, --schema <file>", "JSON file to read (base) schema from", "models/schema.json")
       .option("-o, --overlay <file>", "JSON file to read, defining additions to the schema.data.__schema.types (especially metadata)")
       .option("-d, --default-meta <file>","ES6 template file defining the metadata structure and default values (used for each type, in the absence of any other sources)")
+      .option("-f, --config-key <key>", "key of the config structure node in the above file")
       .option("-k, --default-meta-key <key>","key of the metadata structure node in the above file")
       .option("-m, --schema-out <file>", "JSON file to write, defining schema with merged in metadata")
       .option("-v, --overlay-out <file>", "JSON file to write, defining additions to the schema (especially metadata, but including type IDs)")
@@ -26,7 +27,6 @@ export class AppMetaMerge {
       .option("-q, --dont-dequote", "don't try to remove quotes from values that shouldn't normally be quoted (e.g. null)")
       .option("-n, --dont-remove-null", "don't remove null metadata entries")
       .option("-z, --return-overlay", "return only the merged overlay, rather than the full merged schema")
-      .option("-b, --debug", "output extra debugging")
       .parse(process.argv);
       const options = this.program.opts();
       if (options.debug) console.log(options);
@@ -35,6 +35,7 @@ export class AppMetaMerge {
       this.program.schema,
       this.program.overlay,
       this.program.defaultMeta,
+      this.program.configKey,
       this.program.defaultMetaKey,
       this.program.schemaOut,
       this.program.overlayOut,

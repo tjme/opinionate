@@ -1,3 +1,4 @@
+import { config } from "chai";
 import * as fs from "fs";
 import { plural as _plural, singular as _singular } from "pluralize";
 
@@ -123,6 +124,7 @@ function isType(field: any, type: string): boolean { return (getType(field) === 
  * @param schemaInPath base schema JSON filename to load from (which may already contain some metadata)
  * @param overlayInPath then merge in any schema.data.__schema.types metadata from overlay JSON file (containing metadata and type IDs)
  * @param defaultMeta an ES6 template file defining the default metadata (used for each type, in the absence of any other sources)
+ * @param configKey config key within the above file
  * @param defaultMetaKey default metadata key within the above
  * then also merge in any metadata from its entity and field descriptions (originally from PostgreSQL table and field comments)
  * Write merged results to any of the following output files:
@@ -138,7 +140,8 @@ function isType(field: any, type: string): boolean { return (getType(field) === 
  * @param dontRemoveNull don't remove null metadata entries
  * @param returnOverlay return only the merged overlay, rather than the full merged schema
  */
-export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultMeta: string = "./package.json", defaultMetaKey: string = "config.defaultMeta",
+export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultMeta: string = "./package.json",
+  configKey: string = "config", defaultMetaKey: string = "config.defaultMeta",
   schemaOutPath?: string, overlayOutPath?: string, commentsOutPath?: string,
   allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false,
   dontEval = false, dontDequote = false, dontRemoveNull = false, returnOverlay = false
@@ -146,7 +149,9 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
 
   function plural(word: string): string { return _plural(word) }
   function singular(word: string): string { return _singular(word) }
-  const es6MetaIn = JSON.stringify(get(JSON.parse(fs.readFileSync(defaultMeta).toString()), defaultMetaKey));
+  const configFile = JSON.parse(fs.readFileSync(defaultMeta).toString());
+  const config = get(configFile, configKey);
+  const es6MetaIn = JSON.stringify(get(configFile, defaultMetaKey));
 
   function mergeMeta(item: any[any], overlay: any[], parent?: any) {
     let es6Meta = dontEval ? es6MetaIn : eval("`"+es6MetaIn+"`");
@@ -225,17 +230,18 @@ export function metaMerge(schemaInPath: string, overlayInPath?: string, defaultM
  * @param schemaInPath base schema JSON filename to load from (which may already contain some metadata)
  * @param overlayInPath then merge in any schema.data.__schema.types metadata from overlay JSON file (containing metadata and type IDs)
  * @param defaultMeta an ES6 template file defining the default metadata (used for each type, in the absence of any other sources)
+ * @param configKey config key within the above file
  * @param defaultMetaKey default metadata key within the above
  * then also merge in any metadata from its entity and field descriptions (originally from PostgreSQL table and field comments)
  * @param evalExcludeFiles a regex to match any filenames to be excluded from eval
  */
 export function generate(templateDir: string, targetDir: string, schemaInPath: string,
-  overlayInPath?: string, defaultMeta: string = "./package.json", defaultMetaKey: string = "config.defaultMeta",
-  evalExcludeFiles: RegExp = /package.*\.json/): void {
+  overlayInPath?: string, defaultMeta: string = "./package.json", configKey: string = "config",
+  defaultMetaKey: string = "config.defaultMeta", evalExcludeFiles: RegExp = /package.*\.json/): void {
 
   function plural(word: string): string { return _plural(word) }
   function singular(word: string): string { return _singular(word) }
-  const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta, defaultMetaKey);
+  const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta, configKey, defaultMetaKey);
   const types = schema.data.__schema.types;
   const entities = types.filter((f: any) => isEntity(f) && f[metaProp] && f[metaProp].templates && (f[metaProp].templates.length > 1 || f[metaProp].templates[0] != ""));
 

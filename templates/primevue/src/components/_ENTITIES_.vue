@@ -105,13 +105,13 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
   // GraphQL queries/mutations:
   const `+entity.name+`Fields = gql\`fragment `+entity.name+`Fields on `+entity.name+` {`
 +(entity.fields.filter(f => isField(f))[0].name == "nodeId" ? "" : "nodeId:"+entity.fields.filter(f => isField(f))[0].name+",")
-+(entity.fields.filter(f => getType(f)!=null && !["_id_"].includes(f.name)).map(fields => fields.name+(isField(fields) ? "" : "{totalCount}")))+` }\`;
++(entity.fields.filter(f => getType(f)!=null && !["`+defaultPrimaryLabel+`"].includes(f.name)).map(fields => fields.name+(isField(fields) ? "" : "{totalCount}")))+` }\`;
   const ReadAll = gql\`query readAll($condition:`+entity.name+`Condition) {all`+entity.meta.plural+` (condition:$condition)
     {nodes{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Create = gql\`mutation create(`+entity.fields
-    .filter(f => isField(f) && !["nodeId","_id_"].includes(f.name)).map(field => '$'+field.name+':'+(field.meta.array ? '['+getType(field)+']' : getType(field))+(field.meta.required && !field.meta.readonly ? "!" : ""))+`)
+    .filter(f => isField(f) && !["nodeId","`+defaultPrimaryLabel+`"].includes(f.name)).map(field => '$'+field.name+':'+(field.meta.array ? '['+getType(field)+']' : getType(field))+(field.meta.required && !field.meta.readonly ? "!" : ""))+`)
     {create`+entity.name+`(input:{`+to1LowerCase(entity.name)+`:{ `+entity.fields
-        .filter(f => isField(f) && !["nodeId","_id_"].includes(f.name)).map(field => field.name+':\$'+field.name)+` } })
+        .filter(f => isField(f) && !["nodeId","`+defaultPrimaryLabel+`"].includes(f.name)).map(field => field.name+':\$'+field.name)+` } })
     { `+to1LowerCase(entity.name)+`{...`+entity.name+`Fields } } } $\{ `+entity.name+`Fields}\`;
   const Update = gql\`mutation update(`+entity.fields
     .filter(f => isField(f) && (f.name=="nodeId" || f.meta.templates.includes("crud") && !f.meta.readonly)).map(field => '$'+field.name+':'+(field.meta.array ? '['+getType(field)+']' : getType(field))+(field.name=="nodeId" ? "!" : ""))+`)
@@ -196,7 +196,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
       toast.add({ severity: "success", summary: "Successful", detail: "Records Updated", life: 3000 });
     } else { // it's a create:
 //      console.log("Create Pre:"+JSON.stringify(recordV));
-      await cEx( { ...recordV, `+entity.fields.filter(f => isField(f) && !["nodeId","_id_"].includes(f.name) && !f.meta.templates.includes("list")).map(field => field.name+': ""').join(",")+` } );
+      await cEx( { ...recordV, `+entity.fields.filter(f => isField(f) && !["nodeId","`+defaultPrimaryLabel+`"].includes(f.name) && !f.meta.templates.includes("list")).map(field => field.name+': ""').join(",")+` } );
       if (cErrors.value) throw "Create Errors:"+JSON.stringify(cErrors.value.response.body.errors);
       records.value.push(cRecs.value.create`+entity.name+`.`+to1LowerCase(entity.name)+`);
       toast.add({ severity: "success", summary: "Successful", detail: "Records Created", life: 3000 });
@@ -246,7 +246,7 @@ fields.meta.format=='currency' ? '<template #body="slotProps">{{formatCurrency(s
 `+entity.fields.filter(f => isField(f) && f.meta.linkEntity && !f.meta.linkFields).map(f => f.meta).flat().filter((obj, index, self) => index === self.findIndex((o) => o.linkEntity === obj.linkEntity)).map(m => '\
   const { data: raRecs'+m.linkEntity+', error: raErrors'+m.linkEntity+' } = await useQuery({query: gql\`{all'+
   entities.filter(l => m.linkEntity==l.name)[0].meta.plural
-  +(entities.filter(l => m.linkEntity==l.name)[0].meta.primaryLabel=='_id_' ? '(orderBy: _ID_ASC) {nodes{ _id_,' : ' {nodes{ ' )+m.linkFieldsFrom+' }}}\`});\n\
+  +(entities.filter(l => m.linkEntity==l.name)[0].meta.primaryLabel==defaultPrimaryLabel ? '(orderBy: _ID_ASC) {nodes{ '+defaultPrimaryLabel+',' : ' {nodes{ ' )+m.linkFieldsFrom+' }}}\`});\n\
   if (raErrors'+m.linkEntity+'.value) throw "ReadAll'+m.linkEntity+' Errors:"+JSON.stringify(raErrors'+m.linkEntity+'.value.response.body.errors);\n\
   const records'+m.linkEntity+' = ref( raRecs'+m.linkEntity+'.value.all'+
   entities.filter(l => m.linkEntity==l.name)[0].meta.plural

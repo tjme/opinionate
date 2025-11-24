@@ -76,10 +76,12 @@ function getType(field) {
     return isField(field) && field.type && (field.type.name || (field.type.ofType && field.type.ofType.name));
 }
 function isType(field, type) { return (getType(field) === type); }
-function metaMerge(schemaInPath, overlayInPath, defaultMeta = "./package.json", defaultMetaKey = "config.defaultMeta", schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, dontEval = false, dontDequote = false, dontRemoveNull = false, returnOverlay = false) {
+function metaMerge(schemaInPath, overlayInPath, defaultMeta = "./package.json", configKey = "config", defaultMetaKey = "config.defaultMeta", schemaOutPath, overlayOutPath, commentsOutPath, allowExisting = false, cleanDescriptions = false, ignoreComments = false, relaxedStructure = false, dontEval = false, dontDequote = false, dontRemoveNull = false, returnOverlay = false) {
     function plural(word) { return pluralize_1.plural(word); }
     function singular(word) { return pluralize_1.singular(word); }
-    const es6MetaIn = JSON.stringify(get(JSON.parse(fs.readFileSync(defaultMeta).toString()), defaultMetaKey));
+    const configFile = JSON.parse(fs.readFileSync(defaultMeta).toString());
+    const config = get(configFile, configKey);
+    const es6MetaIn = JSON.stringify(get(configFile, defaultMetaKey));
     function mergeMeta(item, overlay, parent) {
         let es6Meta = dontEval ? es6MetaIn : eval("`" + es6MetaIn + "`");
         if (relaxedStructure)
@@ -159,10 +161,10 @@ function metaMerge(schemaInPath, overlayInPath, defaultMeta = "./package.json", 
     return schema;
 }
 exports.metaMerge = metaMerge;
-function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMeta = "./package.json", defaultMetaKey = "config.defaultMeta", evalExcludeFiles = /package.*\.json/) {
+function generate(templateDir, targetDir, schemaInPath, overlayInPath, defaultMeta = "./package.json", configKey = "config", defaultMetaKey = "config.defaultMeta", evalExcludeFiles = /package.*\.json/) {
     function plural(word) { return pluralize_1.plural(word); }
     function singular(word) { return pluralize_1.singular(word); }
-    const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta, defaultMetaKey);
+    const schema = metaMerge(schemaInPath, overlayInPath, defaultMeta, configKey, defaultMetaKey);
     const types = schema.data.__schema.types;
     const entities = types.filter((f) => isEntity(f) && f[metaProp] && f[metaProp].templates && (f[metaProp].templates.length > 1 || f[metaProp].templates[0] != ""));
     function genCore(templateDir, targetDir) {
