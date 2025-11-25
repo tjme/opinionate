@@ -49,7 +49,7 @@ export function formatDate(value: string): string | undefined {
   if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium"}).replace(/ Sept /," Sep "); } };
 export function formatDateTime(value: string): string | undefined {
   // Formatted partially for acceptability by PrimeVue DatePicker
-  if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium", timeStyle: "short"})?.replace(/, (\d\d:\d\d)$/," $1").replace(/ Sept /," Sep "); } };
+  if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium", timeStyle: "short"})?.replace(/, (\\d\\d:\\d\\d)$/," $1").replace(/ Sept /," Sep "); } };
 export const allLanguages = all;
 
 const routes = [
