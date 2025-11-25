@@ -45,10 +45,11 @@ export const language = config.language || navigator.languages?.[0] || navigator
 export function formatCurrency(value: string): string | undefined {
   if (value) { const v = +value; return v.toLocaleString(language, !config.currency ? {} : {style: "currency", currency: config.currency}); } };
 export function formatDate(value: string): string | undefined {
-  if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium"}); } };
+  // Formatted partially for acceptability by PrimeVue DatePicker
+  if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium"}).replace(/ Sept /," Sep "); } };
 export function formatDateTime(value: string): string | undefined {
   // Formatted partially for acceptability by PrimeVue DatePicker
-  if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium", timeStyle: "short"})?.replace(/, (\\d\\d:\\d\\d)$/," $1"); } };
+  if (value) { const v = new Date(value); return v.toLocaleString(language, {dateStyle: "medium", timeStyle: "short"})?.replace(/, (\d\d:\d\d)$/," $1").replace(/ Sept /," Sep "); } };
 export const allLanguages = all;
 
 const routes = [
