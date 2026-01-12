@@ -14,6 +14,8 @@ Of course, Opinionate can be used with other GraphQL server-side technologies, t
 
 Though there are some parallels, Opinionate is not based on AI and unlike "vibe coding", is fully reproducable and deterministic.
 
+If you would like to develop in a containerized environment, see [opinionate-docker](https://github.com/tjme/opinionate-docker).
+
 ## Prerequisites
 
 - install [Node.js](https://nodejs.org)
@@ -48,7 +50,7 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
 
 - create and change to your project directory: `mkdir primevue-pagila && cd primevue-pagila`
 - you are strongly advised to initialize version control to help track source code changes (e.g. `git init`)
-- copy the template's [package~.json](https://github.com/tjme/opinionate/blob/master/templates/primevue/package~.json) as your new package.json (remove backticks from beginning and end, and making adjustments, e.g. occurencies of the database name 'pagila' in the script, as appropriate)
+- copy the template's [package~.json](https://raw.githubusercontent.com/tjme/opinionate/master/templates/primevue/package~.json) as your new package.json (remove any backticks from beginning and end, and making adjustments, e.g. occurencies of the database name 'pagila' in the script, as appropriate)
 - You may be able to improve the metadata generated, by editing the defaultMeta in your package.json, e.g. with a more tailored rule (to make most primary keys and last updated fields read-only), by changing the line beginning with "readonly" to: `"readonly": "${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || ['nodeId','lastUpdate'].includes(item.name) || (item.name.endsWith('Id') && item.name==parent.fields[1].name && !parent.fields[2].name.endsWith('Id'))}",`
 - Likewise, identify specific currency fields by changing the line beginning with "format" by inserting (before `['money`): `['amount','rentalRate','replacementCost'].includes(item.name) ? 'currency' : ` (and likewise for maxDP, but replace '2' for 'currency')
 - run the GraphQL server, with `pnpm backend &`
@@ -61,7 +63,7 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO test;
   - create a configuration/overlay (for later enhancement and customization): `pnpm gen-overlay` (WARNING: this will overwrite any previous version/amendments)
   - to automatically (re)generate fully functional components/pages for each GraphQL node/entity, as well as common items: `pnpm gen-code` (WARNING: this will overwrite any previous versions/amendments)
 - note that there is a problem with the rental_by_category materialized view not being populated, so remove it by removing all of the templates listed in overlayOut.json, just above the line `"label": "Rental By Category"`.
-- note also, what seems to be a quirk of Postgraphile's pluralize function used on entity names results in an upper case instead of lower case "s" at the end of seven instances of names beginning with "PaymentP202220", but they can be easily accomodated by changes in overlayOut.json, e.g. changing `"plural": "PaymentP202201s",` to `"plural": "PaymentP202201S",`, etc
+- note also, what seems to be a quirk of Postgraphile's pluralize function used on entity names results in an upper case instead of lower case "s" at the end of seven instances of names beginning with "PaymentP202220", but they can be easily accomodated by changes in overlayOut.json, e.g. changing `"plural": "PaymentP202201s",` to `"plural": "PaymentP202201S",`, etc...
 - it would be wise at this stage to use: `git add -A && git commit -m "opinionate gen"`
 - run the development server, to deliver your new website: `pnpm dev`
 - or build: `pnpm build` then run a production version: `pnpm preview`

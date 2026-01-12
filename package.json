@@ -10,6 +10,7 @@
 	"scripts": {
 		"prebuild": "rimraf dist",
 		"build": "tsc --pretty",
+		"prepare": "npm run build",
 		"test-gen-overlay": "node bin/opinionate-meta --default-meta models/defaultMeta.json --overlay-out models/overlayOut.json",
 		"test": "mocha --compilers ts:ts-node/register --recursive test/**/*-spec.ts",
 		"watch": "tsc --watch"
