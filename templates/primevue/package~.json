@@ -1,6 +1,6 @@
 {
   "name": "opinionate-primevue",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "type": "module",
   "license": "MIT",
   "author": "Tim Merrison <tim@merrison.co.uk>",
@@ -20,12 +20,10 @@
       ],
       "label": "${camel2proper(item.name)}",
       "readonly": "${(isEntity(item) && item.fields[0].name!=='nodeId') || (!isEntity(item) && !isField(item)) || (item.type && item.type.kind=='LIST') || ['nodeId'].includes(item.name) || (item.name.endsWith('Id') && item.name==parent.fields[1].name && !parent.fields[2].name.endsWith('Id'))}",
-
       "plural": "${!isEntity(item) ? 'null' : plural(item.name)}",
       "menu": "${!isEntity(item) ? 'null' : 'Entities'}",
       "primaryKey": "${!isEntity(item) ? 'null' : item.fields[1].name}",
       "primaryLabel": "${!isEntity(item) ? 'null' : item.fields.filter(e => e.name=='_id_').map(e => e.name).includes('_id_') ? '_id_' : item.fields[1].name}",
-
       "sType": "${isEntity(item) ? 'null' : getType(item)}",
       "format": "${isEntity(item) ? 'null' : item.type.kind=='ENUM' ? 'enum' : ['money','money!'].includes(getType(item)) ? 'currency' : ['Boolean','Boolean!'].includes(getType(item)) ? 'boolean' : ['Date','Date!'].includes(getType(item)) ? 'date' : ['Datetime','Datetime!'].includes(getType(item)) ? 'datetime' : !isField(item) || ['Int','Int!','BigInt','BigInt!','Float','Float!','BigFloat','BigFloat!','Year','Year!'].includes(getType(item)) ? 'number' : 'string'}",
       "maxDP": "${isEntity(item) ? 'null' : ['money','money!'].includes(getType(item)) ? '2' : ['Float','Float!','BigFloat','BigFloat!'].includes(getType(item)) ? '4' : 'null'}",
@@ -39,20 +37,18 @@
     }
   },
   "scripts": {
+    "backend": "postgraphile -c postgres://test:testpass@/pagila -s public --cors --enhance-graphiql -n localhost -p 5000 -q /graphql",
     "preinstall": "npx only-allow pnpm",
     "gen-json": "postgraphile -c postgres://test:testpass@/pagila -s public -X --export-schema-json models/schema.json",
     "gen-gql": "postgraphile -c postgres://test:testpass@/pagila -s public -X --export-schema-graphql models/schema.gql",
-    "gen-json-a": "apollo client:download-schema --endpoint=localhost models/schema.json",
-    "gen-gql-a": "apollo client:download-schema --endpoint=localhost models/schema.gql",
-    "gen-json-g": "get-graphql-schema localhost -j > models/schema.json",
-    "gen-gql-g": "get-graphql-schema localhost > models/schema.gql",
     "gen-ts": "graphql-codegen --config node_modules/opinionate/models/codegen.yml",
     "gen-overlay": "opinionate meta --overlay-out models/overlayOut.json",
     "gen-code": "opinionate gen --template node_modules/opinionate/templates/primevue -o models/overlayOut.json",
-    "gen": "mkdir models && pnpm install && pnpm gen-json && pnpm gen-gql && pnpm gen-ts && pnpm gen-overlay && pnpm gen-code",
-    "backend": "postgraphile -c postgres://test:testpass@/pagila -s public --cors --enhance-graphiql -n localhost -p 5000 -q /graphql",
-    "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "gen": "pnpm install && pnpm gen-json && pnpm gen-gql && pnpm gen-ts && pnpm gen-overlay && pnpm gen-code",
+    "build": "vue-tsc && vite build",
+    "watch-build": "chokidar 'src/**/*' -c 'pnpm run build'",
+    "dev": "vite --host",
+    "genDev": "pnpm gen && pnpm build && pnpm dev",
     "preview": "vite preview",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src"
   },
@@ -69,8 +65,8 @@
     "vue-router": "^4.6.3"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^5.0.7",
-    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/cli": "^6.1.1",
+    "@graphql-codegen/typescript": "^5.0.7",
     "@vitejs/plugin-vue": "^6.0.2",
     "@vue/tsconfig": "^0.8.1",
     "opinionate": "github:tjme/opinionate#master",
